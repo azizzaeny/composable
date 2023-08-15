@@ -1,5 +1,11 @@
-### values 
+## zaeny/composable  
+
+### Composable Values
 values in    (todo)  
+not framework  
+composable functions   
+
+azizzaeny.github/composable
 
 #### Introduction
 {TODO: introduction}   
@@ -8,5 +14,8 @@ repository about collection of library functional programming, data structure, U
 
 
 ```sh
-npm i @zaeny/core
+
+
 ```
+
+azizzaeny/packages
