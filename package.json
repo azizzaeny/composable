@@ -1,0 +1,23 @@
+{
+  "name": "composable",
+  "version": "1.0.0",
+  "description": "Reusable toolkit, General purpose library Functional Programming, Side-effects modules, Data structure development",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/azizzaeny/composable.git"
+  },
+  "keywords": [
+    "functional",
+    "programming"
+  ],
+  "author": "azizzaeny",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/azizzaeny/composable/issues"
+  },
+  "homepage": "https://github.com/azizzaeny/composable#readme"
+}
