@@ -1,7 +1,9 @@
 ## Composable  
     "Composable is to make or form by combining things."   
-collection of functions that can be composed to solve programming problem  
-about collection of library functional programming, data structure, UI development, pushing side-effects to the last  
+    
+    
+Collection of functions that can be composed to solve programming problem.  
+Library functional programming, data structure, UI development, pushing side-effects to the last  
 
 
 
