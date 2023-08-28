@@ -1,18 +1,9 @@
-// my idea is this should be fetch from github directly so we dont write again
-
-export function reload(){
-  window.location.reload();
-}
-
-export var r = reload;
-
-export function connectRepl(origin){
-  console.log('connect to', origin);
+// long subscribe polling connect to repl
+export function start_repl(origin, opts){
   origin = origin  || window.location.origin;
-  return fetch(origin, {
-    headers: {'repl': true }
-  }).then(res => res.text())
-    .then(res => (console.log(res), res))
+  opts = opts || {'repl': true };
+  return fetch(origin, opts).then(res => res.text())
+    .then(res => (console.log('evaluate:'), res))
     .then(res => eval(res))
-    .then(_ => setTimeout(()=> connectRepl(origin), 500))
+    .then(_ => setTimeout(() => start_repl(origin, opts), 100))
 }      
