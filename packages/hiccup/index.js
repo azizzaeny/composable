@@ -22,7 +22,7 @@ export function createElement(hnode){
   }
 
   for(let child of children){
-    elementNode.appendCHild(createElement(child));
+    elementNode.appendChild(createElement(child));
   }
   return elementNode
 }
