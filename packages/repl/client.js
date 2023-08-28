@@ -1,13 +1,13 @@
 // my idea is this should be fetch from github directly so we dont write again
 
-function reload(){
+export function reload(){
   window.location.reload();
 }
 
-var r = reload;
+export var r = reload;
 
-function connectRepl(){
-  console.log('subscribing');
+export function connectRepl(){
+  console.log('connect');
   return fetch(window.location.origin, {
     headers: {'repl': true }
   }).then(res => res.text())
