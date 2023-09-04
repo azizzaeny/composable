@@ -8,10 +8,13 @@ export function createElement(hnode){
   */
   
   if(typeof hnode === "string") return document.createTextNode(hnode);
-  let [tagName, attrs, children] = hnode;
+
+  let [tagName, attrs, ...children] = hnode;
   
   let elementNode = document.createElement(tagName);
 
+  if(attrs === null){ attrs = {} };
+  
   for (let attrName in attrs){
     if(attrName.startsWith('on') && typeof attrs[attrName] === 'function'){
       let eventName = attrName.substring(2);
