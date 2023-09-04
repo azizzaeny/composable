@@ -44,10 +44,9 @@ export function render(container, hnode){
 export function toHiccup(htmlString){
   const parser = new DOMParser();
   const doc = parser.parseFromString(htmlString, 'text/html');
-  
   function parseNode(node) {
     if (node.nodeType === Node.TEXT_NODE) {
-      return node.textContent.trim();
+      return node.textContent.trim() !== '' ? node.textContent.trim() : null;
     }
     
     const attributes = {};
@@ -55,11 +54,10 @@ export function toHiccup(htmlString){
       attributes[attr.name] = attr.value;
     }
     
-    const children = Array.from(node.childNodes).map(parseNode);
+    const children = Array.from(node.childNodes).map(parseNode).filter(Boolean);
     
     return [node.tagName.toLowerCase(), attributes, ...children];
-  }
-  
+  }  
   const root = doc.body.firstChild;
   return parseNode(root);
 };
