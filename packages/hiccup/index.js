@@ -14,6 +14,10 @@ export function createElement(hnode){
   let elementNode = document.createElement(tagName);
 
   if(attrs === null){ attrs = {} };
+
+  if(typeof attrs ==== "String"){
+    attrs = {"class": attrs};
+  };
   
   for (let attrName in attrs){
     if(attrName.startsWith('on') && typeof attrs[attrName] === 'function'){
