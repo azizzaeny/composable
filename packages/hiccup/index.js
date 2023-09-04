@@ -39,3 +39,27 @@ export function render(container, hnode){
   container.appendChild(createElement(hnode));
   return true;
 }
+
+
+export function toHiccup(htmlString){
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(htmlString, 'text/html');
+  
+  function parseNode(node) {
+    if (node.nodeType === Node.TEXT_NODE) {
+      return node.textContent.trim();
+    }
+    
+    const attributes = {};
+    for (const attr of node.attributes) {
+      attributes[attr.name] = attr.value;
+    }
+    
+    const children = Array.from(node.childNodes).map(parseNode);
+    
+    return [node.tagName.toLowerCase(), attributes, ...children];
+  }
+  
+  const root = doc.body.firstChild;
+  return parseNode(root);
+};
