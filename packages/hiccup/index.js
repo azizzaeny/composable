@@ -15,7 +15,7 @@ export function createElement(hnode){
 
   if(attrs === null){ attrs = {} };
 
-  if(typeof attrs ==== "String"){
+  if(typeof attrs === "String"){
     attrs = {"class": attrs};
   };
   
