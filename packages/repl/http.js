@@ -1,5 +1,5 @@
-import http from 'node:http';
-import fs from 'fs';
+import * as http from 'node:http';
+import * as fs from 'fs';
 
 var server ;
 var request_poll = [];
