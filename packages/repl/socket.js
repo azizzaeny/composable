@@ -4,12 +4,15 @@
 
 var net      = require('net');
 var readline = require('readline');
+var vm       = require('vm');
+var context;
 
 function evaluate(line, socket){
   try{
     let msg = JSON.parse(line);
     if(msg && typeof msg.code === 'string'){
-      eval(msg.code);
+      // eval(msg.code);
+      vm.runInContext(msg.code, context);
     }else{
       socket.write(`Invalid msg format, ${line} \n`);
     }
@@ -20,7 +23,8 @@ function evaluate(line, socket){
 
 function start(port){
   if(!port) (port=1355);
-  if(process._SOCKET) return console.log(`socket repl already start at ${port}`);  
+  if(process._SOCKET) return console.log(`socket repl already start at ${port}`);
+  context = vm.createContext(global);
   process._SOCKET = net.createServer(socket => {
     process._READLINE = readline.createInterface({
       input : socket,
