@@ -13,3 +13,7 @@ function fetch(url, context) {
     })
   });
 }
+
+var url = 'https://cdn.jsdelivr.net/gh/azizzaeny/composable@main/packages/repl/index.js';
+// fetch('url');
+
