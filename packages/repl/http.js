@@ -1,8 +1,9 @@
-import * as http from 'http';
-import * as fs from 'fs';
+var http = require('http');
+var fs = require('fs');
 
 var server ;
 var request_poll = [];
+
 var blankCanvas = `
 <html><head></head><body><script src="client.js"></script></body></html>
 `;
@@ -49,6 +50,7 @@ function stop(){
 
 function evaluate(code){ return release(code); }
 
-export default { start, evaluate, stop }
+//export default { start, evaluate, stop }
+module.exports = { start, evaluate, stop }
 
 

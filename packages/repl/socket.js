@@ -2,10 +2,11 @@
 // format {code, path, at, line, file}
 // evaluate code
 
-import net from 'node:net';
-import readline from 'node:readline';
-import vm from 'node:vm';
-import http from './http';
+var net = require('net');
+var readline = require('readline');
+var vm = requrie('vm');
+var http = require('http');
+var fs = require('fs');
 
 var context;
 var forceHttp;
@@ -33,7 +34,6 @@ function release(line, socket){
 }
 
 function evaluate(code){
-  // eval(msg.code);
   return vm.runInContext(code, context);  
 }
 
@@ -57,4 +57,6 @@ function stop(){
   if( process._SOCKET && process._SOCKET.destroy ) process._SOCKET.destroy();
 }
 
-export default {start, evaluate, stop}
+module.exports = {start, evaluate, stop}
+
+//export default {start, evaluate, stop}
