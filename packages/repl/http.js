@@ -1,5 +1,6 @@
-var http = require('http');
-var fs   = require('fs');
+import http from 'node:http';
+import fs from 'fs';
+
 var server ;
 var request_poll = [];
 var blankCanvas = `

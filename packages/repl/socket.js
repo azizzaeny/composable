@@ -2,10 +2,10 @@
 // format {code, path, at, line, file}
 // evaluate code
 
-var net      = require('net');
-var readline = require('readline');
-var vm       = require('vm');
-var http     = require('./http');
+import net from 'node:net';
+import readline from 'node:readline';
+import vm from 'node:vm';
+import http from './http';
 
 var context;
 var forceHttp;
