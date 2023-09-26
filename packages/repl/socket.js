@@ -12,7 +12,8 @@ function evaluate(line, socket){
     let msg = JSON.parse(line);
     if(msg && typeof msg.code === 'string'){
       // eval(msg.code);
-      vm.runInContext(msg.code, context);
+      var res = vm.runInContext(msg.code, context);
+      socket.write(`${res}\n`);
     }else{
       socket.write(`Invalid msg format, ${line} \n`);
     }
@@ -34,7 +35,7 @@ function start(port){
     process._READLINE.on('line', line => evaluate(line, socket));
     socket.on('end', ()=> process._READLINE.close());
   });
-  process._SOCKET.line(port, ()=> console.log(`socket repl running on port ${port}`));
+  process._SOCKET.listen(port, ()=> console.log(`socket repl running on port ${port}`));
 }
 
 function stop(){
