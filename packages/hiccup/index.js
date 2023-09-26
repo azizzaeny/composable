@@ -28,6 +28,11 @@ export function createElement(hnode){
     }
   }
 
+  if(typeof children === "string"){
+    elementNode.appendChild(createElement(children));
+    return elementNode;
+  }
+
   for(let child of children){
     elementNode.appendChild(createElement(child));
   }
