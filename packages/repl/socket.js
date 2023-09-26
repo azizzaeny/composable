@@ -7,12 +7,11 @@ var readline = require('readline');
 var vm       = require('vm');
 var context;
 
-function evaluate(line, socket){
+function release(line, socket){
   try{
     let msg = JSON.parse(line);
     if(msg && typeof msg.code === 'string'){
-      // eval(msg.code);
-      var res = vm.runInContext(msg.code, context);
+      var res = evaluate(msg.code)
       socket.write(`${res}\n`);
     }else{
       socket.write(`Invalid msg format, ${line} \n`);
@@ -20,6 +19,11 @@ function evaluate(line, socket){
   }catch(err){
     socket.write(`Error : ${err.message}\n`);
   }
+}
+
+function evaluate(code){
+  // eval(msg.code);
+  return vm.runInContext(msg.code, context);  
 }
 
 function start(port){
@@ -32,7 +36,7 @@ function start(port){
       output: socket,
       prompt: ''
     });
-    process._READLINE.on('line', line => evaluate(line, socket));
+    process._READLINE.on('line', line => release(line, socket));
     socket.on('end', ()=> process._READLINE.close());
   });
   process._SOCKET.listen(port, ()=> console.log(`socket repl running on port ${port}`));
@@ -42,4 +46,4 @@ function stop(){
   if( process._SOCKET && process._SOCKET.destroy ) process._SOCKET.destroy();
 }
 
-module.exports = {start, stop}
+module.exports = {start, evaluate, stop}
