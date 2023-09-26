@@ -57,4 +57,4 @@ function stop(){
   if( process._SOCKET && process._SOCKET.destroy ) process._SOCKET.destroy();
 }
 
-module.exports = {start, evaluate, stop}
+export default {start, evaluate, stop}

@@ -48,6 +48,6 @@ function stop(){
 
 function evaluate(code){ return release(code); }
 
-module.exports = {start, evaluate, stop}
+export default { start, evaluate, stop }
 
 
