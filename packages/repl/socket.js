@@ -5,13 +5,24 @@
 var net      = require('net');
 var readline = require('readline');
 var vm       = require('vm');
+var http     = require('./http');
+
 var context;
+var forceHttp;
 
 function release(line, socket){
   try{
     let msg = JSON.parse(line);
     if(msg && typeof msg.code === 'string'){
-      var res = evaluate(msg.code)
+      let evaluator =  evaluate;
+      if(msg && msg.type === "node"){
+        evaluator = evaluate;
+      }else if(msg && msg.type === "browser"){
+        evaluator = http.evaluate;
+      }else if(forceHttp){
+        evaluator =  http.evaluate;
+      }
+      var res = evaluator(msg.code)
       socket.write(`${res}\n`);
     }else{
       socket.write(`Invalid msg format, ${line} \n`);
@@ -23,7 +34,7 @@ function release(line, socket){
 
 function evaluate(code){
   // eval(msg.code);
-  return vm.runInContext(msg.code, context);  
+  return vm.runInContext(code, context);  
 }
 
 function start(port){

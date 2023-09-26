@@ -7,7 +7,6 @@ var blankCanvas = `
 `;
 
 var clientJs = `
-console.log('repl client loaded');
 function poll_request(host){
   host = host || window.location.origin; 
   console.log('connecting...');
@@ -50,4 +49,5 @@ function stop(){
 function evaluate(code){ return release(code); }
 
 module.exports = {start, evaluate, stop}
+
 
