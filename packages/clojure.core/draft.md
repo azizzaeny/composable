@@ -1,7 +1,55 @@
-### Objects
+building functional programming in js with clojure.core convention
 
-```js
-var assoc = (...args) => {
+starting test 
+
+```sh
+node -i -e "var vm = require('vm'); var ctx =  vm.createContext(global); vm.runInContext( require('fs').readFileSync('./index.js', 'utf-8'), ctx);"
+```
+evaluate all of this contents code block into the nodejs 
+
+```js evaluate=1
+console.log('clojure.core laoded');
+```
+
+
+create utility to reload
+
+```javascript evaluate=0
+function reload(ctx){
+  return evaluateFile('./contents/functional-programming-js-clojure/readme.md') 
+}
+```
+to reload just type 
+
+```js 
+reload(ctx);
+```
+
+### Features Test
+- must throw or handle what number arguments is called
+- add every clojure
+- in the presentations of blog it should code and test it immedietly, or split it into more code blocks
+
+
+JS object manipulations
+
+```javascript evaluate=1
+
+function get (obj, key){
+  return obj[key];
+}
+
+function getIn(coll, keys){
+  return keys.reduce((acc, key) => {
+    if (acc && typeof acc === 'object' && key in acc) {
+      return acc[key];
+    } else {
+      return undefined;
+    }
+  }, coll);
+};
+
+function assoc(...args){
   let [obj, key, val] = args;
   if (args.length === 3) {
     return { ...obj, [key]: val };
@@ -17,7 +65,7 @@ function dissoc(obj, key) {
   return rest;
 }
 
-const assocIn = (...args) => {
+function assocIn(...args){
   let [obj, keys, val] = args;
   if (args.length === 3) {
     keys = Array.isArray(keys) ? keys : [keys];
@@ -25,10 +73,8 @@ const assocIn = (...args) => {
   } else if (args.length === 2) {
     return (val) => assocIn(obj, keys, val);
   }
-  // throw new Error('assocIn function must be called with at least 2 arguments');
 }
 
-// update function
 function update(...args) {
   let [object, key, updateFn] = args;
   if (args.length === 2) {
@@ -40,7 +86,6 @@ function update(...args) {
   };
 }
 
-// update-in function
 function updateIn(...args) {
   let [object, keys, updateFn] = args;
   if (args.length === 2) {
@@ -53,20 +98,24 @@ function updateIn(...args) {
   return update(object, key, (value) => updateIn(value, rest, updateFn));
 }
 
-const selectKeys = (...args) => {
+function selectKeys(...args){
   let [obj, keys] = args;
   if (args.length === 2) {
     return Object.fromEntries(Object.entries(obj).filter(([key, value]) => keys.includes(key)));
   } else if (args.length === 1) {
     return (keys) => selectKeys(obj, keys);
   }
-  //throw new Error('selectKeys function must be called with at least 1 argument');
 }
+
 
 function renameKeys(obj, keyMap) {
   const renamedObj = Object.entries(obj)
-    .reduce((acc, [key, value]) => keyMap[key] ? { ...acc, [keyMap[key]]: value } : { ...acc, [key]: value }, {});
+        .reduce((acc, [key, value]) => keyMap[key] ? { ...acc, [keyMap[key]]: value } : { ...acc, [key]: value }, {});
   return renamedObj;
+}
+
+function merge(...args) {
+  return Object.assign({}, ...args);
 }
 
 function mergeWith(fn, ...maps) {
@@ -94,27 +143,13 @@ function mergeWith(fn, ...maps) {
   }
 }
 
-function getIn(coll, keys){
-  return keys.reduce((acc, key) => {
-    if (acc && typeof acc === 'object' && key in acc) {
-      return acc[key];
-    } else {
-      return undefined;
-    }
-  }, coll);
-};
-
-const get = (obj, key) => {
-  return obj[key];
-};
-
-const keys = (obj) => {
+function keys (obj){
   return Object.keys(obj);
-};
+}
 
-const vals = (obj) => {
-  return Object.values(obj);
-};
+function vals (obj){
+  return Object.values(obj); 
+}
 
 function zipmap(keys, vals) {
   return keys.reduce((result, key, i) => {
@@ -124,34 +159,64 @@ function zipmap(keys, vals) {
 }
 
 ```
-### Array
 
-```js
-const conj = (coll, item) => {
+Test the objects
+
+```js evaluate=0
+reload(ctx);
+get({a:1}, 'a')
+getIn({a: {b: 1}}, ['a', 'b'])
+assoc({}, 'a', 1);
+dissoc({a:1}, 'a');
+assocIn({}, ['a', 'b'], 1)
+update({a:1}, 'a', (v) => v + 10);
+updateIn({a: {b: 1}}, ['a', 'b'],(v) => v +1)
+selectKeys({a: 1, b: 2}, ['a'])
+// TODO: test renameKeys
+// TODO: test mergeWith
+keys({a:1})
+vals({a: 101})
+// TDOO: test zipmap
+```
+
+
+Collection manipulations
+
+```javascript evaluate=1
+
+function count(coll) {
+  return coll.length;
+}
+
+function conj(coll, item){
   return [...coll, item];
 };
 
-const cons = (item, seq) => {
+function cons(item, seq) {
   return [item, ...seq];
 };
 
-const first = (seq) => {
+function first(seq) {
   return seq[0];
 };
 
-const nth = (seq, n) => {
+function ffirst(coll){
+  return first(coll[0]);
+};
+
+function nth(seq, n) {
   return seq[n];
 };
 
-const peek = (stack) => {
+function peek(stack) {
   return stack[stack.length - 1];
 };
 
-const rest = (seq) => {
+function rest(seq) {
   return seq.slice(1);
 };
 
-const pop = (stack) => {
+function pop(stack) {
   return stack.slice(0, -1);
 };
 
@@ -162,90 +227,10 @@ function disj(...args){
   } else if (args.length === 1) {
     return (key) => disj(coll, key);
   }
-  throw new Error('disj function must be called with at least 1 argument');
+  // throw new Error('disj function must be called with at least 1 argument');
 }
 
-const ffirst = (coll) => {
-  return first(coll[0]);
-};
-
-
-function find(pred, coll){
-  for (const item of coll) {
-    if (pred(item)) {
-      return item;
-    }
-  }
-  return undefined;
-};
-
-
-var map = (...args) => {
-  let [fn, arr] = args;
-  if (args.length === 1) {
-    return coll => map(fn, coll);
-  }
-  return arr.map(fn);
-}
-
-
-var filter = (...args) => {
-  let [predicate, arr] = args;
-  if (args.length === 1) {
-    return coll => filter(predicate, coll);
-  }
-  return arr.filter(predicate);
-}
-
-var reduce = (...args) => {
-  let [reducer, initialValue, arr] = args;
-  if(args.length === 1){
-    return coll => reduce(reducer, null, coll);
-  }
-  if (args.length === 2) {
-    return coll => reduce(reducer, initialValueHolder, coll)
-  }
-  return arr.reduce(reducer, initialValue)
-}
-
-var concat = (...args) => {
-  let [arr1, arr2] = args;
-  if (args.length === 1) {
-    return arr2Holder => concat(arr1, arr2Holder)
-  }
-  return arr1.concat(arr2)
-}
-
-// mapcat
-var mapcat = (...args) => {
-  let [fn, arr]= args;
-  if (args.length === 1) {
-    return coll => mapcat(fn, coll);
-  }
-  return arr.map(fn).reduce((acc, val) => acc.concat(val), [])
-}
-
-// flatten
-var flatten = arr => {
-  const flat = [].concat(...arr)
-  return flat.some(Array.isArray) ? flatten(flat) : flat
-}
-
-// distinct
-var distinct = arr => [...new Set(arr)]
-
-// remove
-var remove = (...args) => {
-  let [predicate, arr] = args;
-  if (args.length === 1) {
-    return coll => remove(predicate, coll)
-  }
-  return arr.filter(val => !predicate(val))
-}
-
-// take-nth
-
-var takeNth = (...args) => {
+function takeNth(...args){
   let [n, arr] = args;
   if (args.length === 1) {
     return coll => takeNth(n, coll)
@@ -253,8 +238,7 @@ var takeNth = (...args) => {
   return arr.filter((_, i) => i % n === 0);
 }
 
-// take
-var take = (...args) => {
+function take(...args){
   let [n, arr] = args;
   if (args.length === 1) {
     return coll => take(n, coll);
@@ -262,30 +246,27 @@ var take = (...args) => {
   return arr.slice(0, n)
 }
 
-// second
-var second = ([_, x]) => x
+function second([_, x]){ return x; }
 
 // last
-const last = arr => arr[arr.length - 1]
+function last (arr){ return arr[arr.length - 1]; }
 
 // next
-const next = ([_, ...rest]) => rest
+function next([_, ...rest]){ return rest; }
 
 // nfirst
-const nfirst = (n = 1, arr) => arr.slice(n)
+function nfirst(n = 1, arr){ return arr.slice(n); }
 
 // nnext
-const nnext = (n = 1, arr) => arr.slice(-n)
+function nnext(n = 1, arr){ return arr.slice(-n); }
 
 // fnext
-const fnext = (fn, arr) => fn(...next(arr))
+function fnext(fn, arr){ return fn(...next(arr)); }
 
 // take-last
-const takeLast = (n, arr) => arr.slice(-n)
+function takeLast(n, arr){ return arr.slice(-n); }
 
-// take-while
-
-const takeWhile = (...args) => {
+function takeWhile(...args){
   let [predicate, arr] = args;
   if (args.length === 1) {
     return coll => takeWhile(predicate, coll)
@@ -294,17 +275,13 @@ const takeWhile = (...args) => {
   return index === -1 ? arr : arr.slice(0, index)
 }
 
-// drop
-const drop = (n, arr) => arr.slice(n)
+function drop(n, arr){ return arr.slice(n); }
 
-// drop-last
-const dropLast = (arr) => arr.slice(0, -1)
+function dropLast(arr){ return arr.slice(0, -1); }
 
-// drop-first
-const dropFirst = (arr) => arr.slice(1)
+function dropFirst(arr){ return arr.slice(1); }
 
-// nthrest
-const nthrest = (...args) => {
+function nthrest(...args){
   let [n, arr] = args;
   if (args.length === 1) {
     return coll => nthrest(n, coll)
@@ -312,148 +289,14 @@ const nthrest = (...args) => {
   return arr.filter((_, i) => i >= n)
 }
 
-const sort = (...args) => {
-  let [arr, comparator = (a, b) => a - b] = args;
-  return args.length === 1 ? [...arr].sort() : [...arr].sort(comparator);
-}
-
-
-const sortBy = (...args) => {
-  let [fn, arr] = args;
-  if (args.length === 1) {
-    return arr => [...arr].sort((a, b) => fn(a) - fn(b));
-  } else {
-    return [...arr].sort((a, b) => fn(a) - fn(b));
-  }
-};
-
-const mapIndexed = (...args) => {
-  let [fn, arr] = args;
-  if (args.length === 1) {
-    return arr => arr.map((val, idx) => fn(val, idx));
-  } else {
-    return arr.map((val, idx) => fn(val, idx));
-  }
-};
-
-
-const reverse = (...args) => {
-  let [arr] = args;
-  args.length === 1 ? [...arr].reverse() : arr.reverse();
-}
-
-/*
-const numbers = [1, 2, 3];
-console.log(reverse(numbers)); // [3, 2, 1]
-*/
-
-const interleave = (...arrays) => {
-  if (arrays.length === 1) {
-    return arr => arrays.reduce((acc, arr) => acc.flatMap((val, i) => [val, arr[i]]), arr.shift());
-  } else {
-    return arrays.reduce((acc, arr) => acc.flatMap((val, i) => [val, arr[i]]), arrays.shift());
-  }
-};
-
-const interpose = (...args) => {
-  let [sep, arr] = args;
-  if (args.length === 1) {
-    return arr => arr.flatMap((val, i) => i === arr.length - 1 ? val : [val, sep]);
-  } else {
-    return arr.flatMap((val, i) => i === arr.length - 1 ? val : [val, sep]);
-  }
-};
-
-
-const compare = (a, b) => {
-  if (a < b) {
-    return -1;
-  } else if (a > b) {
-    return 1;
-  } else {
-    return 0;
-  }
-};
-
-
-var groupBy = (...args) => {
-  let [fn, arr] = args;
-  if(args.length === 1){
-    return (coll) => groupBy(fn, coll);
-  }
-  return arr.reduce((acc, curr) => {
-    const key = fn(curr);
-    if (!acc[key]) {
-      acc[key] = [];
-    }
-    acc[key].push(curr);
-    return acc;
-  }, {});
-};
-
-const partition = (...args) => {
-  let [size, arr] = args;
-  if(args.length === 1){
-    return (coll) => partition(size, coll);
-  }
-  const result = [];
-  for (let i = 0; i < arr.length; i += size) {
-    result.push(arr.slice(i, i + size));
-  }
-  return result;
-};
-
-
-var partitionAll = (...args) => {
-  let [size, arr] = args;
-  if(args.length === 1){
-    return (coll) => partitionAll(size, coll);
-  }
-  if (!arr || !arr.length) return [];
-  const result = [];
-  for (let i = 0; i < arr.length; i += size) {
-    result.push(arr.slice(i, i + size));
-  }
-  return result;
-};
-
-
-// partition-by
-
-const partitionBy = (...args) => {
-  let [fn, coll] = args;
-  if(args.length === 1){
-    return (coll) => partitionBy(fn, coll);
-  }
-  const result = [];
-  let group = [];
-  let prevValue;
-  for (const elem of coll) {
-    const value = fn(elem);
-    if (value === prevValue || prevValue === undefined) {
-      group.push(elem);
-    } else {
-      result.push(group);
-      group = [elem];
-    }
-    prevValue = value;
-  }
-  if (group.length > 0) {
-    result.push(group);
-  }
-  return result;
-};
-
-
-// split-at
-const splitAt = (n, coll) => {
+function splitAt(n, coll){
   return [coll.slice(0, n), coll.slice(n)];
-};
+}
 
-// split-with
-const splitWith = (pred, coll) => {
-  const a = [];
-  const b = [];
+function splitWith(pred, coll){
+  // TODO: use reduce
+  let a = [];
+  let b = [];
   let inA = true;
   coll.forEach((elem) => {
     if (inA && pred(elem)) {
@@ -464,7 +307,8 @@ const splitWith = (pred, coll) => {
     }
   });
   return [a, b];
-};
+}
+// TODO: funcitonalize
 
 // shuffle
 const shuffle = (coll) => {
@@ -561,6 +405,211 @@ function keepIndexed(pred, coll) {
   }, []);
 }
 
+```
+
+more multi collection manipulation map filter reduce, concat
+
+```js evaluate=1
+
+function find(pred, coll){
+  for (const item of coll) {
+    if (pred(item)) {
+      return item;
+    }
+  }
+  return undefined;
+};
+
+function map(...args){
+  let [fn, arr] = args;
+  if (args.length === 1) {
+    return coll => map(fn, coll);
+  }
+  return arr.map(fn);
+}
+
+function filter(...args){
+  let [predicate, arr] = args;
+  if (args.length === 1) {
+    return coll => filter(predicate, coll);
+  }
+  return arr.filter(predicate);
+}
+
+
+function remove(...args){
+  let [predicate, arr] = args;
+  if (args.length === 1) {
+    return coll => remove(predicate, coll)
+  }
+  return arr.filter(val => !predicate(val))
+}
+
+function every(...args){
+  let [predicate, arr] = args ;
+  if(args.length === 1){
+    return coll => every(predicate, coll);
+  }
+  return arr.every(predicate);
+}
+
+function reduce(...args){
+  let [reducer, initialValue, arr] = args;
+  if(args.length === 1){
+    return coll => reduce(reducer, null, coll);
+  }
+  if (args.length === 2) {
+    return coll => reduce(reducer, initialValueHolder, coll)
+  }
+  return arr.reduce(reducer, initialValue)
+}
+// TODO: every
+
+
+function concat(...args){
+  let [arr1, arr2] = args;
+  if (args.length === 1) {
+    return (arr2Holder) => concat(arr1, arr2Holder)
+  }
+  return arr1.concat(arr2)
+}
+
+function mapcat(...args){
+  let [fn, arr]= args;
+  if (args.length === 1) {
+    return coll => mapcat(fn, coll);
+  }
+  return arr.map(fn).reduce((acc, val) => acc.concat(val), [])
+}
+  
+function mapIndexed(...args){
+  let [fn, arr] = args;
+  if (args.length === 1) {
+    return arr => arr.map((val, idx) => fn(val, idx));
+  } else {
+    return arr.map((val, idx) => fn(val, idx));
+  }
+}
+
+function flatten(...args){  
+  let flat = [].concat(...arr)
+  return flat.some(Array.isArray) ? flatten(flat) : flat
+}
+
+function distinct(...args){
+  return [...new Set(arr)];
+}
+
+function interleave(...arrays){
+  if (arrays.length === 1) {
+    return arr => arrays.reduce((acc, arr) => acc.flatMap((val, i) => [val, arr[i]]), arr.shift());
+  } else {
+    return arrays.reduce((acc, arr) => acc.flatMap((val, i) => [val, arr[i]]), arrays.shift());
+  }  
+}
+
+function interpose(...args){
+  let [sep, arr] = args;
+  if (args.length === 1) {
+    return arr => arr.flatMap((val, i) => i === arr.length - 1 ? val : [val, sep]);
+  } else {
+    return arr.flatMap((val, i) => i === arr.length - 1 ? val : [val, sep]);
+  } 
+}
+
+function reverse(...args){
+  let [arr] = args;
+  args.length === 1 ? [...arr].reverse() : arr.reverse();
+}
+
+function sort(...args){
+  let [arr, comparator = (a, b) => a - b] = args;
+  return args.length === 1 ? [...arr].sort() : [...arr].sort(comparator);
+}
+
+function sortBy(...args){
+  let [fn, arr] = args;
+  if (args.length === 1) {
+    return arr => [...arr].sort((a, b) => fn(a) - fn(b));
+  } else {
+    return [...arr].sort((a, b) => fn(a) - fn(b));
+  }
+}
+
+function compare(a , b){
+  if (a < b) {
+    return -1;
+  } else if (a > b) {
+    return 1;
+  } else {
+    return 0;
+  }
+}
+
+function groupBy(...args){
+  let [fn, arr] = args;
+  if(args.length === 1){
+    return (coll) => groupBy(fn, coll);
+  }
+  return arr.reduce((acc, curr) => {
+    const key = fn(curr);
+    if (!acc[key]) {
+      acc[key] = [];
+    }
+    acc[key].push(curr);
+    return acc;
+  }, {});
+}
+
+function partition(...args){
+  let [size, arr] = args;
+  if(args.length === 1){
+    return (coll) => partition(size, coll);
+  }
+  const result = [];
+  for (let i = 0; i < arr.length; i += size) {
+    result.push(arr.slice(i, i + size));
+  }
+  return result;
+}
+
+function partitionAll(...args){
+  let [size, arr] = args;
+  if(args.length === 1){
+    return (coll) => partitionAll(size, coll);
+  }
+  if (!arr || !arr.length) return [];
+  const result = [];
+  for (let i = 0; i < arr.length; i += size) {
+    result.push(arr.slice(i, i + size));
+  }
+  return result;
+}
+
+function partitionBy(...args){
+  let [fn, coll] = args;
+  if(args.length === 1){
+    return (coll) => partitionBy(fn, coll);
+  }
+  const result = [];
+  let group = [];
+  let prevValue;
+  for (const elem of coll) {
+    const value = fn(elem);
+    if (value === prevValue || prevValue === undefined) {
+      group.push(elem);
+    } else {
+      result.push(group);
+      group = [elem];
+    }
+    prevValue = value;
+  }
+  if (group.length > 0) {
+    result.push(group);
+  }
+  return result;
+}
+
 function frequencies(coll) {
   const freqMap = new Map();
   for (const el of coll) {
@@ -568,11 +617,7 @@ function frequencies(coll) {
   }
   return Object.fromEntries(freqMap);
 }
-
-function count(coll) {
-  return coll.length;
-}
-
+ 
 function union(set1, set2) {
   return Array.from(new Set([...set1, ...set2]));
 }
@@ -586,230 +631,10 @@ function intersection(arr1, arr2) {
 }
 
 ```
+add functions 
 
-### Checks
+```javascript evaluate=1
 
-```js
-
-function notEmpty(coll) {
-  return coll.length > 0 ? coll : null;
-}
-
-function empty(coll) {
-  return coll.length === 0;
-}
-
-
-function contains(key, coll){
-  if (coll instanceof Map || coll instanceof Set) {
-    return coll.has(key);
-  } else if (Array.isArray(coll)) {
-    return coll.includes(key);
-  } else {
-    return Object.prototype.hasOwnProperty.call(coll, key);
-  }
-};
-
-/*
-contains({ a: 1, b: 2 }, 'a'); // true
-contains(new Set([1, 2, 3]), 4); // false
-*/
-
-function isZero(x) {
-  return x === 0;
-}
-
-function isPos(x) {
-  return x > 0;
-}
-
-function isNeg(x) {
-  return x < 0;
-}
-
-function isEven(x) {
-  return x % 2 === 0;
-}
-
-function isOdd(x) {
-  return x % 2 !== 0;
-}
-
-function isInt(x) {
-  return Number.isInteger(x);
-}
-
-function isTrue(x) {
-  return x === true;
-}
-
-function isFalse(x) {
-  return x === false;
-}
-
-function isInstanceOf(x, type) {
-  return x instanceof type;
-}
-
-function isNil(x) {
-  return x === null;
-}
-
-function isSome(x) {
-  return x != null;
-}
-
-function isFn(value) {
-  return typeof value === 'function';
-}
-
-function isIncludes(coll, value) {
-  return coll.includes(value);
-}
-
-function isBlank(value) {
-  return typeof value === 'string' && value.trim() === '';
-}
-
-function isArray(value) {
-  return Array.isArray(value);
-}
-
-function isNumber(value) {
-  return typeof value === 'number' && !Number.isNaN(value);
-}
-
-function isObject(value) {
-  return typeof value === 'object' && value !== null && !Array.isArray(value);
-}
-
-function isString(value) {
-  return typeof value === 'string';
-}
-
-function isIdentical(x, y) {
-  return x === y;
-}
-
-function isColl(value) {
-  return typeof value === 'object' && value !== null;
-}
-
-/*
-  isFn(() => {}); // true
-isIncludes([1, 2, 3], 2); // true
-isBlank(''); // true
-isArray([1, 2, 3]); // true
-isNumber(42); // true
-isObject({ a: 1, b: 2 }); // true
-isString('hello'); // true
-isIdentical(2, 2); // true
-isColl({}); // true
-*/
-
-function isSubset(set1, set2) {
-  for (let item of set1) {
-    if (!set2.has(item)) {
-      return false;
-    }
-  }
-  return true;
-}
-
-function isSuperset(set1, set2) {
-  for (let item of set2) {
-    if (!set1.has(item)) {
-      return false;
-    }
-  }
-  return true;
-}
-
-function isDistinct(arr) {
-  return arr.length === new Set(arr).size;
-}
-
-function isEmptyArray(arr) {
-  return arr.length === 0;
-}
-
-function isEmptySet(set) {
-  return set.size === 0;
-}
-
-function isEveryEven(arr) {
-  return arr.every(num => num % 2 === 0);
-}
-
-function isNotEveryEven(arr) {
-  return arr.some(num => num % 2 !== 0);
-}
-
-function isNotAnyEven(arr) {
-  return !arr.some(num => num % 2 === 0);
-}
-
-function isDeepEqual(a, b) {
-  if (Array.isArray(a) && Array.isArray(b)) {
-    if (a.length !== b.length) return false;
-    for (let i = 0; i < a.length; i++) {
-      if (!isDeepEqual(a[i], b[i])) return false;
-    }
-    return true;
-  } else if (typeof a === 'object' && typeof b === 'object') {
-    const aKeys = Object.keys(a);
-    const bKeys = Object.keys(b);
-    if (aKeys.length !== bKeys.length) return false;
-    for (const key of aKeys) {
-      if (!isDeepEqual(a[key], b[key])) return false;
-    }
-    return true;
-  } else {
-    return a === b;
-  }
-}
-
-/*
-const a = { a: [1, 2, { b: 'c' }], d: { e: [3, 4] } };
-const b = { a: [1, 2, { b: 'c' }], d: { e: [3, 4] } };
-const c = { a: [1, 2, { b: 'd' }], d: { e: [3, 4] } };
-
-console.log(isDeepEqual(a, b)); // true
-console.log(isDeepEqual(a, c)); // false
-*/
-
-function eq(a, b) {
-  return a === b;
-}
-
-function eqv(a, b) {
-  return a == b;
-}
-
-function neq(a, b) {
-  return a !== b;
-}
-
-function gt(a, b) {
-  return a > b;
-}
-
-function lt(a, b) {
-  return a < b;
-}
-
-function gte(a, b) {
-  return a >= b;
-}
-
-function lte(a, b) {
-  return a <= b;
-}
- 
-```
-
-### Function
-```js
 function apply(fn, args) {
   return fn(...args);
 }
@@ -820,6 +645,81 @@ function comp(...fns) {
       return fn(acc);
     }, x);
   };
+}
+
+function thread(val, ...forms) {
+  return forms.reduce((acc, form) => form(acc), val);
+}
+
+/*
+thread(1, x => x + 2, x => x * 3); // returns 9
+*/
+
+function threadLast(val, ...forms) {
+  return forms.reduceRight((acc, form) => form(acc), val);
+}
+
+/*
+threadLast(1, x => x + 2, x => x * 3); // returns 9
+*/
+
+function threadAs(name, val, ...forms) {
+  return forms.reduce((acc, form) => form(name ? { [name]: acc } : acc), val);
+}
+
+/*
+threadAs('x', 1, x => ({ y: x + 2 }), ({ y, x }) => ({ z: y * x })); // returns { z: 3 }
+*/
+
+function condThread(val, ...clauses) {
+  return clauses.reduce((acc, [pred, ...forms]) => pred(acc) ? thread(acc, ...forms) : acc, val);
+}
+
+/*
+condThread(0,
+  [x => x === 0, x => x + 2],
+  [x => x === 2, x => x * 3]
+); // returns 2
+*/
+
+function condThreadLast(val, ...clauses) {
+  return clauses.reduceRight((acc, [pred, ...forms]) => pred(acc) ? threadLast(acc, ...forms) : acc, val);
+}
+
+/*
+condThreadLast(0,
+  [x => x === 0, x => x + 2],
+  [x => x === 2, x => x * 3]
+); // returns 6
+*/
+
+function someThread(val, ...forms) {
+  for (let form of forms) {
+    if (val == null) {
+      return val;
+    }
+    val = form(val);
+  }
+  return val;
+}
+
+function someThreadLast(input, ...forms) {
+  return forms.reduce((acc, form) => {
+    if (acc === null || acc === undefined) {
+      return null;
+    }
+    if (typeof form === "function") {
+      return form(acc);
+    }
+    if (Array.isArray(acc)) {
+      return acc.some(item => {
+        return typeof item[form] === "function" ? item[form]() : false;
+      })
+        ? acc
+        : null;
+    }
+    return form in acc ? acc[form] : null;
+  }, input);
 }
 
 function some(fn, coll) {
@@ -907,106 +807,218 @@ function someFn(...fns) {
   };
 }
 
-function thread(val, ...forms) {
-  return forms.reduce((acc, form) => form(acc), val);
-}
+```
+add checking using `is`
 
-/*
-thread(1, x => x + 2, x => x * 3); // returns 9
-*/
+```javascript evaluate=1
 
-function threadLast(val, ...forms) {
-  return forms.reduceRight((acc, form) => form(acc), val);
-}
-
-/*
-threadLast(1, x => x + 2, x => x * 3); // returns 9
-*/
-
-function threadAs(name, val, ...forms) {
-  return forms.reduce((acc, form) => form(name ? { [name]: acc } : acc), val);
-}
-
-/*
-threadAs('x', 1, x => ({ y: x + 2 }), ({ y, x }) => ({ z: y * x })); // returns { z: 3 }
-*/
-
-function condThread(val, ...clauses) {
-  return clauses.reduce((acc, [pred, ...forms]) => pred(acc) ? thread(acc, ...forms) : acc, val);
-}
-
-/*
-condThread(0,
-  [x => x === 0, x => x + 2],
-  [x => x === 2, x => x * 3]
-); // returns 2
-*/
-
-function condThreadLast(val, ...clauses) {
-  return clauses.reduceRight((acc, [pred, ...forms]) => pred(acc) ? threadLast(acc, ...forms) : acc, val);
-}
-
-/*
-condThreadLast(0,
-  [x => x === 0, x => x + 2],
-  [x => x === 2, x => x * 3]
-); // returns 6
-*/
-
-function someThread(val, ...forms) {
-  for (let form of forms) {
-    if (val == null) {
-      return val;
-    }
-    val = form(val);
+function isNotEmpty(coll) {
+  if(typeof coll === 'object'){
+    return (Object.keys(coll).length > 0)
   }
-  return val;
+  return coll.length > 0;
 }
 
-function someThreadLast(input, ...forms) {
-  return forms.reduce((acc, form) => {
-    if (acc === null || acc === undefined) {
-      return null;
-    }
-    if (typeof form === "function") {
-      return form(acc);
-    }
-    if (Array.isArray(acc)) {
-      return acc.some(item => {
-        return typeof item[form] === "function" ? item[form]() : false;
-      })
-        ? acc
-        : null;
-    }
-    return form in acc ? acc[form] : null;
-  }, input);
-}
-function defMulti(dispatchFn) {
-  const methods = [];
-
-  function multiFn(...args) {
-    const dispatchValue = dispatchFn(...args);
-    const dispatchIndex = methods.findIndex(method => method.dispatchValue === dispatchValue);
-
-    if (dispatchIndex < 0) {
-      throw new Error(`No method defined for dispatch value: ${dispatchValue}`);
-    }
-
-    const dispatchFn = methods[dispatchIndex].methodFn;
-
-    return dispatchFn(...args);
+function isEmpty(coll) {
+  if(typeof coll === 'object'){
+    return (Object.keys(coll).length === 0);
   }
-
-  return multiFn;
+  return coll.length === 0;
 }
 
-function defMethod(multiFn, dispatchValue, methodFn) {
-  multiFn.methods.push({ dispatchValue, methodFn });
+function isContains(key, coll){
+  if (coll instanceof Map || coll instanceof Set) {
+    return coll.has(key);
+  } else if (Array.isArray(coll)) {
+    return coll.includes(key);
+  } else {
+    return Object.prototype.hasOwnProperty.call(coll, key);
+  }
+};
+
+function isIncludes(coll, value) {
+  return coll.includes(value);
 }
+
+function isZero(x) {
+  return x === 0;
+}
+
+function isPos(x) {
+  return x > 0;
+}
+
+function isNeg(x) {
+  return x < 0;
+}
+
+function isEven(x) {
+  return x % 2 === 0;
+}
+
+function isOdd(x) {
+  return x % 2 !== 0;
+}
+
+function isInt(x) {
+  return Number.isInteger(x);
+}
+
+function isTrue(x) {
+  return x === true;
+}
+
+function isFalse(x) {
+  return x === false;
+}
+
+function isInstanceOf(x, type) {
+  return x instanceof type;
+}
+
+function isNil(x) {
+  return x === null;
+}
+
+function isSome(x) {
+  return x != null;
+}
+
+function isFn(value) {
+  return typeof value === 'function';
+}
+
+
+function isBlank(value) {
+  return typeof value === 'string' && value.trim() === '';
+}
+
+function isArray(value) {
+  return Array.isArray(value);
+}
+
+function isNumber(value) {
+  return typeof value === 'number' && !Number.isNaN(value);
+}
+
+function isObject(value) {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+function isString(value) {
+  return typeof value === 'string';
+}
+
+function isIdentical(x, y) {
+  return x === y;
+}
+
+function isColl(value) {
+  // TODO fix this, add Array check also
+  return (value !== null && typeof value === 'object');
+}
+
+
+function isSubset(set1, set2) {
+  for (let item of set1) {
+    if (!set2.has(item)) {
+      return false;
+    }
+  }
+  return true;
+}
+
+function isSuperset(set1, set2) {
+  for (let item of set2) {
+    if (!set1.has(item)) {
+      return false;
+    }
+  }
+  return true;
+}
+
+function isDistinct(arr) {
+  return arr.length === new Set(arr).size;
+}
+
+function isEmptyArray(arr) {
+  return arr.length === 0;
+}
+
+function isEmptySet(set) {
+  return set.size === 0;
+}
+
+function isEveryEven(arr) {
+  return arr.every(num => num % 2 === 0);
+}
+
+function isNotEveryEven(arr) {
+  return arr.some(num => num % 2 !== 0);
+}
+
+function isNotAnyEven(arr) {
+  return !arr.some(num => num % 2 === 0);
+}
+
+function isDeepEqual(a, b) {
+  if (Array.isArray(a) && Array.isArray(b)) {
+    if (a.length !== b.length) return false;
+    for (let i = 0; i < a.length; i++) {
+      if (!isDeepEqual(a[i], b[i])) return false;
+    }
+    return true;
+  } else if (typeof a === 'object' && typeof b === 'object') {
+    const aKeys = Object.keys(a);
+    const bKeys = Object.keys(b);
+    if (aKeys.length !== bKeys.length) return false;
+    for (const key of aKeys) {
+      if (!isDeepEqual(a[key], b[key])) return false;
+    }
+    return true;
+  } else {
+    return a === b;
+  }
+}
+
+
+function isEq(a, b) {
+  return a === b;
+}
+
+function isEqv(a, b) {
+  return a == b;
+}
+
+function isNeq(a, b) {
+  return a !== b;
+}
+
+function isGt(a, b) {
+  return a > b;
+}
+
+function isLt(a, b) {
+  return a < b;
+}
+
+function isGte(a, b) {
+  return a >= b;
+}
+
+function isLte(a, b) {
+  return a <= b;
+}
+
 ```
 
-### Math
-```js
+
+add math 
+
+```js evaluate=1
+
+// TODO: add arity args to maths
+
 // Returns a random floating-point number between 0 (inclusive) and 1 (exclusive)
 function rand() {
   return Math.random();
@@ -1078,161 +1090,9 @@ function toIntSafe(num) {
 }
 
 ```
+add string
 
-### Reducer (test)
-```js
-
-function transduce(xform, f, coll) {
-  const xf = xform(f);
-  let result = xf[init]();
-
-  for (const item of coll) {
-    const res = xf[step](result, item);
-    if (res && res['@@transducer/reduced']) {
-      result = res['@@transducer/value'];
-      break;
-    } else {
-      result = res;
-    }
-  }
-
-  return xf[completion](result);
-}
-
-function dedupe() {
-  const seen = new Set();
-  return (f) => ({
-    ['@@transducer/init']: f[init],
-    ['@@transducer/step']: (result, item) => {
-      if (seen.has(item)) {
-        return result;
-      }
-      seen.add(item);
-      return f[step](result, item);
-    },
-    ['@@transducer/completion']: f[completion]
-  });
-}
-
-const arr = [1, 2, 3, 3, 4, 5];
-const sum = (acc, val) => acc + val;
-const double = (val) => val * 2;
-const takeWhile = (pred) => (f) => ({
-  ['@@transducer/init']: f[init],
-  ['@@transducer/step']: (result, item) => pred(item) ? f[step](result, item) : result,
-  ['@@transducer/completion']: f[completion]
-});
-
-const push = (acc, val) => {
-  acc.push(val);
-  return acc;
-};
-
-
-const res = transduce(
-  compose(takeWhile((val) => val < 5), dedupe(), map(double)),
-  sum,
-  arr
-);
-console.log(res); // Output: 10
-
-const map = f => xf => (reducer) => {
-  return xf((acc, x) => reducer(acc, f(x)))
-}
-
-const filter = pred => xf => (reducer) => {
-  return xf((acc, x) => pred(x) ? reducer(acc, x) : acc)
-}
-
-const transducer = compose(
-  map(x => x * 2),
-  filter(x => x % 2 === 0)
-)
-const arr = [1, 2, 3, 4, 5]
-const doubledEvens = transduce(transducer, push(), arr)
-console.log(doubledEvens) // [4, 8]
-
-const arr = [1, 2, 3, 4, 5]
-const sumOfDoubledEvens = transduce(
-  transducer,
-  (acc, x) => acc + x,
-  0,
-  arr
-)
-console.log(sumOfDoubledEvens) // 12
-
-```
-
-### State
-```js
-function atom(val) {
-  let value = val;
-  let watchers = new Set();
-  let validator = undefined;
-
-  function deref() {
-    return value;
-  }
-
-  function reset(newVal) {
-    if (validator !== undefined) {
-      validator(newVal);
-    }
-    const oldVal = value;
-    value = newVal;
-    watchers.forEach((watcher) => watcher(newVal, oldVal));
-    return newVal;
-  }
-
-  function swap(fn, ...args) {
-    return reset(fn(value, ...args));
-  }
-
-  function compareAndSet(expectedVal, newVal) {
-    if (deref() === expectedVal) {
-      reset(newVal);
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  function addWatch(watcherFn) {
-    watchers.add(watcherFn);
-  }
-
-  function removeWatch(watcherFn) {
-    watchers.delete(watcherFn);
-  }
-
-  function setValidator(validatorFn) {
-    validator = validatorFn;
-  }
-
-  function getValidator() {
-    return validator;
-  }
-
-  return {
-    deref,
-    reset,
-    swap,
-    compareAndSet,
-    addWatch,
-    removeWatch,
-    setValidator,
-    getValidator,
-  };
-}
-
-function deref(atom){
-  return atom.deref();
-}
-
-```
-
-### String
-```js
+```js evaluate=1
 
 function subs(str, start, end) {
   return str.substring(start, end);
@@ -1345,4 +1205,186 @@ function char(n) {
 
 ```
 
+add defMulti
 ---
+
+```js evaluate=1
+
+function defMulti(dispatchFn) {
+  const methods = [];
+
+  function multiFn(...args) {
+    const dispatchValue = dispatchFn(...args);
+    const dispatchIndex = methods.findIndex(method => method.dispatchValue === dispatchValue);
+
+    if (dispatchIndex < 0) {
+      throw new Error(`No method defined for dispatch value: ${dispatchValue}`);
+    }
+
+    const dispatchFn = methods[dispatchIndex].methodFn;
+
+    return dispatchFn(...args);
+  }
+
+  return multiFn;
+}
+
+function defMethod(multiFn, dispatchValue, methodFn) {
+  multiFn.methods.push({ dispatchValue, methodFn });
+}
+```
+
+add states
+
+```js evaluate=1
+function atom(val) {
+  let value = val;
+  let watchers = new Set();
+  let validator = undefined;
+
+  function deref() {
+    return value;
+  }
+
+  function reset(newVal) {
+    if (validator !== undefined) {
+      validator(newVal);
+    }
+    const oldVal = value;
+    value = newVal;
+    watchers.forEach((watcher) => watcher(newVal, oldVal));
+    return newVal;
+  }
+
+  function swap(fn, ...args) {
+    return reset(fn(value, ...args));
+  }
+
+  function compareAndSet(expectedVal, newVal) {
+    if (deref() === expectedVal) {
+      reset(newVal);
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  function addWatch(watcherFn) {
+    watchers.add(watcherFn);
+  }
+
+  function removeWatch(watcherFn) {
+    watchers.delete(watcherFn);
+  }
+
+  function setValidator(validatorFn) {
+    validator = validatorFn;
+  }
+
+  function getValidator() {
+    return validator;
+  }
+
+  return {
+    deref,
+    reset,
+    swap,
+    compareAndSet,
+    addWatch,
+    removeWatch,
+    setValidator,
+    getValidator,
+  };
+}
+
+function deref(atom){
+  return atom.deref();
+}
+
+```
+
+Add Reducer 
+---
+
+```js evaluate=0
+// TODO: still testing
+function transduce(xform, f, coll) {
+  const xf = xform(f);
+  let result = xf[init]();
+
+  for (const item of coll) {
+    const res = xf[step](result, item);
+    if (res && res['@@transducer/reduced']) {
+      result = res['@@transducer/value'];
+      break;
+    } else {
+      result = res;
+    }
+  }
+
+  return xf[completion](result);
+}
+
+function dedupe() {
+  const seen = new Set();
+  return (f) => ({
+    ['@@transducer/init']: f[init],
+    ['@@transducer/step']: (result, item) => {
+      if (seen.has(item)) {
+        return result;
+      }
+      seen.add(item);
+      return f[step](result, item);
+    },
+    ['@@transducer/completion']: f[completion]
+  });
+}
+
+const arr = [1, 2, 3, 3, 4, 5];
+const sum = (acc, val) => acc + val;
+const double = (val) => val * 2;
+const takeWhile = (pred) => (f) => ({
+  ['@@transducer/init']: f[init],
+  ['@@transducer/step']: (result, item) => pred(item) ? f[step](result, item) : result,
+  ['@@transducer/completion']: f[completion]
+});
+
+const push = (acc, val) => {
+  acc.push(val);
+  return acc;
+};
+
+
+const res = transduce(
+  compose(takeWhile((val) => val < 5), dedupe(), map(double)),
+  sum,
+  arr
+);
+console.log(res); // Output: 10
+
+const map = f => xf => (reducer) => {
+  return xf((acc, x) => reducer(acc, f(x)))
+}
+
+const filter = pred => xf => (reducer) => {
+  return xf((acc, x) => pred(x) ? reducer(acc, x) : acc)
+}
+
+const transducer = compose(
+  map(x => x * 2),
+  filter(x => x % 2 === 0)
+)
+const arr = [1, 2, 3, 4, 5]
+const doubledEvens = transduce(transducer, push(), arr)
+console.log(doubledEvens) // [4, 8]
+
+const arr = [1, 2, 3, 4, 5]
+const sumOfDoubledEvens = transduce(
+  transducer,
+  (acc, x) => acc + x,
+  0,
+  arr
+)
+console.log(sumOfDoubledEvens) // 12
+
+```
