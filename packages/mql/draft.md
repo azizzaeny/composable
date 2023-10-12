@@ -4,9 +4,12 @@ specifications
 loadFile('./draft.md');
 loadFile('../clojure.core/draft.md')
 ```
-its need the clojure.core
 
-```js evaluate=1
+
+
+
+first version
+```js evaluate=0
 
 function createDatabase(){
   return atom({})
@@ -139,10 +142,23 @@ function handleMatchStage(data, stage){
   return filter(doc=> matchCondition(doc, condition) , data)
 }
 
+// TODO: reuse funciton
+function handleLookupStage(data, stage, db){
+  const { from, as, localField, foreignField } = stage.$lookup;
+  const fromCollection = db[from]._data;
+
+  return data.map((doc)=>{
+    let localVal = doc[stage.$lookup.localField];
+  })
+}
+
 function aggregate(coll, stages, db=getDatabase()){
   return reduce((acc, stage)=>{
     if(stage.$match){
       return handleMatchStage(acc, stage);
+    }
+    if(stage.$lookup){
+      return handleLookupStage(acc, stage, db.deref());
     }
     return acc;
   }, getData(coll, db) , stages)
@@ -201,4 +217,167 @@ matchCondition(doc1, { "carrier.details.name": "FedEx" })
 matchCondition(doc1,  { "carrier.details": { name: "FedEx" } })
 matchCondition(doc2, { "address.postal.code": "90001" })
 matchCondition(doc2, { "address.postal": { area: { $ne: "Suburb" } }})
+```
+
+Second Version
+
+```js evalaute=1
+
+function createDatabase(){
+  return atom({coll: {}, index: {}})
+}
+
+var Database = Database || createDatabase();
+
+function getDb(db=Database){
+  return db.deref();
+}
+
+function resetDb(db=Database){
+  db.reset({coll: {}, index: {}});
+}
+
+function getColl(coll, db=Database){
+  return getDb()['coll'][coll];
+}
+
+function createCollection(coll, args={}){
+  let { db=Database, index=['_id']} = args;
+  if(getColl(coll, db)) return console.log('collection already exists');
+  return (db.swap((database)=> ({
+    coll: { [coll] : {} },
+    index: { [coll]: reduce((acc, idx)=> assoc(acc,idx, {}),{}, index) }
+  })), true);
+  
+}
+
+function upsert(coll, document, args={}){
+  let {db=Database, index=['_id']} = args;
+  if(!getColl(coll, db)) return console.log('no collection');
+  if(!document._id) return console.log('no document _id');
+  return (db.swap((database)=>{
+    let updateData = updateIn(database, ['coll', coll], (data) => assoc(data, document._id, document));
+    return updateIn(updateData, ['index', coll], (data) =>{
+      return reduce((acc, value) =>{
+        if(!acc[value]){
+          return assoc(acc, value, {[document[value]]: document._id});
+        }else{
+          return assoc(acc, value, merge(acc[value], {[document[value]]: document._id}));
+        }
+      }, {}, keys(data))
+    });
+  }), true)
+}
+
+function insert(coll, document, args={}){
+  let {db=Database, index=['_id']} = args;
+  if (!getColl(coll, db)) return console.log('no collection');
+  if (!document._id) return console.log('no document _id');
+  if (getIn(db.deref(), ['coll', coll, document._id])){
+    return console.log('document already exists');
+  }
+  return upsert(coll, document, args);
+}
+
+function getIndex(coll, index, args={}){
+  let { db=Database } = args;
+  if (!getColl(coll, db)) return console.log('no collection');
+  return getIn(db.deref(), ['coll', coll, index]);
+}
+
+function scanIndex(coll, index, args={}){
+  let { db=Database } = args;
+  if ( !getColl(coll, db) ) return console.log('no collection');
+  let idx = getIn(db.deref(), ['index', coll]);
+  let curr = getIn(db.deref(), ['coll', coll]);
+  let results = join(reduce((acc,value)=>concat(acc, `curr['${index}']`),[], keys(idx)), '||');
+  return eval(results); // Todo: tricky eval
+}
+
+function getOperator(op){
+  let operator = {
+    $eq: (a,b) => a === b,
+    $lte: (a, b) => a <= b,
+    $gte: (a, b) => a >= b,
+    $gt: (a, b) => a > b,
+    $lt: (a, b) => a < b,
+    $ne: (a, b) => a !== b,  
+    $in: (a, b) => b.some(val => a.includes(val)),
+    $nin: (a, b) => !b.some(val => a.includes(val))  
+  };
+  return operator[op];
+}
+
+function handleMatchOperator(op, opValue, nestKey, data){
+  if(getOperator(op)){
+    return getOperator(op)(getIn(data, nestKey), opValue);
+  }else{
+    return false;
+  }
+}
+
+function matchOperator(data){
+  return function([key, value]){
+    let nestKey = key.split('.');
+    console.log('getIn', nestKey);
+    if(isObject(value) && !isArray(value)){
+      console.log('return operator get');
+      let matchValueOperator = ([op, opValue]) => {
+        if(op.startsWith('$')){
+          return handleMatchOperator(op, opValue, nestKey, data);
+        }else{
+          return false;
+        }
+      }
+      return every(matchValueOperator, seq(value))
+    }
+    console.log('return normal get', data, nestKey, value);
+    return isEq( getIn(data, nestKey), value);
+  }
+}
+
+function $match(dataObj, stage, db){ // {$match: ...data}
+  let condition = stage.$match;
+  console.log('condition', condition, dataObj);
+  if(condition.$expr) return 'not yet supported';
+  return reduce((acc, value)=>{
+    let matchEveryCondition = (condition, value) => every( matchOperator(value) , seq(condition));    
+    if(matchEveryCondition(condition, value)){
+      console.log('all cond is match');
+      return assoc(acc, value._id, alue);
+    }
+    return acc;
+  }, {}, vals(dataObj));
+}
+
+function aggregate(coll, stages, args={}){
+  let { db=Database } = args;
+  let currColl  = getIn(db.deref(), ['coll', coll]);
+  let currIndex = getIn(db.deref(), ['index', coll]);
+  return reduce((acc, stage) =>{
+    if(stage.$match){
+      let results = $match(currColl, stage, db);
+      return results;
+    }
+    if(stage.$lookup){
+      return 'not yet supported';
+    }
+    return acc;
+  }, {}, stages);
+}
+
+resetDb()
+Database.deref()
+Database.deref().index
+createCollection('products');
+
+upsert('products', {_id: 1, name: 'bottle', price: 1.4});
+insert('products', {_id: 1, name: 'bottle', price: 1.4});
+scanIndex('products', '1');
+getIndex('products', '1');
+
+aggregate('products', [
+  {$match: {_id: '1'}}
+]);
+
 ```
