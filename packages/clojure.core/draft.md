@@ -143,6 +143,11 @@ function mergeWith(fn, ...maps) {
   }
 }
 
+function seq(obj){
+  // todo: check
+  return Object.entries(obj);
+}
+
 function keys (obj){
   return Object.keys(obj);
 }
