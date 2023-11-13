@@ -11,5 +11,12 @@ for example:
 I have experiencing this issues and I think with providing clojure.core library or translating clojure.core to javascript can help for those people that has similiar problem that want to use functional programming clojure library but in javascript land using javascript syntax.  
 
 
-every funcitonal prgoramming in clojure have their own lang, context, but for me
-i have an experiences developing clojure, 
+TOOD: difference from mori
+
+
+### Implementation
+working with objects clojure maps `get, assoc, getIn, assocIn, dissoc, selectKeys, updateIn, merge, renameKeys, mergeWith, seq, keys, vals, zipmap`
+
+```javascript 
+
+```

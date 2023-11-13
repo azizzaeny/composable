@@ -1,0 +1,11 @@
+{
+  "name": "@composable/clojure.core",
+  "version": "1.0.0",
+  "description": "core clojure functions in simple javascript",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "azizzaeny",
+  "license": "ISC"
+}
