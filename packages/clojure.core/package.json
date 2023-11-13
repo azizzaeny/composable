@@ -1,5 +1,5 @@
 {
-  "name": "@composable/clojure.core",
+  "name": "@composar/clojure.core",
   "version": "1.0.0",
   "description": "core clojure functions in simple javascript",
   "main": "index.js",
