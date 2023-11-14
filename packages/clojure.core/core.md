@@ -1,5 +1,7 @@
 ### prepare & setup 
 Setup test ground on node.js repl
+why use `var` ? because we are code it up in thre repl, and we have repl workflow, const is not able to evalauted twices
+
 
 ```js path=dist/test.core.js
 var assert = require('assert');
@@ -129,9 +131,83 @@ test('should dissoc key', ()=>{
 });
 ```
 
+#### update
+`(update m k f)(update m k f x)(update m k f x y)(update m k f x y z)(update m k f x y z & more)`
 
+```js path=dist/core.js
+var update = (...args) => {
+  let [object, key, updateFn] = args;
+  if (args.length === 2) {
+    return (updateFn) => update(object, key, updateFn);
+  }
+  return {
+    ...object,
+    [key]: updateFn(object[key])
+  };
+}
+```
 
+usage:
 
+```js path=dist/test.core.js
+test('should udpate object given key and functions ', ()=>{
+  let obj = {a: 1, b: 2};
+  let inc = (val) => val + 1;
+  let res = update(obj, "b", inc);
+  assert.deepEqual(res, {a: 1, b: 3});
+});
+```
+
+#### assocIn
+`(assoc-in m [k & ks] v)`
+```js path=dist/core.js
+var assocIn = (...args) =>{
+  let [obj, keys, val] = args;
+  if (args.length === 3) {
+    keys = Array.isArray(keys) ? keys : [keys];
+    return assoc(obj, keys[0], keys.length === 1 ? val : assocIn(obj[keys[0]], keys.slice(1), val));
+  } else if (args.length === 2) {
+    return (val) => assocIn(obj, keys, val);
+  }
+}
+```
+usage:
+```js path=dist/test.core.js
+test('should assoc in path given value', ()=>{
+  let obj = {a: 1, b:{c: 10}};
+  let res = assocIn(obj, ['b', 'c'], 20);
+  assert.deepEqual(res, {a:1, b:{c: 20}});
+});
+```
+
+#### updateIn
+`(update-in m ks f & args)`
+
+```js path=dist/core.js
+var updateIn = (...args) =>{
+  let [object, keys, updateFn] = args;
+  if (args.length === 2) {
+    return (updateFn) => updateIn(object, keys, updateFn);
+  }
+  const [key, ...rest] = keys;
+  if (rest.length === 0) {
+    return update(object, key, updateFn);
+  }
+  return update(object, key, (value) => updateIn(value, rest, updateFn));
+}
+```
+usage:
+
+```js
+test('should updateIn path, uppercase full name', ()=>{
+  let obj = {name:{ full_name: "aziz zaeny"}};
+  let upperCase = (val) => val.toString().toUpperCase();
+  let path = ["name", "full_name"];
+  let res = updateIn(obj, path, upperCase);
+  let fullName  = getIn(res, path);
+  assert.equal(fullName, "AZIZ ZAENY");
+})
+```
 
 nodejs exports
 ```js path=dist/core.js
