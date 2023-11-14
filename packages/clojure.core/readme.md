@@ -10,7 +10,6 @@ for example:
 
 I have experiencing this issues and I think with providing clojure.core library or translating clojure.core to javascript can help for those people that has similiar problem that want to use functional programming clojure library but in javascript land using javascript syntax.  
 
-
 TOOD: difference from mori
 
 
