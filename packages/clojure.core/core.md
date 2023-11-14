@@ -313,8 +313,75 @@ test(' should rename key b to c', ()=>{
   let res = renameKeys({a: 1, b:2}, {"b": "c"});
   assert.deepEqual(res, {a:1, c:2});
 });
-
 ```
+#### seq 
+`(seq coll)` sequence in this is converting objects & strings
+
+```js path=dist/core.js
+var seq = (arg) =>{
+  if(Array.isArray(arg)){
+    return arg;
+  }
+  if(typeof arg === "object"){
+    return Object.entries(arg);
+  }
+  if(typeof arg === "string"){
+    return Array.from(arg);
+  }
+  return arg;
+}
+```
+usage:
+```js path=dist/test.core.js
+test('should test the conversion of object', ()=>{
+  assert.deepEqual(seq({a:1, b:2}), [["a", 1], ["b", 2]]);
+});
+test('should convert string into sequences', ()=>{
+  assert.deepEqual(seq('aziz'), ['a', 'z','i', 'z'])
+})
+```
+
+#### keys
+```js path=dist/core.js
+var keys = (obj) => Object.keys(obj);
+```
+usage: 
+```js path=dist/test.core.js
+test('get keys of objects', ()=>{
+  assert.deepEqual(keys({a:1, b:2}), ['a','b'])
+})
+```
+#### vals
+```js path=dist/core.js
+var vals = (obj)=> Object.values(obj);
+```
+usage: 
+```js path=dist/test.core.js
+test('should get vals of objects', ()=>{
+  assert.deepEqual(vals({a:1, b:2}), [1,2])
+})
+```
+
+#### zipmap
+```js path=dist/core.js
+var zipmap = (...args) =>{
+  let [keys, vals] = args;
+  if(args.length === 1){
+    return (valsA) => zipmap(keys, valsA);
+  }
+  return keys.reduce((result, key, i) => {
+    result[key] = vals[i];
+    return result;
+  }, {});
+}
+```
+usage: 
+```js path=dist/test.core.js
+test('should zipma given arrays of keys and values', ()=>{
+  assert.deepEqual(zipmap(['a', 'b'])([1,2]), {a:1, b:2})
+})
+```
+
 nodejs exports
 ```js path=dist/core.js
 module.exports = {get, getIn, assoc, dissoc, updateIn, assocIn}
