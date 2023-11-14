@@ -1,6 +1,4 @@
-
 ###  Problem to solve
-
 
 As Software Developers there are several use cases that we cannot be picky about certain development methods, ideas, and programming paradigms that we usually used daily in our work.  
 for example:  
@@ -10,8 +8,12 @@ for example:
 
 I have experiencing this issues and I think with providing clojure.core library or translating clojure.core to javascript can help for those people that has similiar problem that want to use functional programming clojure library but in javascript land using javascript syntax.  
 
+### Motivation & Inspiration 
+TODO: thinking in clojure and functional pgoramming 
+
 TOOD: difference from mori
 
+TODO: Documentations should be available offline usages
 
 ### Implementation
 working with objects clojure maps `get, assoc, getIn, assocIn, dissoc, selectKeys, updateIn, merge, renameKeys, mergeWith, seq, keys, vals, zipmap`

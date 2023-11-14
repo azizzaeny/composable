@@ -1,3 +1,6 @@
+## @zaeny/clojure.core
+clojure core library functions in javascript 
+
 ### prepare & setup 
 Setup test ground on node.js repl
 why use `var` ? because we are code it up in thre repl, and we have repl workflow, const is not able to evalauted twices
@@ -198,7 +201,7 @@ var updateIn = (...args) =>{
 ```
 usage:
 
-```js
+```js path=dist/test.core.js
 test('should updateIn path, uppercase full name', ()=>{
   let obj = {name:{ full_name: "aziz zaeny"}};
   let upperCase = (val) => val.toString().toUpperCase();
@@ -209,7 +212,110 @@ test('should updateIn path, uppercase full name', ()=>{
 })
 ```
 
+#### merge
+`(merge & maps)`
+```js path=dist/core.js
+var merge = (...args) =>{
+  return Object.assign({}, ...args);
+}
+```
+usage:
+
+```js path=dist/test.core.js
+test('should merge more maps or object', ()=>{
+  let obj1 = {a:1}
+  let obj2 = {a:11, b:2};
+  let obj3 = {c:32}
+  let res = merge(obj1, obj2, obj3);
+  assert.deepEqual(res, {a:11, b:2, c:32})
+});
+
+```
+#### mergeWith
+`(merge-with f & maps)`
+
+```js path=dist/core.js
+var mergeWith = (...args) =>{
+  let [fn, ...maps] = args;
+  if (maps.length === 0) {
+    return {};
+  } else if (maps.length === 1) {
+    return maps[0];
+  } else {
+    const [head, ...tail] = maps;
+    const merged = mergeWith(fn, ...tail);
+    const result = {};
+    for (const [key, value] of Object.entries(head)) {
+      if (key in merged) {
+        result[key] = fn(merged[key], value);
+      } else {
+        result[key] = value;
+      }
+    }
+    for (const [key, value] of Object.entries(merged)) {
+      if (!(key in head)) {
+        result[key] = value;
+      }
+    }
+    return result;
+  }
+}
+```
+
+usage:
+```js path=dist/test.core.js
+test('should test merge with function', ()=>{
+  let obj1 = {a:1, b: 0};
+  let obj2 = {a:2, b: 2};
+  let sum = (a, b) => a + b;
+  let res = mergeWith(inc, obj1, obj2);
+  assert.deepEqual(res, {a:3, b:3})
+})
+```
+
+#### selectKeys
+`(select-keys map keyseq)`
+```js path=dist/core.js
+var selectKeys = (...args) =>{
+  let [obj, keys] = args;
+  if (args.length === 2) {
+    return Object.fromEntries(Object.entries(obj).filter(([key, value]) => keys.includes(key)));
+  } else if (args.length === 1) {
+    return (keys) => selectKeys(obj, keys);
+  }
+}
+```
+usage:
+```js path=dist/test.core.js
+test('should return selected keys', ()=>{
+  let obj = {a:1, b:2, c:3, d:4};
+  let res = selectKeys(obj, ['b', 'c']);
+  assert.deepEqual(res, {b:2, c:3})
+});
+```
+#### renameKeys
+`(rename-keys map kmap)`
+
+```js path=dist/core.js
+var renameKeys = (...args) =>{
+  let [obj, keyMap] = args;
+  if(args.length === 1){
+    return (keyMapA) => renameKeys(obj, keyMapA);
+  }
+  return Object.entries(obj)
+    .reduce((acc, [key, value]) => keyMap[key] ? { ...acc, [keyMap[key]]: value } : { ...acc, [key]: value }, {});
+}
+```
+usage:
+```js path=dist/test.core.js
+
+test(' should rename key b to c', ()=>{
+  let res = renameKeys({a: 1, b:2}, {"b": "c"});
+  assert.deepEqual(res, {a:1, c:2});
+});
+
+```
 nodejs exports
 ```js path=dist/core.js
-module.exports = {get, getIn}
+module.exports = {get, getIn, assoc, dissoc, updateIn, assocIn}
 ```
