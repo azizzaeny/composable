@@ -81,6 +81,57 @@ test('should getIn with curry args', ()=>{
 });
 
 ```
+#### assoc
+`(assoc map key val)(assoc map key val & kvs)`
+```js path=dist/core.js
+var assoc = (...args) =>{
+  let [obj, key, val] = args;
+  if (args.length === 3) {
+    return { ...obj, [key]: val };
+  } else if (args.length === 2) {
+    return (val) => assoc(obj, key, val);
+  }else{
+    return (key, val) => assoc(obj, key, val);
+  }
+}
+
+```
+usage:
+
+```js path=dist/test.core.js
+
+test('should assoc key value', ()=>{
+  let obj = {a:1};
+  assert.deepEqual(assoc(obj, 'b', 20), {a:1, b:20})
+});
+
+```
+#### dissoc 
+`(dissoc map)(dissoc map key)(dissoc map key & ks)`
+
+```js path=dist/core.js
+var dissoc = (...args) =>{
+  let [obj, key] = args;
+  if(args.length === 1){
+    return (keyA) => dissoc(obj, keyA);
+  }
+  let { [key]: omitted, ...rest } = obj;
+  return rest;
+}
+```
+
+usage:
+
+```js path=dist/test.core.js
+test('should dissoc key', ()=>{
+  let obj = {a:1, b:2};
+  assert.deepEqual(dissoc(obj, 'a'), {b:2})
+});
+```
+
+
+
+
 
 nodejs exports
 ```js path=dist/core.js
