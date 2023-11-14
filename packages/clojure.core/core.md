@@ -39,7 +39,7 @@ test('should get object',()=>{
   assert.equal( get(obj, 'a'), 1);
 });
 
-test('should get object currid', ()=>{
+test('should get object curried', ()=>{
   let obj = {a:1};
   let getObj = get(obj);
   assert.equal( getObj('a'), 1)
@@ -61,17 +61,25 @@ var getIn = (...args)=>{
       }
     }, coll);
   }else{
-    return (keysA) => geetIn(coll, keysA);
+    return (keysA) => getIn(coll, keysA);
   }
 }
 
 ```
 usage :
+
 ```js path=dist/test.core.js
 test('should getIn nested path', ()=>{
   let obj = {a: {b: {c: 1}}};
   assert.equal(getIn(obj, ['a', 'b', 'c']), 1)
 })
+
+test('should getIn with curry args', ()=>{
+  let obj = {a: {b: {c: 10}}};
+  let getObj = getIn(obj);
+  assert.equal(getObj(['a','b','c']), 10)
+});
+
 ```
 
 nodejs exports
