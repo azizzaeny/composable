@@ -11,7 +11,7 @@ for example:
 
 I have experiencing this issues and I think with providing clojure.core library or translating clojure.core to javascript can help for those people that has similiar problem that want to use functional programming clojure library but in javascript land using javascript syntax.  
 
-TODO: why clojure rich library functions
+TODO: why clojure rich library functions, naming conventions of functions
 
 ### Motivation & Inspiration 
 
@@ -19,18 +19,37 @@ TODO: thinking in clojure and functional pgoramming
 
 TOOD: difference from mori
 
-TODO: Documentations should be available offline usages
+TODO: documentations
 
 ### Usage
 TODO: usage, arity arguments, curry
+TODO: isntallation & browser usage
+TODO: preview 
 
 ### Implementation
-- [part 01 - working with objects](./01.objects.md) `get, assoc, getIn, assocIn, dissoc, selectKeys, updateIn, merge, renameKeys, mergeWith, seq, keys, vals, zipmap`
-- [part 02 - working with collections](./02.collections.md)
-- [part 03 - functions compositions](./03.functions.md)
-- [part 04 - checks and validations](./04.checks.md)
-- [part 05 - math functions](./05.maths.md)
-- [part 06 - working with string](./06.strings.md)
+- [part 01 - working with objects](./01.objects.md)   
+`get, assoc, getIn, assocIn, dissoc, selectKeys, updateIn, merge, renameKeys, mergeWith, seq, keys, vals, zipmap,`   
+- [part 02 - working with collections](./02.collections.md)   
+`count, conj, cons, first, ffirst, nth, peek, rest, pop, disj, take, takeNth, second, last, next, nfirst, nnext,`   
+`fnext, takeLast, takeWhile, drop, dropFirst, nthrest, splitAt, splitWith, randNth, shuffle, whenFirst, subvec,`   
+`range, keep, keepIndexed, find, map, filter, remove, every, reduce, concat, mapcat, mapIndexed, flatten, distinct,`  
+`interleave, interpose, reverse, sort, sortBy, compare, groupBy, partition, partitionAll, partitionBy, frequencies, union, difference, intersection,`   
+- [part 03 - functions compositions](./03.functions.md)  
+`apply, comp, thread, threadAs, threadLast, condThread, condThreadLast, someThread, some, constantly, identity, fnil, memoize, every, complement, partial, juxt, someFn,`   
+- [part 04 - checks and validations](./04.checks.md)  
+`isNotEmtpy, isEmpty, isContains, isIncludes, isZero, isPos, isNeg, isOdd, isInt, isTrue, isFalse, isInstanceOf, isNil, `  
+`isSome, isFn, isBlank, isArray, isNumber, isObject, isString, isColl, isSubset, isSuperset, isDistinct, isEmptyArray,`   
+`isEqual, isDeepEqual, isEveryEven, isNotEeveryEven, isNotAnyEven, isGet, isNotEqual, isGt, isGte, isLt, isLte,`  
+- [part 05 - math functions](./05.maths.md)   
+`rand, randInt, add, subtract, multiply, divide, quot, mod, rem, incr, decr, max, min, toInt, toIntSafe,`  
+- [part 06 - working with string](./06.strings.md)  
+`subs, splitLines, replace, replaceFirst, join, escape, rePattern, reMatches, capitalize, lowerCase, upperCase, trim, trimNewLine, tirmL, trimR, char,`  
+- [part 07 - working with states using atom](./07.atom.md)  
+`atom, deref, reset, swap, compareAndSet, removeWatch, addWatch, setValidator, getValdiator,`  
+- [part 08 - working with multi method](./08.multi-method.md)  
+`defMulti, defMethod`  
+- [part 09 - transducer, reducer](./09.transducer.md)  
+`(todo)`   
 
 ### Development & Test
 Setup test ground on node.js repl, `node` then evaluate bellow line
