@@ -44,11 +44,11 @@ TODO: preview
 `rand, randInt, add, subtract, multiply, divide, quot, mod, rem, incr, decr, max, min, toInt, toIntSafe,`  
 - [part 06 - working with string](./06.strings.md)  
 `subs, splitLines, replace, replaceFirst, join, escape, rePattern, reMatches, capitalize, lowerCase, upperCase, trim, trimNewLine, tirmL, trimR, char,`  
-- [part 07 - working with states using atom](./07.atom.md)  
+- (draft) [part 07 - working with states using atom](./07.atom.md)  
 `atom, deref, reset, swap, compareAndSet, removeWatch, addWatch, setValidator, getValdiator,`  
-- [part 08 - working with multi method](./08.multi-method.md)  
+- (draft) [part 08 - working with multi method](./08.multi-method.md)  
 `defMulti, defMethod`  
-- [part 09 - transducer, reducer](./09.transducer.md)  
+- (draft)[part 09 - transducer, reducer](./09.transducer.md)  
 `(todo)`   
 
 ### Development & Test
