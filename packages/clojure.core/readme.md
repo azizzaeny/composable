@@ -37,9 +37,9 @@ TODO: preview
 - [part 03 - functions compositions](./03.functions.md)  
 `apply, comp, thread, threadAs, threadLast, condThread, condThreadLast, someThread, some, constantly, identity, fnil, memoize, every, complement, partial, juxt, someFn,`   
 - [part 04 - checks and validations](./04.checks.md)  
-`isNotEmtpy, isEmpty, isContains, isIncludes, isZero, isPos, isNeg, isOdd, isInt, isTrue, isFalse, isInstanceOf, isNil, `  
+`isNotEmtpy, isEmpty, isContains, isIncludes, isZero, isPos, isNeg, isOdd, isInt, isTrue, isFalse, isInstanceOf, `  
 `isSome, isFn, isBlank, isArray, isNumber, isObject, isString, isColl, isSubset, isSuperset, isDistinct, isEmptyArray,`   
-`isEqual, isDeepEqual, isEveryEven, isNotEeveryEven, isNotAnyEven, isGet, isNotEqual, isGt, isGte, isLt, isLte,`  
+`isNil, isEqual, isDeepEqual, isEveryEven, isNotEeveryEven, isNotAnyEven, isGet, isNotEqual, isGt, isGte, isLt, isLte,`  
 - [part 05 - math functions](./05.maths.md)   
 `rand, randInt, add, subtract, multiply, divide, quot, mod, rem, incr, decr, max, min, toInt, toIntSafe,`  
 - [part 06 - working with string](./06.strings.md)  
