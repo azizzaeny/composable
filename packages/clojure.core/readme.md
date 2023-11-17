@@ -20,36 +20,49 @@ TODO: thinking in clojure and functional pgoramming
 TOOD: difference from mori
 
 TODO: documentations
+TODO: Naming Convention from clojure 
 
 ### Usage
 TODO: usage, arity arguments, curry
 TODO: isntallation & browser usage
 TODO: preview 
 
-### Implementation
+### Available Functions
+
+```js path=dist/core.js
+module.exports = {
+  // object,
+  get, getIn, assoc, dissoc, update, assocIn, updateIn, merge, mergeWith, selectKeys, renameKeys, keys, vals, zipmap,
+  // collections
+  count, conj, cons, first, ffirst, nth, seq, peek, rest, pop, disj, takeNth, take, second, last, next, fnext, takeLast, takeWhile,
+  nthrest, drop, dropLast, splitAt, shuffle, randNth, vec, subvec, repeat, range, keep, keepIndexed, sort, sortBy, compare,
+  map, filter, every, remove, reduce, concat, mapcat, mapIndexed, flatten, interleave, interpose, reverse, groupBy, partition, partitionAll,
+  frequencies, union, difference, intersection,
+  // functions
+  apply, comp, constantly, identity, fnil, memoize, everyPred, complement, partial, juxt, someFn, partialRight, partialLeft, thread, condThread,  
+  // checks
+  isNotEmpty, isEmpty, isContains, isIncludes, isIncludes, isZero, isPos, isNeg, isEven, isOdd, isInt, isTrue, isFalse, isInstanceOf, isSome, isFn, isDeepEqual,
+  isBlank, isArray, isObject, isNumber, isString, isIdentical, isEqual, isNotEqual, isGt, isGte, isLt, isLte, isDistinct, isEveryEven, isNotEveryEven, isNotAnyEven,
+  // maths
+  rand, randInt, add, subtract, multiply, divide, quot, mod, rem, incr, decr, max, min, toInt, toIntSafe,
+  // strings
+  subs, splitLines, replace, replaceFirst, join, escape, rePattern, reMatches, capitalize, lowerCase, upperCase, trim, trimNewLine, trimL, trimR, char,
+  // atom
+  
+  // mutli method  
+}
+```
+#### Documentation & Implementation
+the documentations and the actual code is produced by using literate programming method
 - [part 01 - working with objects](./01.objects.md)   
-`get, assoc, getIn, assocIn, dissoc, selectKeys, updateIn, merge, renameKeys, mergeWith, seq, keys, vals, zipmap,`   
 - [part 02 - working with collections](./02.collections.md)   
-`count, conj, cons, first, ffirst, nth, peek, rest, pop, disj, take, takeNth, second, last, next, nfirst, nnext,`   
-`fnext, takeLast, takeWhile, drop, dropFirst, nthrest, splitAt, splitWith, randNth, shuffle, whenFirst, subvec,`   
-`range, keep, keepIndexed, find, map, filter, remove, every, reduce, concat, mapcat, mapIndexed, flatten, distinct,`  
-`interleave, interpose, reverse, sort, sortBy, compare, groupBy, partition, partitionAll, partitionBy, frequencies, union, difference, intersection,`   
 - [part 03 - functions compositions](./03.functions.md)  
-`apply, comp, thread, threadAs, threadLast, condThread, condThreadLast, someThread, some, constantly, identity, fnil, memoize, every, complement, partial, juxt, someFn,`   
 - [part 04 - checks and validations](./04.checks.md)  
-`isNotEmtpy, isEmpty, isContains, isIncludes, isZero, isPos, isNeg, isOdd, isInt, isTrue, isFalse, isInstanceOf, `  
-`isSome, isFn, isBlank, isArray, isNumber, isObject, isString, isColl, isSubset, isSuperset, isDistinct, isEmptyArray,`   
-`isNil, isEqual, isDeepEqual, isEveryEven, isNotEeveryEven, isNotAnyEven, isGet, isNotEqual, isGt, isGte, isLt, isLte,`  
 - [part 05 - math functions](./05.maths.md)   
-`rand, randInt, add, subtract, multiply, divide, quot, mod, rem, incr, decr, max, min, toInt, toIntSafe,`  
 - [part 06 - working with string](./06.strings.md)  
-`subs, splitLines, replace, replaceFirst, join, escape, rePattern, reMatches, capitalize, lowerCase, upperCase, trim, trimNewLine, tirmL, trimR, char,`  
 - [part 07 - working with states using atom](./07.atom.md) (wip)  
-`atom, deref, reset, swap, compareAndSet, removeWatch, addWatch, setValidator, getValdiator,`  
 - [part 08 - working with multi method](./08.multi-method.md) (wip)   
-`defMulti, defMethod`  
 - [part 09 - transducer, reducer](./09.transducer.md) (draft)  
-`(todo)`   
 
 ### Development & Test
 Setup test ground on node.js repl, `node` then evaluate bellow line
@@ -70,11 +83,73 @@ function test(desc, fn){
     return false;
   }
 }
+var core = require('./core');
+Object.assign(global, core);
 ```
 
 ### Build & Compile
+gather all the contents code blocks
 
-```sh
+```js 
+var fs = require('fs');
+
+function extractCode(markdown){
+  let regex = /```(\w+)((?:\s+\w+=[\w./]+)*)\s*([\s\S]*?)```/g;
+  function extractParams(paramsString){
+    if(paramsString){
+      return paramsString.split(/\s+/).reduce((acc, params)=>{
+        let [key, value] = params.split('=');
+        if(key && value){
+          acc[key] = isNaN(value) ? value : parseInt(value);
+        }     
+        return acc;
+      }, {});
+    }
+    return {};
+  }
+  return [...markdown.matchAll(regex)].reduce((acc, match) => {
+    let lang         = match[1];
+    let paramsString = match[2];
+    let code         = match[3].trim();
+    let params       = extractParams(paramsString);
+    return acc.concat({
+      ...params,
+      lang,
+      code
+    });
+  }, []);
+}
+
+function groupByPath(extracted){
+  return extracted.reduce((acc, value)=>{
+    if(!acc[value['path']]){
+      acc[value['path']] = value['code'];
+    }else{
+      acc[value['path']] = acc[value['path']].concat('\n\n', value['code'])
+    }
+    return acc;
+  }, {})
+}
+
+var files = [
+  './readme.md',
+  './01.objects.md',
+  './02.collections.md',
+  './03.functions.md',
+  './04.checks.md',
+  './05.maths.md',
+  './06.strings.md',
+  //'./07.atom.md'
+];
+
+var bundle = files.map((file) => fs.readFileSync(file, 'utf8')).join('\n');
+var code = extractCode(bundle)
+var [exports, ...restCode] = code;
+var blocks = restCode.concat(exports);
+var groupFile = groupByPath(blocks);
+var writeOut = Object.entries(groupFile).map(([file, contents]) => (fs.writeFileSync(file, contents, { flag: 'w+'}), file))
+
+console.log('written files: ', writeOut.join(' '));
 ```
 
 TODO: Work In Progress
