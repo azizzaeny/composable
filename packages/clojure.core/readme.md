@@ -2,7 +2,18 @@
 `@zaeny/clojure.core:1.0.0`  
 clojure core library functions in javascript   
 
-###  Problem to solve
+this is part of [@composable/clojure.core](https://github.com/azizzaeny/composable/) composable utility functions for functional programming in javascript.  
+
+- [Problem to Solve](#problem-to-Solve)
+- [Thinking in Clojure and Functional Programming](#thinking-in-clojure-and-functional-programming)
+- [Difference from Mori and Clojurescript](#difference-from-mori-and-clojurescript)
+- [Naming convention from Clojure](#naming-convention-from-clojure)
+- [Getting Started](#getting-started)
+- [Usage](#usage)
+- [Documentation](#documentation)
+- [Development](#development)
+
+###  Problem to Solve
 
 As Software Developers there are several use cases that we cannot be picky about certain development methods, ideas, and programming paradigms that we usually used daily in our work.  
 for example:  
@@ -14,10 +25,14 @@ I have experiencing this issues and I think with providing clojure.core library 
 
 TODO: why clojure?  rich library functions, naming conventions of functions
 
-### Thinking in Clojure and Functional Programming (todo)
-### Difference from Mori (todo)
-### Naming convention from Clojure (todo)
-### Getting Started  (todo)
+### Thinking in Clojure and Functional Programming
+(todo)
+### Difference from Mori and Clojurescript
+(todo)
+### Naming convention from Clojure 
+(todo)
+### Getting Started  
+(todo)
  - Nodejs CommonJS 
  - Nodejs Es6
  - CDN Import to Browser 
@@ -158,8 +173,8 @@ module.exports = {
 }
 ```
 
-### Documentation & Implementation
-the documentations and the actual code is produced by using literate programming method
+### Documentation
+the Implementation  and the actual code is produced by using literate programming method
 - [part 01 - working with objects](./01.objects.md)   
 - [part 02 - working with collections](./02.collections.md)   
 - [part 03 - functions compositions](./03.functions.md)  
@@ -170,7 +185,8 @@ the documentations and the actual code is produced by using literate programming
 - [part 08 - working with multi method](./08.multi-method.md) (wip)   
 - [part 09 - transducer, reducer](./09.transducer.md) (draft)  
 
-### Development & Test
+### Development 
+TODO: explain better
 Setup test ground on node.js repl, `node` then evaluate bellow line
 to Build & Compile (todo) gather all the contents code blocks, `bin/build` will output all code into `core.js` in `dist` folder
 

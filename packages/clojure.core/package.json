@@ -1,9 +1,10 @@
 {
   "name": "@zaeny/clojure.core",
   "version": "1.0.0",
-  "description": "core clojure functions in simple javascript",
-  "main": "index.js",
+  "description": "core clojure functions in javascript land",
+  "main": "dist/core.js",
   "scripts": {
+    "build": "./bin/build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": "https://github.com/azizzaeny/composable/tree/main/packages/clojure.core",
