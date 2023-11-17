@@ -212,3 +212,5 @@ Object.assign(global, core);
 ```
 
 TODO: Work In Progress
+### Changes
+ - [1.0.1] add atom functions `reset, swap, compareAndSet, addWatch, removeWatch, setValidator`
