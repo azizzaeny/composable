@@ -82,6 +82,7 @@ test('should test merge with function', ()=>{
   let obj1 = {a:1, b: 0};
   let obj2 = {a:2, b: 2};
   let sum = (a, b) => a + b;
+  let inc = (val) => val + 1;  
   let res = mergeWith(inc, obj1, obj2);
   assert.deepEqual(res, {a:3, b:3})
 })
@@ -164,7 +165,7 @@ assert.deepEqual(takeNth(3, [1,2,3,4,5,6,7,8]),[1,4,7])
 
 assert.deepEqual(take(2, [1,2,3,4,5,6,7,8]), [1,2])
 
-assert.deppEqual(second([1,2]), 2)
+assert.deepEqual(second([1,2]), 2)
 
 assert.deepEqual(last([1,2,3,4,5]), 5);
 

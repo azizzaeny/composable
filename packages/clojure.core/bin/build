@@ -56,6 +56,6 @@ var code = extractCode(bundle)
 var [exports, ...restCode] = code;
 var blocks = restCode.concat(exports);
 var groupFile = groupByPath(blocks);
-var writeOut = Object.entries(groupFile).map(([file, contents]) => (fs.writeFileSync(file, contents, { flag: 'w+'}), file))
+var writeOut = Object.entries(groupFile).map(([file, contents]) => ((file) ? fs.writeFileSync(file, contents, { flag: 'w+'}) : file, file))
 
-console.log('written files: ', writeOut.join(' '));
+console.log('written files:', writeOut.length, writeOut.join(' '));
