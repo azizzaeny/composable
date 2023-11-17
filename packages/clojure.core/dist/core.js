@@ -1026,7 +1026,6 @@ module.exports = {
   rand, randInt, add, subtract, multiply, divide, quot, mod, rem, incr, decr, max, min, toInt, toIntSafe,
   // strings
   subs, splitLines, replace, replaceFirst, join, escape, rePattern, reMatches, capitalize, lowerCase, upperCase, trim, trimNewLine, trimL, trimR, char,
-  // atom
-  
+  // atom  
   // mutli method  
 }
