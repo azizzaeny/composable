@@ -1,4 +1,0 @@
-var fs = require('fs');
-
-function extractCode(markdown){
-  let regex = /
