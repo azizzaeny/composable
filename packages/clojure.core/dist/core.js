@@ -1009,6 +1009,122 @@ function char(n) {
   return String.fromCharCode(n);
 }
 
+function atom(initialValue) {
+  let state = initialValue;
+  let watchers = {};
+  let validator = null;
+
+  function deref() {
+    return state;
+  }
+
+  function reset(newValue) {
+    const oldState = state;
+    const validatedValue = validate(newValue);
+    state = validatedValue;
+    notifyWatchers(oldState, state);
+    return state === validatedValue; // Return true if the value passed validation
+  }
+
+  function swap(updateFn) {
+    const oldValue = state;
+    const newValue = updateFn(state);
+    const validatedValue = validate(newValue);
+    state = validatedValue;
+    notifyWatchers(oldValue, state);
+    return state === validatedValue; // Return true if the value passed validation
+  }
+
+  function addWatch(name, watcherFn) {
+    watchers[name] = watcherFn;
+  }
+
+  function removeWatch(name) {
+    delete watchers[name];
+  }
+
+  function notifyWatchers(oldState, newState) {
+    for (const watcherName in watchers) {
+      if (watchers.hasOwnProperty(watcherName)) {
+        watchers[watcherName](oldState, newState);
+      }
+    }
+  }
+
+  function compareAndSet(expectedValue, newValue) {
+    if (state === expectedValue) {
+      const validatedValue = validate(newValue);
+      state = validatedValue;
+      notifyWatchers(expectedValue, state);
+      return state === validatedValue; // Return true if the value passed validation
+    }
+    return false;
+  }
+
+  function setValidator(validatorFn) {
+    validator = validatorFn;
+  }
+
+  function removeValidator() {
+    validator = null;
+  }
+  
+  function validate(newValue) {
+    const defaultValidation = validator ? validator(newValue) : true;
+    return defaultValidation ? newValue : state; // Return current state if validation fails
+  }
+
+  return {
+    deref,
+    reset,
+    swap,
+    addWatch,
+    removeWatch,
+    compareAndSet,
+    setValidator,
+    removeValidator
+  };
+}
+
+function deref(atom){
+  return atom.deref();
+}
+
+function reset(atom, value){
+  atom.reset(value)
+  return atom;
+}
+
+function swap(atom, fn, ...args){
+  atom.swap(fn, ...args);
+  return atom;
+}
+
+function compareAndSet(atom, expected, newVal){
+  atom.compareAndSet(expected, newVal);
+  return atom;
+}
+
+function addWatch(atom, name, watcherFn){
+  atom.addWatch(name, watcherFn);
+  return atom;
+}
+
+function removeWatch(atom, watcherFn){
+  atom.removeWatch(watcherFn)
+  return atom;
+}
+
+function setValidator(atom, validatorFn){
+  atom.setValidator(validatorFn);
+  return atom;
+}
+
+function removeValidator(atom){
+  atom.removeValidator();
+  return atom;
+}
+
 module.exports = {
   // object,
   get, getIn, assoc, dissoc, update, assocIn, updateIn, merge, mergeWith, selectKeys, renameKeys, keys, vals, zipmap,
@@ -1026,6 +1142,7 @@ module.exports = {
   rand, randInt, add, subtract, multiply, divide, quot, mod, rem, incr, decr, max, min, toInt, toIntSafe,
   // strings
   subs, splitLines, replace, replaceFirst, join, escape, rePattern, reMatches, capitalize, lowerCase, upperCase, trim, trimNewLine, trimL, trimR, char,
-  // atom  
+  // state
+  atom, deref, reset, swap, addWatch, removeWatch, setValidator, compareAndSet, removeValidator,
   // mutli method  
 }

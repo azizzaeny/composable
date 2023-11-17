@@ -167,7 +167,8 @@ module.exports = {
   rand, randInt, add, subtract, multiply, divide, quot, mod, rem, incr, decr, max, min, toInt, toIntSafe,
   // strings
   subs, splitLines, replace, replaceFirst, join, escape, rePattern, reMatches, capitalize, lowerCase, upperCase, trim, trimNewLine, trimL, trimR, char,
-  // atom  
+  // state
+  atom, deref, reset, swap, addWatch, removeWatch, setValidator, compareAndSet, removeValidator,
   // mutli method  
 }
 ```
@@ -180,7 +181,7 @@ the Implementation  and the actual code is produced by using literate programmin
 - [part 04 - checks and validations](./04.checks.md)  
 - [part 05 - math functions](./05.maths.md)   
 - [part 06 - working with string](./06.strings.md)  
-- [part 07 - working with states using atom](./07.atom.md) (wip)  
+- [part 07 - working with states using atom](./07.atom.md)
 - [part 08 - working with multi method](./08.multi-method.md) (wip)   
 - [part 09 - transducer, reducer](./09.transducer.md) (draft)  
 

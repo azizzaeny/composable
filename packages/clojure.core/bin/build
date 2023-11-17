@@ -48,13 +48,13 @@ var files = [
   './04.checks.md',
   './05.maths.md',
   './06.strings.md',
-  //'./07.atom.md'
+  './07.atom.md'
 ];
 
 var bundle = files.map((file) => fs.readFileSync(file, 'utf8')).join('\n');
-var code = extractCode(bundle).filter(c => (c.path !== undefined || c.path !== null))
+var code = extractCode(bundle);
 var [usage, exports, ...restCode] = code;
-var blocks = restCode.concat(exports);
+var blocks = restCode.concat(exports).filter(b=> (b.path) ? true : false);
 var groupFile = groupByPath(blocks);
 var writeOut = Object.entries(groupFile).map(([file, contents]) => ((file) ? fs.writeFileSync(file, contents, { flag: 'w+'}) : file, file))
 

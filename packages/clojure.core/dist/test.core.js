@@ -480,3 +480,36 @@ trimL('\nfoo')
 trimR('foo\n')
 
 char(56);
+
+var s = atom(10);
+s.deref()
+s.reset(20);
+s.swap(value => value * 2);
+s.addWatch("logger", (oldState, newState) => console.log(`State changed from ${oldState} to ${newState}`));
+s.addWatch("alert", (oldState, newState) => console.log(`State changed from ${oldState} to ${newState}`));
+s.removeWatch("logger"); // Remove the "logger" watch function
+s.setValidator(newValue => newValue > 0);
+s.removeValidator()
+s.reset(-20);
+s.compareAndSet(-20, 20)
+s.compareAndSet(-20, 20)
+s.deref();
+
+reset(s, 100);
+
+swap(s, (n)=> n - 10)
+
+compareAndSet(s, 90, 200)
+deref(s);
+
+addWatch(s, 'foo', (n, o) => console.log(n,o));
+reset(s, 100);
+
+removeWatch(s, "foo");
+
+setValidator(s, (n)=> n >0);
+reset(s, 100)
+reset(s, 0)
+s.deref()
+
+removeValidator(s)
