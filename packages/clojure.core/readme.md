@@ -1,6 +1,8 @@
 ## composable/clojure.core
-`@zaeny/clojure.core:1.0.0`  
-clojure core library functions in javascript   
+[![npm version](https://img.shields.io/npm/v/@zaeny/clojure.core.svg)](https://www.npmjs.com/package/@zaeny/clojure.core)
+![npm downloads](https://img.shields.io/npm/dm/@thi.ng/hiccup-canvas.svg)  
+
+clojure core functions in javascript   
 
 this is part of [@composable/clojure.core](https://github.com/azizzaeny/composable/) composable utility functions for functional programming in javascript.  
 
