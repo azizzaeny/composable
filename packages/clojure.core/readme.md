@@ -71,75 +71,74 @@ range(0, 10); // [0,1,2,3,4,5,6,7,8,9,10]
 
 find(n=> n === 2, [1,2,3,4,5,6]) ; // 2
 
-var isEven = n => n % 2 === 0;
-var numbers = [1, 2, 3, 4, 5, 6];
-var result = remove(isEven, numbers); //
+remove(isEven, [1, 2, 3, 4, 5, 6]); //[1,3,5]
 
-reduce((acc,v) => acc + v, 0, [1,23,4,5,6,77]); //
-concat([1,2,3,4], [5,6,7,8])
+reduce((acc,v) => acc + v, 0, [1, 23,4,5,6,77]); // 116
+concat([1,2,3,4], [5,6,7,8]); // [1,2,3,4,5,6,7,8]
 
-mapcat(x => [x, x * 2], [1,2,3,4])
+mapcat(x => [x, x * 2], [1,2,3,4]); // [1,2,2,4,3,6,4,8]
 
-mapIndexed((n, i) => [n, i], [1,2,3,4,5])
+mapIndexed((n, i) => [n, i], [1,2,3,4,5]); // [ [ 1, 0 ], [ 2, 1 ], [ 3, 2 ], [ 4, 3 ], [ 5, 4]]
 
-flatten([1,2,[3,4],[[1,2,3,4]]])
+flatten([1,2,[3,4],[[1,2,3,4]]]) // [1,2,3,4,1,2,3,4]
 
-distinct([1,2,1,2,4,5,6,6,7,6,8])
+distinct([1,2,1,2,4,5,6,6,7,6,8]) // [1,2,3,5,6,7,8]
 
-interleave([1,2,3], ["a", "b","c"]) // []
-zipmap([1,2,3], ["a", "b","c"]); // {}
+interleave([1,2,3], ["a", "b","c"]) // [1, 'a', 2, 'b', 3, 'c']
+zipmap([1,2,3], ["a", "b","c"]); // { '1': 'a', '2': 'b', '3': 'c' }
 
-interpose(",", ["one", "two", "three"])
+interpose(",", ["one", "two", "three"]) // [ 'one', ',', 'two', ',', 'three' ]
 
-reverse([0,1,2,3])
+reverse([0,1,2,3]); // [ 'one', ',', 'two', ',', 'three' ]
 
-sort([1,2,3,4,5,6,5,4,1])
+sort([1,2,3,4,5,6,5,4,1]); //[ 1, 1, 2, 3, 4, 4, 5, 5 ,6]
 
-sortBy((n)=> n.length, ["aaa", "bb", "c"])
+sortBy((n)=> n.length, ["aaa", "bb", "c"]); //[ 'c', 'bb', 'aaa' ]
 
-compare(1, 2)
+compare(1, 2) ; // -1
 
-groupBy(n => n > 0)([-1,2,3,4,5, -9,-2]);
+groupBy(n => n > 0)([-1,2,3,4,5, -9,-2]); // { false: [ -1, -9, -2 ], true: [ 2, 3, 4, 5 ] }
 
-partition(4, [1,2,3,4,5,6,7,8,9])
+partition(4, [1,2,3,4,5,6,7,8,9]); //[ [ 1, 2, 3, 4 ], [ 5, 6, 7, 8 ], [ 9 ] ]
 
-frequencies([1,1,1,2,2,2,3,4,5,6,7,8,8]);
+frequencies([1,1,1,2,2,2,3,4,5,6,7,8,8]); // { '1': 3, '2': 3, '3': 1, '4': 1, '5': 1, '6':1, '7': 1, '8': 2 }
 
-union([1,2,3,4,5], [1,2,3,8,9]);
+union([1,2,3,4,5], [1,2,3,8,9]); // [1,2,3,4,5,8,9]
 
-difference([1,2,3,4,5], [0, 3, 5,6]); // 1,2,4
+difference([1,2,3,4,5], [0, 3, 5,6]); // [1,2,4]
 
-map(constantly(10), [1,2,3,4,5])
+map(constantly(10), [1,2,3,4,5]); // [ 10, 10, 10, 10, 10 ]
 
-map(identity, [1,2,3,4,5,6])
+map(identity, [1,2,3,4,5,6]) //[1,2,3,4,5,6]
 
-apply(get, [{a: 1}, "a"])
+apply(get, [ {a: 1}, "a" ]) // 1
 juxt((n)=> n*2, (n)=> n + 10, (n)=> n*100)(10) //  [20, 20, 1000]
 
 thread(
   22,
   (x) => x * 10,
   (x) => x +5
-)
+); //225
 
-thread([22,10], map(x => x *10), map (x => x +5))
+thread([22,10], map(x => x *10), map (x => x +5)) //[225, 105]
 
 condThread(
   5,
   (x) => x > 0, (x) => x * 2,
   (x) => x < 10, (x) => x + 1,
   (x) => x % 2 === 0, (x) => x / 2
-);
+); // 5
 
 var addTwo = (x) => x + 2;
 var square = (x) => x * x;
 var doubleIt = (x) => x * 2;
-var fns = comp(addTwo, square, doubleIt); // compose
-fns(3);
+var composeFn = comp(addTwo, square, doubleIt); // compose
+composeFn(3); // 38
 
-isContains([1,2,3,4], 2)
-isNeg(-1)
-incr(10)
+
+isContains([1,2,3,4], 2) // true 
+isNeg(-1) // true
+incr(10) // 11
 
 replace("hello world", "o", "a"); // "hella warld"
 capitalize("hello world"); // "Hello world"
