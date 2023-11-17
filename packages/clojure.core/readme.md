@@ -1,6 +1,6 @@
 ## composable/clojure.core
 [![npm version](https://img.shields.io/npm/v/@zaeny/clojure.core.svg)](https://www.npmjs.com/package/@zaeny/clojure.core)
-![npm downloads](https://img.shields.io/npm/dm/@thi.ng/hiccup-canvas.svg)  
+![npm downloads](https://img.shields.io/npm/dm/@zaeny/clojure.core.svg)  
 
 clojure core functions in javascript   
 
