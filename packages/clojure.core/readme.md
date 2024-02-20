@@ -125,7 +125,6 @@ upperCase("hello world"); // "HELLO WORLD"
 ```
 
 ### Getting Started  
- - Nodejs 
  ``` 
  npm install @zaeny/clojure.core 
  ``` 
