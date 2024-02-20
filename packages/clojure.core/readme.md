@@ -126,16 +126,19 @@ upperCase("hello world"); // "HELLO WORLD"
 
 ### Getting Started  
  - Nodejs 
- ``` npm install @zaeny/clojure.core ```
-  - CommonJS 
-  ```js var {get, getIn} = require("@zaeny/clojure.core"); 
+ ``` 
+ npm install @zaeny/clojure.core 
+ ``` 
+ - CommonJS 
+  ```js 
+   var {get, getIn} = require("@zaeny/clojure.core");  
   ```
   - Es6
   ```js
   import {peek, assoc} from "@zaeny/clojure.core";
   ```
  - CDN Import to Browser 
-    - browser
+   - browser
    ```js
    <script src="https://cdn.jsdelivr.net/npm/@zaeny/clojure.core"></script>
    ```   
