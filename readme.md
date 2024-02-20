@@ -1,11 +1,10 @@
 ## Composable  
         
 Collection of functions that can be composed to solve programming problem.  
-Library functional programming, data structure, UI development, pushing side-effects to the last  
+Provide reusable toolkit, General purpose library Functional Programming, Pattern Side-effects modules, Data structure Algorithm
 
     Composable is to make or form by combining things.   
     
-Provide reusable toolkit, General purpose library Functional Programming, Side-effects modules, Data structure development
 
 ### Packages
 
@@ -19,3 +18,6 @@ Provide reusable toolkit, General purpose library Functional Programming, Side-e
 
 ### Development
 TODO  
+
+### Contribute
+
