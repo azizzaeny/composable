@@ -1,44 +1,19 @@
-## composable/clojure.core
+## @zaeny/clojure.core
 [![npm version](https://img.shields.io/npm/v/@zaeny/clojure.core.svg)](https://www.npmjs.com/package/@zaeny/clojure.core)
 ![npm downloads](https://img.shields.io/npm/dm/@zaeny/clojure.core.svg)  
 
 clojure core functions in javascript   
 
-this is part of [@composable/clojure.core](https://github.com/azizzaeny/composable/) composable utility functions for functional programming in javascript.  
+[composable packages](https://github.com/azizzaeny/composable/) composable utility functions for functional programming in javascript.  
 
+- [Usage](#usage)
 - [Problem to Solve](#problem-to-Solve)
 - [Thinking in Clojure and Functional Programming](#thinking-in-clojure-and-functional-programming)
 - [Difference from Mori and Clojurescript](#difference-from-mori-and-clojurescript)
 - [Naming convention from Clojure](#naming-convention-from-clojure)
 - [Getting Started](#getting-started)
-- [Usage](#usage)
 - [Documentation](#documentation)
 - [Development](#development)
-
-###  Problem to Solve
-
-As Software Developers there are several use cases that we cannot be picky about certain development methods, ideas, and programming paradigms that we usually used daily in our work.  
-for example:  
-- You have recently joined an established team of developers that use object-oriented style programming and cannot use functional programming style into the team to immediately adapt and work as the way you like it.  
-- You are the third party developer that needs to fix code on the production of the current development team, but you cannot convert the whole code into clojure.   
-- Your team is working on javascript language while you yourself has experiencing the light of doing clojure development but you cannot bring the arguments to your bosses and college to change the whole development around it   
-
-I have experiencing this issues and I think with providing clojure.core library or translating clojure.core to javascript can help for those people that has similiar problem that want to use functional programming clojure library but in javascript land using javascript syntax.  
-
-TODO: why clojure?  rich library functions, naming conventions of functions
-
-### Thinking in Clojure and Functional Programming
-(todo)
-### Difference from Mori and Clojurescript
-(todo)
-### Naming convention from Clojure 
-(todo)
-### Getting Started  
-(todo)
- - Nodejs CommonJS 
- - Nodejs Es6
- - CDN Import to Browser 
- - Copy from documentation  
 
 ### Usage 
 see documentation bellow to explore the detail functions
@@ -149,6 +124,51 @@ upperCase("hello world"); // "HELLO WORLD"
 
 ```
 
+### Getting Started  
+ - Nodejs 
+ ``` npm install @zaeny/clojure.core ```
+  - CommonJS 
+  ```js var {get, getIn} = require("@zaeny/clojure.core"); 
+  ```
+  - Es6
+  ```js
+  import {peek, assoc} from "@zaeny/clojure.core";
+  ```
+ - CDN Import to Browser 
+    - browser
+   ```js
+   <script src="https://cdn.jsdelivr.net/npm/@zaeny/clojure.core"></script>
+   ```   
+   - es6 
+   ```js
+   import {updateIn} from ' https://cdn.jsdelivr.net/npm/@zaeny/clojure.core/+esm';
+   ```
+   - es5 export (load non default file)
+   ```js 
+   https://cdn.jsdelivr.net/npm/@zaeny/clojure.core/dist/core.js
+   https://cdn.jsdelivr.net/npm/@zaeny/clojure.core/dist/core.min.js
+   ```
+   
+###  Problem to Solve
+
+As Software Developers there are several use cases that we cannot be picky about certain development methods, ideas, and programming paradigms that we usually used daily in our work.  
+for example:  
+- You have recently joined an established team of developers that use object-oriented style programming and cannot use functional programming style into the team to immediately adapt and work as the way you like it.  
+- You are the third party developer that needs to fix code on the production of the current development team, but you cannot convert the whole code into clojure.   
+- Your team is working on javascript language while you yourself has experiencing the light of doing clojure development but you cannot bring the arguments to your bosses and college to change the whole development around it   
+
+I have experiencing this issues and I think with providing clojure.core library or translating clojure.core to javascript can help for those people that has similiar problem that want to use functional programming clojure library but in javascript land using javascript syntax.  
+
+TODO: why clojure?  rich library functions, naming conventions of functions
+
+### Thinking in Clojure and Functional Programming
+(todo)
+### Difference from Mori and Clojurescript
+(todo)
+### Naming convention from Clojure 
+(todo)
+
+
 ###  Supported Functions  
 Current status all supported functions  
 ```js path=dist/core.js
@@ -176,7 +196,8 @@ module.exports = {
 ```
 
 ### Documentation
-the Implementation  and the actual code is produced by using literate programming method
+the implementation and the actual code is produced by literate programming method
+
 - [part 01 - working with objects](./01.objects.md)   
 - [part 02 - working with collections](./02.collections.md)   
 - [part 03 - functions compositions](./03.functions.md)  
@@ -192,27 +213,8 @@ TODO: explain better
 Setup test ground on node.js repl, `node` then evaluate bellow line
 to Build & Compile (todo) gather all the contents code blocks, `bin/build` will output all code into `core.js` in `dist` folder
 
-```js path=dist/test.core.js
-var assert = require('assert');
-var {equal, notEqual, deepEqual} = assert;
-
-function test(desc, fn){
-  try{
-    console.log('test', desc);
-    fn();
-    console.log('OK');
-    return true;
-  }catch(e){
-    console.log('', desc);
-    console.log('error', e);
-    return false;
-  }
-}
-var core = require('./core');
-Object.assign(global, core);
-
-```
-
 TODO: Work In Progress
+
 ### Changes
  - [1.0.1] add atom functions `reset, swap, compareAndSet, addWatch, removeWatch, setValidator`
+ - [1.0.2] fix Readme.md

@@ -1,6 +1,6 @@
 {
   "name": "@zaeny/clojure.core",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "core clojure functions in javascript land",
   "main": "dist/core.js",
   "scripts": {
