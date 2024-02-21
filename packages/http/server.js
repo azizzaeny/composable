@@ -43,6 +43,21 @@ function matchRoutes(routes, request){
   return match;
 }
 
+function isContentType(headers, type){
+  return (headers['content-type'] === type);
+}
+
+function isObject(value) {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+function responseRequest(responseObject, response){
+  let {headers={}, body='', status=404} = responseObject;
+  if(isContentType(headers, "application/json") || isObject(body)){ (body = JSON.stringify(body)); };
+  response.writeHead(status, headers);  
+  response.end(body);
+}
+
 function requestHandler(changeHandler){
   return function(request, response){
     let data = [];
@@ -57,11 +72,8 @@ function requestHandler(changeHandler){
       var object  = {status: 404, headers:{}, body: 'not-found'};        
       if(match && command) (object = await command(request, response));
       // responding
-      let {headers={}, body='', status=404} = object;
-      response.writeHead(status, headers);
-      response.end(body);      
-    }
-    
+      responseRequest(object, response);
+    }    
     request.on('data', pushBufferData).on('end', responseData );
   }
 }
