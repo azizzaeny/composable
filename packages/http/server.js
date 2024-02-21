@@ -1,26 +1,20 @@
 var http = require('http');
 var url  = require('url');
 
-var server;
-
 function log(tag, message) {
   return (data) => data ? console.log(tag, message, data) : console.log(tag, message);
 }
 
-function getServer(){
-  return server;
-}
-
-function resetServer(){
+function destoryServer(server){
   if(server && server.close) server.close();
-  return (server=null);
+  return (server = null);
 }
 
 function createServer(changeHandler, port=8080){
-  if(server) return 'already created server';
-  server = http.createServer();
+  let server = http.createServer();
   server.on('request', requestHandler(changeHandler));
   server.listen(port, log('start', `listening at port ${port}`));
+  return server;
 }
 
 function parseUrl(request){  
@@ -78,9 +72,7 @@ function requestHandler(changeHandler){
   }
 }
 
-module.exports = {
-  getServer,
-  resetServer, 
+module.exports = {  
+  destoryServer, 
   createServer,
-  log,
 }
