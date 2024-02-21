@@ -3,7 +3,6 @@ var url  = require('url');
 
 var server;
 
-
 function log(tag, message) {
   return (data) => data ? console.log(tag, message, data) : console.log(tag, message);
 }
@@ -47,20 +46,23 @@ function matchRoutes(routes, request){
 function requestHandler(changeHandler){
   return function(request, response){
     let data = [];
-    request
-      .on('data', (chunk)=> { if(request.method !== "GET" && chunk) (data.push(chunk))})
-      .on('end', async () => {
-        parseUrl(request);
-        parseBody(request, data);
-        let {routes, actions} = changeHandler(request);
-        let match = matchRoutes(routes, request);
-        let command = actions[match['action']];
-        var object = {status: 404, headers:{}, body: 'not-found'};        
-        if(match && command) (object = await command(request, response));  
-        let {headers={}, body='', status=404} = object;
-        response.writeHead(status, headers);
-        response.end(body);      
-      });
+    let pushBufferData =  (chunk)=> { if(request.method !== "GET" && chunk) (data.push(chunk)) }
+    let responseData = async () => {
+      // parse request
+      (parseUrl(request), parseBody(request, data));      
+      let {routes, actions} = changeHandler(request);
+      // routing
+      let match   = matchRoutes(routes, request);
+      let command = actions[match['action']];
+      var object  = {status: 404, headers:{}, body: 'not-found'};        
+      if(match && command) (object = await command(request, response));
+      // responding
+      let {headers={}, body='', status=404} = object;
+      response.writeHead(status, headers);
+      response.end(body);      
+    }
+    
+    request.on('data', pushBufferData).on('end', responseData );
   }
 }
 
