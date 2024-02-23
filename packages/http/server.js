@@ -10,7 +10,8 @@ function destoryServer(server){
   return (server = null);
 }
 
-function createServer(changeHandler, port=8080){
+function createServer(changeHandler, options){
+  let {port, host} = options;
   let server = http.createServer();
   server.on('request', requestHandler(changeHandler));
   server.listen(port, log('start', `listening at port ${port}`));
