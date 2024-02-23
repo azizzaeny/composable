@@ -33,9 +33,15 @@ function parseBody(request, data){
   return true;
 }
 
-function matchRoutes(routes, request){
-  let match = routes.find((route)=>(route.method === request.method && route.path === request.path)) || {action: "notFound"};
-  return match;
+function matchRoutes(routes, request){  
+  let matches = routes.find((route)=>{
+    let parts  = route;
+    let method = parts[0];
+    let path   = parts[1];
+    return (method === request.method && path === request.path);
+  });
+  if(matches) return matches[2];
+  return 'notFound';  
 }
 
 function isContentType(headers, type){
@@ -43,7 +49,7 @@ function isContentType(headers, type){
 }
 
 function isObject(value) {
-  return typeof value === 'object' && value !== null && !Array.isArray(value);
+  return typeof value === 'object';
 }
 
 function responseRequest(responseObject, response){
@@ -60,15 +66,14 @@ function requestHandler(changeHandler){
     let responseData = async () => {
       // parse request
       (parseUrl(request), parseBody(request, data));      
-      let {routes, actions} = changeHandler(request);
+      let {routes, resolve} = changeHandler(request);
       // routing
       let match   = matchRoutes(routes, request);
-      let command = actions[match['action']];
+      let command = resolve[match]; 
       var object  = {status: 404, headers:{}, body: 'not-found'};        
-      if(match && command) (object = await command(request, response));
-      // responding
+      if(match && command) (object = await command(request, response));      
       responseRequest(object, response);
-    }    
+    }
     request.on('data', pushBufferData).on('end', responseData );
   }
 }
