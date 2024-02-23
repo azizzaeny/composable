@@ -5,7 +5,7 @@ function fnName(func=null){
   return result ? result[1] : undefined;
 }
 
-function evalAt(resolveModule, varname, value){
+function evalIn(resolveModule, varname, value){
   let exported = require.cache[require.resolve(resolveModule)]['exports'];
   if(typeof varname === "function"){
     return (exported[fnName(varname)]= varname, varname);
@@ -13,4 +13,8 @@ function evalAt(resolveModule, varname, value){
   return (exported[varname] = value, value);
 }
 
-module.exports = { fnName, evalAt  }
+function evalAtExport(resoveModule, exportObject){
+  return (require.cache[require.resolve(resolveModule)]['exports'] = exportObject, true);
+}
+
+module.exports = { fnName, evalIn, evalAtExport  }
