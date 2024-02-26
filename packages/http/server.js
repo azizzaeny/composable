@@ -35,12 +35,12 @@ function parseBody(request, data){
 
 function matchRoutes(routes, request){  
   let matches = routes.find((route)=>{
-    let parts  = route;
+    let parts  = route.match.split(' ');
     let method = parts[0];
-    let path   = parts[1];
+    let path   = parts[1];    
     return (method === request.method && path === request.path);
   });
-  if(matches) return matches[2];
+  if(matches) return matches['resolve']; 
   return 'notFound';  
 }
 
