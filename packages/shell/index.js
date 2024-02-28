@@ -1,5 +1,5 @@
 
-var {exec} = require('child_process');
+var {exec, spawn} = require('child_process');
 
 function printOut(err, stdout, stderr){
   if(err) return console.log(err);
@@ -17,7 +17,12 @@ function addDeps(modules=[], options){
   return sh(`npm install ${mod} --save`);
 }
 
-module.exports = {sh, addDeps};
+function detach(cmd){
+  let [proc, ...rest] = cmd.split(' ');
+  return (spawn(proc, rest, {stdio: 'inherit', detached: true }).on('data', data => process.stdout.pipe(data)) ,true)
+}
+
+module.exports = {sh, detach, addDeps};
 
 /*
 addDeps(['ulid', 'redis'])
