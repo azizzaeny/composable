@@ -1,4 +1,3 @@
-var http = require('http');
 var url  = require('url');
 
 function log(tag, message) {
@@ -12,9 +11,17 @@ function destoryServer(server){
 
 function createServer(changeHandler, options){
   let {port, host} = options;
-  let server = http.createServer();
+  let isHttps      = options.https || false;
+  let certificate  = options.certificate;
+  let isListen     = options.listen || true;
+  let server;
+  if(isHttps && certificate ){
+    server = require('https').createServer(certificate); // {key, cert, ca}
+  }else{
+    server = require('http').createServer();    
+  }
   server.on('request', requestHandler(changeHandler));
-  server.listen(port, log('start', `listening at port ${port}`));
+  if(isListen) server.listen(port, log('start', `listening at port ${port}`));
   return server;
 }
 
@@ -38,7 +45,14 @@ function matchRoutes(routes, request){
     let parts  = route.match.split(' ');
     let method = parts[0];
     let path   = parts[1];    
-    return (method === request.method && path === request.path);
+    let rawExpression = path.replace(/\/:([\w-]+)/g, '/([$\\w-]+)').replace(/\//, '\/'); // capture params, in the end we replace everything /
+    let expression    = new RegExp(`^${rawExpression}$`);        
+    let resolve       = route.resolve;
+    let requestPath   = (request.path.length > 1) ? request.path.replace(/\/$/,'') : request.path ; // so we dont have endup in tailing /
+    // let params =  path.match(/\/:([\w-]+)/g) || [];
+    // console.log(expression);
+    // console.log(params);
+    return (method === request.method && requestPath.match(expression));    
   });
   if(matches) return matches['resolve']; 
   return 'notFound';  
@@ -70,7 +84,7 @@ function requestHandler(changeHandler){
       // routing
       let match   = matchRoutes(routes, request);
       let command = resolve[match]; 
-      var object  = {status: 404, headers:{}, body: 'not-found'};        
+      var object  = {status: 404, headers:{}, body: ''};        
       if(match && command) (object = await command(request, response));      
       responseRequest(object, response);
     }
