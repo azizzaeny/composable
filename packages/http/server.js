@@ -49,9 +49,15 @@ function matchRoutes(routes, request){
     let expression    = new RegExp(`^${rawExpression}$`);        
     let resolve       = route.resolve;
     let requestPath   = (request.path.length > 1) ? request.path.replace(/\/$/,'') : request.path ; // so we dont have endup in tailing /
-    // let params =  path.match(/\/:([\w-]+)/g) || [];
-    // console.log(expression);
-    // console.log(params);
+    let paramsRoute   = path.match(/\/:([\w-]+)/g) || [];
+    let valueExpr     = requestPath.match(expression) || [];
+    let isMatchPath   = valueExpr.length > 0;
+    let params = paramsRoute.reduce((acc, value, index)=>{
+      let key = value.replace('/:', '');
+      let val = valueExpr[index + 1];
+      return Object.assign({}, acc, { [key]: val} );
+    }, {});
+    (request.params = params);
     return (method === request.method && requestPath.match(expression));    
   });
   if(matches) return matches['resolve']; 
