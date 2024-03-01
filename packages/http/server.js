@@ -85,16 +85,19 @@ function requestHandler(changeHandler){
     let pushBufferData =  (chunk)=> { if(request.method !== "GET" && chunk) (data.push(chunk)) }
     let responseData = async () => {      
       (parseUrl(request), parseBody(request, data));
+      
       let defaultResolve = {
         ':not-found': (request) => ({status: 404, headers:{}, body: ':not-found'})
       };
-      
-      let {routes, resolve} = await changeHandler(request);
-      (resolve = Object.assign({}, defaultResolve, resolve));
-      
+
+      let handler = await changeHandler(request);
+      let routes  = handler.routes;
+      let resolve = handler.resolve;      
+      resolve     = Object.assign(defaultResolve, resolve);      
       let match   = matchRoutes(routes, request);
       let command = resolve[match]; 
-      var object  = null;      
+      var object  = null;
+      
       if(match && command) (object = await command(request, response));      
       if(object) responseRequest(object, response);
     }
