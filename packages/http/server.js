@@ -61,7 +61,7 @@ function matchRoutes(routes, request){
     return (method === request.method && requestPath.match(expression));    
   });
   if(matches) return matches['resolve']; 
-  return 'notFound';  
+  return ':not-found';  
 }
 
 function isContentType(headers, type){
@@ -83,16 +83,20 @@ function requestHandler(changeHandler){
   return function(request, response){
     let data = [];
     let pushBufferData =  (chunk)=> { if(request.method !== "GET" && chunk) (data.push(chunk)) }
-    let responseData = async () => {
-      // parse request
-      (parseUrl(request), parseBody(request, data));      
-      let {routes, resolve} = changeHandler(request);
-      // routing
+    let responseData = async () => {      
+      (parseUrl(request), parseBody(request, data));
+      let defaultResolve = {
+        ':not-found': (request) => ({status: 404, headers:{}, body: ':not-found'});
+      };
+      
+      let {routes, resolve} = await changeHandler(request);
+      (resolve = Object.assign({}, defaultResolve, resolve));
+      
       let match   = matchRoutes(routes, request);
       let command = resolve[match]; 
-      var object  = {status: 404, headers:{}, body: ''};        
+      var object  = null;      
       if(match && command) (object = await command(request, response));      
-      responseRequest(object, response);
+      if(object) responseRequest(object, response);
     }
     request.on('data', pushBufferData).on('end', responseData );
   }
