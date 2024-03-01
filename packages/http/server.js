@@ -86,7 +86,7 @@ function requestHandler(changeHandler){
     let responseData = async () => {      
       (parseUrl(request), parseBody(request, data));
       let defaultResolve = {
-        ':not-found': (request) => ({status: 404, headers:{}, body: ':not-found'});
+        ':not-found': (request) => ({status: 404, headers:{}, body: ':not-found'})
       };
       
       let {routes, resolve} = await changeHandler(request);
