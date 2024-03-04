@@ -11,7 +11,7 @@ function createHandleException(message='signal'){
   ];
 }
 
-function handleException(process=process, handler){
+function handleException(process, handler){
   return handler.reduce((acc, [on, type, call])=>{
     return (process[on](type, call), acc.concat(type));
   }, []);

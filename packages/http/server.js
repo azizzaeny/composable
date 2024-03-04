@@ -57,10 +57,10 @@ function matchRoutes(routes, request){
       let val = valueExpr[index + 1];
       return Object.assign({}, acc, { [key]: val} );
     }, {});
-    (request.params = params);
+    (route.params = params);
     return (method === request.method && requestPath.match(expression));    
   });
-  if(matches) return matches['resolve']; 
+  if(matches) return ((request.params = matches['params']), matches['resolve']); 
   return ':not-found';  
 }
 
@@ -105,25 +105,26 @@ function requestHandler(changeHandler){
   }
 }
 
+// client side repl interaction
+var requestResponsePool = requestResponsePool || {};
 
-var requestPool = null;
-
-function staleRequest(id, request, response){
-  if(!requestPool) (requestPool = {});
-  if(!requestPool[id] (requestPool[id] = [{request, response}]));
-  return (requestPool[id] = requestPool[id].concat({request, response}), null);  
+function requestPool(id, request, response){
+  if(!requestResponsePool) (requestResponsePool = {});
+  if(!requestResponsePool[id]) (requestResponsePool[id] = [{request, response}]);
+  return (requestResponsePool[id] = requestResponsePool[id].concat({request, response}), null);  
 }
 
-function sentBackResponse(id, content){
-  requstPool[id].forEach(({request, response}) => (response.write(content), response.end()));
+function responsePool(id, content){
+  requestResponsePool[id].forEach(({request, response}) => (response.write(content), response.end()));
   return content;
 }
+
 
 
 module.exports = {  
   destoryServer, 
   createServer,
-  staleRequest,
-  sentBackResponse,
-  isContentType
+  isContentType,
+  requestPool,
+  responsePool,
 }
