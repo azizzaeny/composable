@@ -105,7 +105,25 @@ function requestHandler(changeHandler){
   }
 }
 
+
+var requestPool = null;
+
+function staleRequest(id, request, response){
+  if(!requestPool) (requestPool = {});
+  if(!requestPool[id] (requestPool[id] = [{request, response}]));
+  return (requestPool[id] = requestPool[id].concat({request, response}), null);  
+}
+
+function sentBackResponse(id, content){
+  requstPool[id].forEach(({request, response}) => (response.write(content), response.end()));
+  return content;
+}
+
+
 module.exports = {  
   destoryServer, 
   createServer,
+  staleRequest,
+  sentBackResponse,
+  isContentType
 }

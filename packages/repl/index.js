@@ -25,4 +25,6 @@ function recache(resolveModule){
   return require(resolveModule);
 }
 
-module.exports = { fnName, evalInFn, evalAtExport, recache  }
+module.exports = {
+  fnName, evalInFn, evalAtExport, recache
+}
