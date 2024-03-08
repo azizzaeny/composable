@@ -1,0 +1,11 @@
+{
+  "name": "@zaeny/literate",
+  "version": "1.0.0",
+  "description": "literate programming tangle code",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "azizzaeny",
+  "license": "ISC"
+}
