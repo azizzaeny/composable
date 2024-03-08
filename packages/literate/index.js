@@ -58,7 +58,7 @@ var tangleCode = bundle => {
   let takeHasPath = code.filter(b => b.path);
   let groupFile = groupCodeByPath(takeHasPath);
   var writeOut = Object.entries(groupFile).map(([file, contents]) => ((file) ? fs.writeFileSync(file, contents, { flag: 'w+'}) : file, file));  
-  return 'tangle files:' + writeOut.length + writeOut.join(' ');
+  return `tangle files: #${writeOut.length} ${writeOut.join(' ')}`;
 }
 
 module.exports = {tangle, tangleCode, extractCode}
