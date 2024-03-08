@@ -1,130 +1,103 @@
+// todo using npm here
+var {isObject, reduce, replace, first, second, find, map, merge} = require('../clojure.core');
+
 var url  = require('url');
 
-function log(tag, message) {
-  return (data) => data ? console.log(tag, message, data) : console.log(tag, message);
-}
-
-function destoryServer(server){
-  if(server && server.close) server.close();
-  return (server = null);
-}
-
-function createServer(changeHandler, options){
-  let {port, host} = options;
-  let isHttps      = options.https || false;
-  let certificate  = options.certificate;
-  let isListen     = options.listen || true;
-  let server;
-  if(isHttps && certificate ){
-    server = require('https').createServer(certificate); // {key, cert, ca}
-  }else{
-    server = require('http').createServer();    
-  }
-  server.on('request', requestHandler(changeHandler));
-  if(isListen) server.listen(port, log('start', `listening at port ${port}`));
-  return server;
-}
-
-function parseUrl(request){  
+var parseUrl = (request) => {
   (request.parsed = url.parse(request.url, true));
   (request.query = request.parsed.query);
   (request.path = request.parsed.pathname);
   return true;
 }
 
-function parseBody(request, data){
+var parseBody = (request, data)  => {
   (request.body = Buffer.concat(data).toString());
   if(request.headers && request.headers['content-type'] === "application/json"){
-    request.body = JSON.parse(request.body);
+    (request.body = JSON.parse(request.body));
   };
+  return true;
+};
+
+var findRoutes = (routes, request) =>{
+  let matchRoute = find((route, index)=>{
+    let {act, match, before, after} = route;
+    let [method, path] = match.split(' ');
+    let expr = replace(replace(path, /\/:([\w-]+)/g, '/([$\\w-]+)'), /\//, '\/');
+    let newExpression  = new RegExp(`^${expr}$`);
+    let normalizePath  = path => (path.length > 1) ? replace(path, /\/$/, '') : path;
+    let requestPath    = normalizePath(request.path);
+    let routeParameter = path.match(/\/:([\w-]+)/g) || [];
+    let valueExpr      = requestPath.match(newExpression) || [];
+    let isMatched      = valueExpr.length > 0;
+    let params         = reduce((acc, value, index)=>{
+      let key = replace(value, '/:', '');
+      let val = valueExpr[index + 1];
+      return merge(acc, {[key]: val});
+    },{}, routeParameter);    
+    route.paramsFounded = params;
+    return (method === request.method && requestPath.match(newExpression));
+  });
+  let selected = matchRoute(routes);
+  if(selected) return (request.params = selected['paramsFounded'], selected['act']);
+  return 'default';
+}
+
+var isContentType = (headers, type) =>  (headers['content-type'] === type);
+
+var responseWrite = (res, obj) => {
+  let { headers={'Content-Type': 'text/plain'}, body='', status=500} = obj;
+  if(isContentType(headers, "application/json") || isObject(body)){ (body = JSON.stringify(body)); };
+  return (
+    res.writeHead(status, headers),
+    res.write(body),
+    res.end(),
+    true
+  );
+}
+
+var routesHandler = handler => (request, response) => {
+  let buffer = [];
+  let collectBuffer = chunk => buffer.push(chunk);
+  let responseRequest = async  () =>{
+    (parseUrl(request), parseBody(request, buffer));    
+    let resolveMap = await handler(request); // {routes, actions}
+    let routesMap = resolveMap.routes;
+    let actionsMap = resolveMap.actions;
+    actionsMap = merge({ default: () => ({status: 404, headers: {}, body: ''}) }, actionsMap);
+    let matchRoutes = findRoutes(routesMap, request);
+    let actionToCall = actionsMap[matchRoutes];
+    let responseObject = null;
+    if(matchRoutes && actionToCall) (responseObject = await actionToCall(request, response));
+    if(responseObject) responseWrite(response, responseObject);
+  }
+  let processRequest = map(({ onType, process})=> request.on(onType, process));  
+  processRequest([
+    { onType: 'data', process: collectBuffer },
+    { onType: 'end', process: responseRequest }
+  ]);
   return true;
 }
 
-function matchRoutes(routes, request){  
-  let matches = routes.find((route)=>{
-    let parts  = route.match.split(' ');
-    let method = parts[0];
-    let path   = parts[1];    
-    let rawExpression = path.replace(/\/:([\w-]+)/g, '/([$\\w-]+)').replace(/\//, '\/'); // capture params, in the end we replace everything /
-    let expression    = new RegExp(`^${rawExpression}$`);        
-    let resolve       = route.resolve;
-    let requestPath   = (request.path.length > 1) ? request.path.replace(/\/$/,'') : request.path ; // so we dont have endup in tailing /
-    let paramsRoute   = path.match(/\/:([\w-]+)/g) || [];
-    let valueExpr     = requestPath.match(expression) || [];
-    let isMatchPath   = valueExpr.length > 0;
-    let params = paramsRoute.reduce((acc, value, index)=>{
-      let key = value.replace('/:', '');
-      let val = valueExpr[index + 1];
-      return Object.assign({}, acc, { [key]: val} );
-    }, {});
-    (route.params = params);
-    return (method === request.method && requestPath.match(expression));    
-  });
-  if(matches) return ((request.params = matches['params']), matches['resolve']); 
-  return ':not-found';  
+var createServer = handler => {
+  let options, server;
+  if(isFn(handler)) (options = handler());
+  let port = options.port;
+  let type   = options.type || 'http';
+  let cert   = options.cert;  
+  if(type === "https" && ! cert) return 'require certificate';
+  if(type === "http") (server = require('http').createServer());
+  if(type === "https") (server = require('https').createServer(cert));
+  if(!server) return 'unknown type or no routes';
+  server.on('request', routesHandler(handler));
+  server.$options =  {port};
+  return server;
 }
 
-function isContentType(headers, type){
-  return (headers['content-type'] === type);
+var startServer = server => {
+  if(!server || !server.$options) return 'no server instnce';
+  let port = server.$options.port;
+  server.listen(port, _ => console.log('start listening on port', port));
+  return server;
 }
 
-function isObject(value) {
-  return typeof value === 'object';
-}
-
-function responseRequest(responseObject, response){
-  let {headers={}, body='', status=404} = responseObject;
-  if(isContentType(headers, "application/json") || isObject(body)){ (body = JSON.stringify(body)); };
-  response.writeHead(status, headers);  
-  response.end(body);
-}
-
-function requestHandler(changeHandler){
-  return function(request, response){
-    let data = [];
-    let pushBufferData =  (chunk)=> { if(request.method !== "GET" && chunk) (data.push(chunk)) }
-    let responseData = async () => {      
-      (parseUrl(request), parseBody(request, data));
-      
-      let defaultResolve = {
-        ':not-found': (request) => ({status: 404, headers:{}, body: ':not-found'})
-      };
-
-      let handler = await changeHandler(request);
-      let routes  = handler.routes;
-      let resolve = handler.resolve;      
-      resolve     = Object.assign(defaultResolve, resolve);      
-      let match   = matchRoutes(routes, request);
-      let command = resolve[match]; 
-      var object  = null;
-      
-      if(match && command) (object = await command(request, response));      
-      if(object) responseRequest(object, response);
-    }
-    request.on('data', pushBufferData).on('end', responseData );
-  }
-}
-
-// client side repl interaction
-var requestResponsePool = requestResponsePool || {};
-
-function requestPool(id, request, response){
-  if(!requestResponsePool) (requestResponsePool = {});
-  if(!requestResponsePool[id]) (requestResponsePool[id] = [{request, response}]);
-  return (requestResponsePool[id] = requestResponsePool[id].concat({request, response}), null);  
-}
-
-function responsePool(id, content){
-  requestResponsePool[id].forEach(({request, response}) => (response.write(content), response.end()));
-  return content;
-}
-
-
-
-module.exports = {  
-  destoryServer, 
-  createServer,
-  isContentType,
-  requestPool,
-  responsePool,
-}
+module.exports = {createServer, startServer};

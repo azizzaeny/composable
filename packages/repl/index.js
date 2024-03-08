@@ -17,7 +17,11 @@ function evalAtExport(resoveModule, exportObject){
   return (require.cache[require.resolve(resolveModule)]['exports'] = exportObject, true);
 }
 
-function reload(){
+function reload(resolveModule){
+  // todo: this should be evaluations engnine
+  var vm = require('vm');
+  var ctx =  vm.createContext(global); vm.runInContext( require('fs').readFileSync(resolveModules, 'utf-8'), ctx);
+  return ctx;
 }
 
 function recache(resolveModule){
@@ -26,5 +30,5 @@ function recache(resolveModule){
 }
 
 module.exports = {
-  fnName, evalInFn, evalAtExport, recache
+  fnName, evalInFn, evalAtExport, recache,
 }

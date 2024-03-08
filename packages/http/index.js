@@ -1,2 +1,2 @@
 var server = require('./server');
-module.exports = { server }
+module.exports = Object.assign({}, server);
