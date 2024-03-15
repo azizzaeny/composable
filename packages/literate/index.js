@@ -1,8 +1,8 @@
 var fs = require('fs');
 
-function extractCode(markdown){
+var extractCode = (markdown) =>{
   let regex = /```(\w+)((?:\s+\w+=[\w./]+)*)\s*([\s\S]*?)```/g;
-  function extractParams(paramsString){
+  let extractParams = (paramsString) => {
     if(paramsString){
       return paramsString.split(/\s+/).reduce((acc, params)=>{
         let [key, value] = params.split('=');
@@ -27,10 +27,7 @@ function extractCode(markdown){
   }, []);
 }
 
-// extractCode("##markdown `\`\`\js path=foo \n foo `\`\`\ ")
-
-
-function groupCodeByPath(extracted){
+var groupCodeByPath = (extracted) =>{
   return extracted.reduce((acc, value)=>{
     if(!acc[value['path']]){
       acc[value['path']] = value['code'];
@@ -42,7 +39,6 @@ function groupCodeByPath(extracted){
 }
 
 var readFiles = (files) => files.map((file) => fs.readFileSync(file, 'utf8')).join('\n');
-
 
 var tangle = (files) =>{
   let bundle = readFiles(files);
@@ -61,10 +57,32 @@ var tangleCode = bundle => {
   return `tangle files: #${writeOut.length} ${writeOut.join(' ')}`;
 }
 
-module.exports = {tangle, tangleCode, extractCode}
+// example eval code and from files, 
+var evalCode = (code) => {
+  let vm = require('vm');
+  let ctx =  vm.createContext(global);
+  return (
+    vm.runInContext(
+      code,
+      Object.assign(ctx, {require, module, console })
+    )
+  );
+}
+
+var evalFromFiles = (files)=> {
+  let blocks = extractCode(readFiles(files));
+  let takeHasEvaluate = blocks.filter(b => b.evaluate);
+  let codes = takeHasEvaluate.reduce((res, val) => res.concat(val.code), '');
+  return evalCode(codes);
+}
+
+module.exports = {
+  extractCode,
+  readFiles,
+  tangle,
+  tangleCode,
+}
 
 /*
 var e = extractCode("##markdown `\`\`\js path=foo \n foo `\`\`\ ")
-groupCodeByPath(e)
-
 */
