@@ -1,5 +1,5 @@
 ## Composable  
-        
+TODO: {WIP}        
 Collection of functions that can be composed to solve programming problem.  
 Provide reusable toolkit, General purpose library Functional Programming, Pattern & side-effects modules, Data structure algorithm
 
@@ -10,7 +10,7 @@ Provide reusable toolkit, General purpose library Functional Programming, Patter
 
 | Status      | Packages                    | Descriptions                                                                     |
 |-------------|-----------------------------|--------------------------------------------------------------------------------- |
-| development | [@zaeny/clojure.core](./packages/clojure.core/readme.md)  | translating the clojure core functions into javascript functions |
+| development | [@zaeny/clojure.core](https://github.com/azizzaeny/clojure.core)  | translating the clojure core functions into javascript functions |
 | developemnt | [@zaeny/hiccup](./packages/hiccup/readme.md) | ui building with hiccup |
 | development | [@zaeny/aof](./packages/aof/readme.md) | efficient appendonly log json |
 | development | [@zaeny/mql](./packages/mql/readme.md) | Mongodb Query Langauge in memory |
