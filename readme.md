@@ -13,6 +13,7 @@ Provide reusable toolkit, General purpose library Functional Programming, Patter
 |-------------|-----------------------------|--------------------------------------------------------------------------------- |
 | development | [@zaeny/clojure.core](https://github.com/azizzaeny/clojure.core)  | Translating the clojure core functions into javascript functions |
 | development | [@zaeny/literate](https://github.com/azizzaeny/literate)  | Literate programming, extracting code markdown |
+| development | [@zaeny/env](https://github.com/azizzaeny/env)  | Read .env files |
 | developemnt | [@zaeny/hiccup](./packages/hiccup/readme.md) | ui building with hiccup |
 | development | [@zaeny/aof](./packages/aof/readme.md) | efficient appendonly log json |
 | development | [@zaeny/mql](./packages/mql/readme.md) | Mongodb Query Langauge in memory |
