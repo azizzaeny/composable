@@ -6,20 +6,24 @@ Provide reusable toolkit, General purpose library Functional Programming, Patter
 
     Composable is to make or form by combining things.   
     
+TODO: {WIP}        
+
+### Workflow
+first we create snippets, if it good enough, and not have bugs or issue,  we level it up into a package
+
+### Snippets
+| Status      | Snippets                    | Descriptions                                                                     |
+| developemnt | [hiccup](./snippets/hiccup/readme.md) | UI building with hiccup |
+| development | [aof](./snippets/aof/readme.md) | Efficient appendonly log json |
+| development | [mql](./snippets/mql/readme.md) | Mongodb Query Langauge in memory |
+| development | [http](./snippets/http/readme.md) | Basic utility setup nodejs http server |
 
 ### Packages
-
 | Status      | Packages                    | Descriptions                                                                     |
 |-------------|-----------------------------|--------------------------------------------------------------------------------- |
 | development | [@zaeny/clojure.core](https://github.com/azizzaeny/clojure.core)  | Translating the clojure core functions into javascript functions |
 | development | [@zaeny/literate](https://github.com/azizzaeny/literate)  | Literate programming, extracting code markdown |
 | development | [@zaeny/env](https://github.com/azizzaeny/env)  | Read .env files |
-| developemnt | [@zaeny/hiccup](./packages/hiccup/readme.md) | ui building with hiccup |
-| development | [@zaeny/aof](./packages/aof/readme.md) | efficient appendonly log json |
-| development | [@zaeny/mql](./packages/mql/readme.md) | Mongodb Query Langauge in memory |
-| development | [@zaeny/http](./packages/http/readme.md) | basic utility setup nodejs http server |
-
-TODO: {WIP}        
 
 ### Contribute
-
+TODO: {WIP}
