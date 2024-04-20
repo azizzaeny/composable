@@ -8,8 +8,7 @@ Provide reusable toolkit, General purpose library Functional Programming, Patter
     
 TODO: {WIP}        
 
-### Workflow
-first we create snippets, if it good enough, and not have bugs or issue,  we level it up into a package
+### Getting Started 
 
 ### Snippets
 
@@ -21,11 +20,16 @@ first we create snippets, if it good enough, and not have bugs or issue,  we lev
 | development | [http](./snippets/http/readme.md) | Basic utility setup nodejs http server |
 
 ### Packages
+
 | Status      | Packages                    | Descriptions                                                                     |
 |-------------|-----------------------------|--------------------------------------------------------------------------------- |
 | development | [@zaeny/clojure.core](https://github.com/azizzaeny/clojure.core)  | Translating the clojure core functions into javascript functions |
 | development | [@zaeny/literate](https://github.com/azizzaeny/literate)  | Literate programming, extracting code markdown |
 | development | [@zaeny/env](https://github.com/azizzaeny/env)  | Read .env files |
+
+### Workflow
+
+first we create snippets, if it good enough, and not have bugs or issue,  we level it up into a package
 
 ### Contribute
 TODO: {WIP}
