@@ -1,17 +1,3 @@
-Simple UI Components Vdom represented in hiccups
-
-### TODO
-Create element from hiccup nodes   
-
-1. create element or text node
-2. create attributes
-3. cretae children recursiveley
-
-TODO: 
-- create rendere as text of html, instead of direct DOM
-
-
-```js path=index.js
 
 var createElement = (hnode) => {
   if(typeof hnode === "string") return document.createTextNode(hnode);
@@ -78,8 +64,3 @@ var toHiccup = (htmlString) => {
   const root = doc.body.firstChild;
   return parseNode(root);
 }
-
-```
-
-
-
