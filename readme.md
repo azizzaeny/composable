@@ -12,7 +12,9 @@ TODO: {WIP}
 first we create snippets, if it good enough, and not have bugs or issue,  we level it up into a package
 
 ### Snippets
+
 | Status      | Snippets                    | Descriptions                                                                     |
+|-------------|-----------------------------|--------------------------------------------------------------------------------- |
 | developemnt | [hiccup](./snippets/hiccup/readme.md) | UI building with hiccup |
 | development | [aof](./snippets/aof/readme.md) | Efficient appendonly log json |
 | development | [mql](./snippets/mql/readme.md) | Mongodb Query Langauge in memory |
