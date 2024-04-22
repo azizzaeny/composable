@@ -63,7 +63,7 @@ var defaults = (request) => headers(response(indexHtml), {"Content-Type": "text/
 var routes = {
   ["GET /"] : defaults,
   ["GET /_dev/update"]: responseBuffer,
-  ["GET /client.js"]: responseClientRepl
+  ["GET /client.js"]: clientRepl
 };
 
 var middleware = (request) => {
@@ -86,6 +86,7 @@ var main = () => {
 then type `main()` to start the server, then at client side browser console, 
 type `dev()` to start client or `howTo()` to getting more information  
 
+to start sending changes to client, in the repl type `responseWith("console.log(100);");`
 ### implementation
 ```js
 /*

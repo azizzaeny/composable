@@ -40,7 +40,6 @@ parseCode = (code, es5) => {
 generateCode = (ast) => {
   return escodegen.generate(ast);
 }
-
 nodeType = {
   'VariableDeclaration': (node)=>{
     return {
@@ -74,7 +73,6 @@ nodeType = {
     }
   }
 }
-
 traverse  = (acc, node, index) => {
   if(nodeType[node.type]){
     let transform = nodeType[node.type](node);
@@ -83,7 +81,6 @@ traverse  = (acc, node, index) => {
     return acc.concat(node);
   }
 }
-
 transformCode = (ast) => {
   return {
     ...ast,
@@ -92,11 +89,9 @@ transformCode = (ast) => {
     ecmaVersion: "latest"
   }
 }
-
 generateSafeCode = (code, context) => {
   return generateCode(transformCode(parseCode(code)));
 }
-
 evalJs = (res) => {
   try{
     let out = eval(generateSafeCode(res));
@@ -106,9 +101,7 @@ evalJs = (res) => {
     return Promise.reject(e);
   }
 }
-
 requestPoll = (url) => fetch(url).then(res => res.text()).then(evalJs).catch(err => console.error(err)).finally((res) => (setTimeout(()=> requestPoll(url, 100), console.log(res)))) ;
-
 dev = () => {
   Promise.all([
     import('https://cdn.jsdelivr.net/npm/esprima@4.0.1/+esm').then(assignVar(window, "esprima")),
