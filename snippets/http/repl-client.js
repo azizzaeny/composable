@@ -26,7 +26,7 @@ var responseWith = (body) => (
   clientRequest = []
 );
 
-var clientReplJs = (hostUri) => `
+var clientReplJs = () => `
 esprima = window.esprima || {} ;
 escodegen = window.escodegen || {};
 howTo = () => console.log('usage: interactive client development with repl, first initiate dependencies and start pulling by typing  dev() at console');
@@ -103,18 +103,18 @@ evalJs = (res) => {
   }
 }
 requestPoll = (url) => fetch(url).then(res => res.text()).then(evalJs).catch(err => console.error(err)).finally((res) => (setTimeout(()=> requestPoll(url, 100), console.log(res)))) ;
-dev = () => {
+dev = (hostUri) => {
   Promise.all([
     import('https://cdn.jsdelivr.net/npm/esprima@4.0.1/+esm').then(assignVar(window, "esprima")),
     import('https://cdn.jsdelivr.net/npm/escodegen@2.1.0/+esm').then(assignVar(window, "escodegen"))
-  ]).then(() => requestPoll("${hostUri}"));
+  ]).then(() => requestPoll(hostUri));
   return 'evaluated';
 }
 `;
 
-var clientRepl = (hostUri) => (req, res) => ({
+var clientRepl = (req, res) => ({
   status: 200,
-  body: clientReplJs(hostUri),
+  body: clientReplJs(),
   headers: merge(cors, {"Content-Type": 'application/javascript'})
 });
 
