@@ -64,7 +64,7 @@ var defaults = (request) => headers(response(indexHtml), {"Content-Type": "text/
 var routes = {
   ["GET /"] : defaults,
   ["GET /_dev/update"]: responseBuffer,
-  ["GET /client.js"]: clientRepl('http://localhost:8081/_dev/update')
+  ["GET /client.js"]: clientRepl
 };
 
 var middleware = (req, res) => {
