@@ -53,12 +53,12 @@ var responseWrite = (ctx, response) => (ctx) ? (
   response.end()
 ) : (null);
 
-var createServer = (name, ctx) => merge(
+var createServer = (ctx, name="server") => merge(
   ctx,
   { [name] : require('http').createServer((request, response) => responseWrite(ctx.handler(request, response), response)) }
 );
 
-var startServer = (name, ctx) => (
+var startServer = (ctx, name="server") => (
   getIn(ctx, [name, "listen"]) ? ( ctx[name].listen(ctx.port, ctx.onListen), ctx) : ctx
 );
 

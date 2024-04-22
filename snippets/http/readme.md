@@ -25,6 +25,25 @@ addDeps(deps.http);
 addDeps(deps.replClient);
 ```
 
+running it by
+
+```js
+var state = {};
+var middleware = () => response('hello');
+
+var main = () => {
+  state = startServer(
+    createServer({
+      port: 8081,      
+      handler: (req, res) => middleware(req, res)
+    })        
+  );
+  return state
+}
+
+main();
+
+```
 ### implementation
 ```js
 /*
@@ -85,12 +104,12 @@ var responseWrite = (ctx, response) => (ctx) ? (
   response.end()
 ) : (null);
 
-var createServer = (name, ctx) => merge(
+var createServer = (ctx, name="server") => merge(
   ctx,
   { [name] : require('http').createServer((request, response) => responseWrite(ctx.handler(request, response), response)) }
 );
 
-var startServer = (name, ctx) => (
+var startServer = (ctx, name="server") => (
   getIn(ctx, [name, "listen"]) ? ( ctx[name].listen(ctx.port, ctx.onListen), ctx) : ctx
 );
 
