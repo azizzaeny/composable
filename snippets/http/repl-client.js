@@ -1,4 +1,10 @@
 /*util*/
+var merge = (...args) => {
+  let [obj1, obj2] = args;
+  if(args.length === 1) return (obj1) => merge(obj1, obj2);
+  return Object.assign({}, ...args);
+}
+
 var responseWrite = (ctx, response) => (ctx) ? (
   response.writeHead(ctx.status, ctx.headers),
   response.write(ctx.body),
@@ -15,7 +21,7 @@ var cors = {
 
 var responseBuffer = (request, response) => (clientRequest.push({request, response}), null);
 var responseWith = (body) => (
-  clientRequest.forEach(({response}) => responseWrite({status: 200, headers: {}, body }, response)),
+  clientRequest.forEach(({response}) => responseWrite({status: 200, headers: cors, body }, response)),
   clientRequest = []
 );
 
@@ -111,3 +117,9 @@ dev = () => {
   return 'evaluated';
 }
 `;
+
+var responseClientRepl = (hostUri) => {
+  status: 200,
+  body: clientReplJs(hostUri),
+  headers: merge(cors, {"Content-Type": 'application/javascrpt'})
+}
