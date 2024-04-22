@@ -121,5 +121,5 @@ dev = () => {
 var responseClientRepl = (hostUri) => ({
   status: 200,
   body: clientReplJs(hostUri),
-  headers: merge(cors, {"Content-Type": 'application/javascrpt'})
+  headers: merge(cors, {"Content-Type": 'application/javascript'})
 })

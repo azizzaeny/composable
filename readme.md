@@ -9,6 +9,32 @@ Provide reusable toolkit, General purpose library Functional Programming, Patter
 TODO: {WIP}        
 
 ### Getting Started 
+all snippets available to downlaod or fetched via cdn
+
+```javascript
+
+var evaluate= (...args) => {
+  let [vm=require('vm'), ctx=global, addCtx={console, require, module}] = args;
+  return (res) => {
+    let context = vm.createContext(ctx);
+    return vm.runInContext(res, Object.assign(context, addCtx));
+  }
+}
+
+var addDeps = url => fetch(url).then(res => res.text()).then(evaluate());
+
+```
+
+usage : 
+
+```js
+var deps = {
+  http : "https://cdn.jsdelivr.net/gh/azizzaeny/composable@main/snippets/http/util.js",
+  replClient: "https://cdn.jsdelivr.net/gh/azizzaeny/composable@main/snippets/http/repl-client.js",
+}
+
+addDeps(deps.http);
+```
 
 ### Snippets
 
