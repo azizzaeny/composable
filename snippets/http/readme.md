@@ -16,10 +16,12 @@ var evalCode= (...args) => {
 var addDeps = url => fetch(url).then(res => res.text()).then(evalCode());
 
 var deps = {
-  http : "https://cdn.jsdelivr.net/gh/azizzaeny/composable@main/snippets/http/util.js"
+  http : "https://cdn.jsdelivr.net/gh/azizzaeny/composable@main/snippets/http/util.js",
+  replClient: "https://cdn.jsdelivr.net/gh/azizzaeny/composable@main/snippets/http/repl-client.js",
 }
 
 addDeps(deps.http);
+addDeps(deps.replClient);
 ```
 
 ### implementation
