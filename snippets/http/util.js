@@ -70,6 +70,7 @@ var notFound = (body) => ({ status: 404, headers:{}, body });
 var status = (resp, code)  => assoc(resp, "status", status);
 var header = (resp, header, value) => assocIn(resp, ["headers", header], value);
 var headers = (resp, headers) => merge(resp, headers);
+
 // TODO: find file automatic haders content-type mime-type and add content-length
 // var findFile = (resp, file, headers) => ({ status: 200, headers: {}})
 
