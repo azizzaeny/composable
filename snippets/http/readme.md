@@ -17,8 +17,8 @@ var evalCode= (...args) => {
 var addDeps = url => fetch(url).then(res => res.text()).then(evalCode());
 
 var deps = {
-  http : "https://cdn.jsdelivr.net/gh/azizzaeny/composable@45fce56fcd9de09ca6bd9c6f4cc5bc5c0661e304/snippets/http/util.js",
-  replClient: "https://cdn.jsdelivr.net/gh/azizzaeny/composable@584cc7493c596983b39b8ed2351cfb8bbe26245c/snippets/http/repl-client.js",
+  http : "https://cdn.jsdelivr.net/gh/azizzaeny/composable@5fa60236a1ecc585cca4284ab815f97359d973af/snippets/http/util.js",
+  replClient: "https://cdn.jsdelivr.net/gh/azizzaeny/composable@5fa60236a1ecc585cca4284ab815f97359d973af/snippets/http/repl-client.js",
 }
 
 addDeps(deps.http);
