@@ -40,7 +40,7 @@ var render = (container, hnode) =>{
   return true;
 }
 
-var toString(hnode) => {
+var toString = (hnode) => {
   //TODO
 }
 
