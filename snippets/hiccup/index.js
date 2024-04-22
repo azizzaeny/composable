@@ -64,3 +64,5 @@ var toHiccup = (htmlString) => {
   const root = doc.body.firstChild;
   return parseNode(root);
 }
+
+export default {toHiccup, toString, render}
