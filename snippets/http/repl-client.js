@@ -118,8 +118,8 @@ dev = () => {
 }
 `;
 
-var responseClientRepl = (hostUri) => {
+var responseClientRepl = (hostUri) => ({
   status: 200,
   body: clientReplJs(hostUri),
   headers: merge(cors, {"Content-Type": 'application/javascrpt'})
-}
+})

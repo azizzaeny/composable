@@ -5,6 +5,7 @@ type `node`
 then 
 
 ```js
+
 var evalCode= (...args) => {
   let [vm=require('vm'), ctx=global, addCtx={console, require, module}] = args;
   return (res) => {
