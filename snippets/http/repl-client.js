@@ -20,6 +20,7 @@ var cors = {
 };
 
 var responseBuffer = (request, response) => (clientRequest.push({request, response}), null);
+
 var responseWith = (body) => (
   clientRequest.forEach(({response}) => responseWrite({status: 200, headers: cors, body }, response)),
   clientRequest = []

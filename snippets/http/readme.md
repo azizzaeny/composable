@@ -18,11 +18,11 @@ var addDeps = url => fetch(url).then(res => res.text()).then(evalCode());
 
 var deps = {
   http : "https://cdn.jsdelivr.net/gh/azizzaeny/composable@5fa60236a1ecc585cca4284ab815f97359d973af/snippets/http/util.js",
-  replClient: "https://cdn.jsdelivr.net/gh/azizzaeny/composable@44b01b8dfaaedd5a6f4020dc85591d8253c07530/snippets/http/repl-client.js",
+  replClient: "https://cdn.jsdelivr.net/gh/azizzaeny/composable@80512d2163a6cca9c509a3a30ccf2ae87a7e14b6/snippets/http/repl-client.js",
 }
 
-addDeps(deps.http);
-addDeps(deps.replClient);
+Object.values(deps).forEach(addDeps);
+
 ```
 
 running it by
@@ -64,12 +64,12 @@ var defaults = (request) => headers(response(indexHtml), {"Content-Type": "text/
 var routes = {
   ["GET /"] : defaults,
   ["GET /_dev/update"]: responseBuffer,
-  ["GET /client.js"]: clientRepl('http://localhost/_dev/update')
+  ["GET /client.js"]: clientRepl('http://localhost:8081/_dev/update')
 };
 
-var middleware = (request) => {
-  let resolve = routes[request.method+" "+request.url];
-  if(resolve) return resolve(request);
+var middleware = (req, res) => {
+  let resolve = routes[`${req.method} ${req.url}`];
+  if(resolve) return resolve(req, res);
   return notFound('');
 }
 
