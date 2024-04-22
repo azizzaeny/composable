@@ -18,7 +18,7 @@ var addDeps = url => fetch(url).then(res => res.text()).then(evalCode());
 
 var deps = {
   http : "https://cdn.jsdelivr.net/gh/azizzaeny/composable@5fa60236a1ecc585cca4284ab815f97359d973af/snippets/http/util.js",
-  replClient: "https://cdn.jsdelivr.net/gh/azizzaeny/composable@5fa60236a1ecc585cca4284ab815f97359d973af/snippets/http/repl-client.js",
+  replClient: "https://cdn.jsdelivr.net/gh/azizzaeny/composable@44b01b8dfaaedd5a6f4020dc85591d8253c07530/snippets/http/repl-client.js",
 }
 
 addDeps(deps.http);
@@ -47,6 +47,7 @@ the type `main()`
 working with replClient 
 
 ```js
+
 var state = {}
 
 var indexHtml = `
@@ -63,7 +64,7 @@ var defaults = (request) => headers(response(indexHtml), {"Content-Type": "text/
 var routes = {
   ["GET /"] : defaults,
   ["GET /_dev/update"]: responseBuffer,
-  ["GET /client.js"]: clientRepl
+  ["GET /client.js"]: clientRepl('http://localhost/_dev/update')
 };
 
 var middleware = (request) => {
@@ -87,6 +88,7 @@ then type `main()` to start the server, then at client side browser console,
 type `dev()` to start client or `howTo()` to getting more information  
 
 to start sending changes to client, in the repl type `responseWith("console.log(100);");`
+
 ### implementation
 ```js
 /*

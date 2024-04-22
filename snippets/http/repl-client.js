@@ -106,7 +106,7 @@ dev = () => {
   Promise.all([
     import('https://cdn.jsdelivr.net/npm/esprima@4.0.1/+esm').then(assignVar(window, "esprima")),
     import('https://cdn.jsdelivr.net/npm/escodegen@2.1.0/+esm').then(assignVar(window, "escodegen"))
-  ]).then(() => requestPoll(${hostUri}));
+  ]).then(() => requestPoll("${hostUri}"));
   return 'evaluated';
 }
 `;
