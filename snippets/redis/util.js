@@ -62,6 +62,7 @@ var flatten =(...args) => {
 }
 var pop = (stack) => stack.slice(0, -1);
 var peek = (stack) => stack[stack.length - 1];
+var identity = (x) => x;
 
 
 var stringify = (data) => {
@@ -187,8 +188,7 @@ var reader = (...args) => {
       let lastId = data[data.length -1][0];
       callback(data);
       return (!closed ? $xread(client, concat(pop(commands), lastId)) : null);
-    });
-      // .catch( err => (console.log(err), (!closed ? $xread(client, commands) : null)));    
+    }).catch(err => (console.log(err), (!closed ? $xread(client, commands) : null)));             
   };
   
   var blockType = {
@@ -205,7 +205,7 @@ var reader = (...args) => {
   
   // initiate
   client.connect()
-    .then((c)=> (commands['xreadgroup'] ? command(['xgroup', commands[1], commands[2], '$']).catch((err)=> console.log(err, 'error creating group')) : c ))  
+    .then((c)=> (commands[0] === 'xreadgroup' ? command(['xgroup', commands[1], commands[2], '$'], client).catch(identity) : c ))  
     .then(() => (!closed ? processor(client, commands) : null));
   
   return {
@@ -225,7 +225,8 @@ var connectRedis = (ctx, name="redis") => {
   let client = getIn(ctx, [name]);
   let onError = ctx.onError || ((err) => console.log('Redis error', err));  
   if(!client) return (console.log("cannot connect to redis"), ctx);
-  return (client.on('error', onError), client.connect(), ctx);
+  client.on('error', onError);
+  return client.connect();   
 }
 
 var disconnectRedis = (ctx, name="redis") => {
@@ -257,11 +258,12 @@ var getClientRedis = (ctx, name="redis") => () => getIn(ctx, [name]);
 */
 
 /*
-  process.env.REDIS_URL ="redis://:redispass@51.255.87.159:11001"
-  var ctx = connectRedis(createRedis({ url: process.env.REDIS_URL }));
-  var client = getClientRedis(ctx);  
 
-  block(['xreadgroup', 'stream', 'group1', 'consumer1', '100', '0', '0'], (data)=> console.log(data), client);
+  process.env.REDIS_URL ="redis://:redispass@51.255.87.159:11001"
+  var ctx = createRedis({ url: process.env.REDIS_URL });
+  var client = getClientRedis(ctx);  
+  connectRedis(ctx).then(()=> console.log('redis connected'));
+ 
   reader(['xreadgroup', 'stream', 'group1', 'consumer1', '100', '0', '0'], (data)=> console.log(data), client);
   reader(['xread', 'stream', '100', '0', '0'], (data)=> console.log(data), client);
   
