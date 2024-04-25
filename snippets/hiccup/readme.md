@@ -1,4 +1,17 @@
-Simple UI Components Vdom represented in hiccups
+Simple UI Components Vdom represented in hiccups, intended to be loaded in browser, using es6 import
+
+### Files
+- [index.js](./indx.js)
+
+### Usage
+
+```js
+var component = ["div", "container", ["div", {class: "w-10"}, "look iam hiccup"]];
+
+render(document.body,  component);
+toHiccup('<div>hai</div>');
+
+```
 
 ### TODO
 Create element from hiccup nodes   
