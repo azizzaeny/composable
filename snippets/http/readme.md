@@ -1,4 +1,7 @@
 Translate incomin http request into data strcuture like ring in clojure
+### Files
+- [util.js](./util.js)
+- [repl-client.js](./repl-client.js)
 
 ### Usage
 type `node`
@@ -17,8 +20,8 @@ var evalCode= (...args) => {
 var addDeps = url => fetch(url).then(res => res.text()).then(evalCode());
 
 var deps = {
-  http : "https://cdn.jsdelivr.net/gh/azizzaeny/composable@5fa60236a1ecc585cca4284ab815f97359d973af/snippets/http/util.js",
-  replClient: "https://cdn.jsdelivr.net/gh/azizzaeny/composable@80512d2163a6cca9c509a3a30ccf2ae87a7e14b6/snippets/http/repl-client.js",
+  http : "https://cdn.jsdelivr.net/gh/azizzaeny/composable@main/snippets/http/util.js",
+  replClient: "https://cdn.jsdelivr.net/gh/azizzaeny/composable@main/snippets/http/repl-client.js",
 }
 
 Object.values(deps).forEach(addDeps);

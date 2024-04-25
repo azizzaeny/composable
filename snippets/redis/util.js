@@ -262,21 +262,5 @@ var getClient = (ctx, name="redis") => () => getIn(ctx, [name]);
   reader(['xreadgroup', 'stream', 'group1', 'consumer1', '100', '0', '0'], (data)=> console.log(data), client);
   reader(['xread', 'stream', '100', '0', '0'], (data)=> console.log(data), client);
   
-  command(['xadd', 'stream', {data: '1'}], client)
-  
-  c.close();
-  
-  var cmd = ['xreadgroup', 'stream', 'group1', 'consumer1', '0' , '1', ];
-
-  transformCommand(cmd);
-  command(['xgroup', cmd[1], cmd[2]], client).then(console.log);
-  command(cmd, client).then(console.log);
-  
-  command(['xadd', 'stream', {data: '1'}], client)
-  command(['json.get', 'foo', '$.data'], client).then(console.log)
-  command(['json.set', 'foo', {data: 1}], client).then(console.log);
-  command(['json.mget', 'foo', 'bar', '$'], client).then(console.log);
-
-  command(['json.get', 'foo'])(client).then(console.log)
-  client().sendCommand(['json.get', 'foo', '$']).then(console.log)  
+  command(['xadd', 'stream', {data: '1'}], client)  
 */

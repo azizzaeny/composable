@@ -1,5 +1,9 @@
-functional programming utility dealing with redis
+Functional programming utility dealing with redis
 
+### Files
+- [util.js](./util.js)
+
+### Usage
 ```javascript
 
 process.env.REDIS_URL ="redis://user:pass@127.0.0.1:6679";
@@ -19,6 +23,7 @@ command(['json.get', 'foo', '$.data'], client).then(console.log)
 command(['json.set', 'foo', {data: 1}], client).then(console.log);
 command(['json.mget', 'foo', 'bar', '$'], client).then(console.log);
 
-
+var streamRead = reader(['xread', 'stream', '100', '0', '0'], (data)=> console.log(data), client);
+streamRead.close(); // to close blocking
 
 ```
