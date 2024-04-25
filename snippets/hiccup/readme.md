@@ -1,7 +1,7 @@
 Simple UI Components Vdom represented in hiccups, intended to be loaded in browser, using es6 import
 
 ### Files
-- [index.js](./indx.js)
+- [index.js](./index.js)
 
 ### Usage
 

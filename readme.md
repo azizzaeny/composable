@@ -51,8 +51,8 @@ Promise.all([
 | developemnt | [hiccup](./snippets/hiccup/readme.md) | UI building with hiccup |
 | development | [http](./snippets/http/readme.md) | Basic utility setup nodejs http server |
 | development | [redis](./snippets/redis/readme.md) | Functional programming utility dealing with redis |
-| development | (wip)[aof](./snippets/aof/readme.md) | Efficient appendonly log json |
-| development | (wip)[mql](./snippets/mql/readme.md) | Mongodb Query Langauge in memory |
+| development | (wip) [aof](./snippets/aof/readme.md) | Efficient appendonly log json |
+| development | (wip) [mql](./snippets/mql/readme.md) | Mongodb Query Langauge in memory |
 
 ### Packages
 
