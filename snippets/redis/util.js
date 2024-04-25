@@ -112,7 +112,7 @@ var commandType = {
     return concat(['xadd', key, '*'], parseData(data));
   },
   'xread': (args) => {
-    let [_, key, count="1", start="0", timeout="0"] = args;
+    let [_, key, count="1", timeout="0", start="0" ] = args;
     return ['xread', 'count', count, 'block', timeout, 'streams', key, start];
   },
   'xack': (args) => {
@@ -124,7 +124,7 @@ var commandType = {
     return ['xgroup', 'create', key, group, target, 'MKSTREAM']
   },
   'xreadgroup': (args) => {
-    let [_, key, group, consumer, start=">", count="1", timeout="0"  ] = args;
+    let [_, key, group, consumer, count="1", timeout="0", start=">"  ] = args;
     return [
       'xreadgroup', 'group', group, consumer,
        'count', count, 'block', timeout, 'streams', key, start
@@ -151,6 +151,7 @@ var parseResult = (type) => (result) => {
   return result;
 };
 
+// todo: add invalid commands validator
 var command = (...args) =>{
   let [commands, client] = args;
   if (args.length === 1) return (client) => command(commands, client);
@@ -160,42 +161,52 @@ var command = (...args) =>{
   return client.sendCommand(adaptCommand).then(parseResult(type));
 }
 
-
-var block = (...args) => {
+// todo: add invalid commands validator
+var reader = (...args) => {
   let [commands, callback, currentClient] = args;
   if (args.length === 1) return (callback, currentClient) => block(commands, callback, currentClient);
   if (args.length === 2) return (currentClient) => block(commands, callback, currentClient);
   let type = lowerCase(first(commands));
-  if(isFn(currentClient)) (currentClient = currentClient());
-  let client = currentClient.duplicate();
   let closed = false;
-  // todo: fist starting data
-  let $xreadgroup = (client) =>{
-    console.log('called');
+  
+  let $xreadgroup = (client, commands) =>{    
     return command(commands, client).then((streamData)=>{
-      console.log(streamData);
-      if(!streamData) return (!closed ? $xreadgroup(client) : null);
+      if(!streamData) return (!closed ? $xreadgroup(client, concat(pop(commands), '>')) : null);
       let [[_, data]] = streamData;
-      if(!data || data.length === 0) return (!closed ? $xreadgroup(client) : null);
-      callback(data) //TODO: add ack functions
-      return (!closed ? $xreadgroup(client) : null)
-    }).catch((err) => (console.log(err),(!closed ? $xreadgroup(client) : null)))
+      if(!data || data.length === 0) return (!closed ? $xreadgroup(client, concat(pop(commands), '>')) : null);
+      callback(data) // TODO: add ack functions
+      return (!closed ? $xreadgroup(client, concat(pop(commands), '>')) : null)
+    }).catch((err) => (console.log(err),(!closed ? $xreadgroup(client, concat(pop(commands), '>')) : null)))
   }
 
-  var blockType = {
-    'xreadgroup': $xreadgroup,
-    // 'xread': null,  
-    // TODO: more blocking commands
+  var $xread = (client, commands) => {
+    return command(commands, client).then((streamData)=>{
+      if(!streamData) return (!closed ? $xread(client, commands) : null)
+      let [[_, data]] = streamData;
+      if(!data || data.length === 0) return (!closed ? $xread(client, commands) : null);
+      let lastId = data[data.length -1][0];
+      callback(data);
+      return (!closed ? $xread(client, concat(pop(commands), lastId)) : null);
+    });
+      // .catch( err => (console.log(err), (!closed ? $xread(client, commands) : null)));    
   };
   
-  let processor = blockType[type];
+  var blockType = {
+    'xreadgroup': $xreadgroup,
+    'xread': $xread,  
+    // TODO: more blocking commands
+  };
 
-  console.log(processor);
+  let processor = blockType[type];
+  if(!processor) return console.log('unsupported block type');  
+
+  if(isFn(currentClient)) (currentClient = currentClient());  
+  let client = currentClient.duplicate();
   
   // initiate
   client.connect()
-    .then((c)=> (commands['xreadgroup'] ? command(['xgroup', commands[1], commands[2], '$']).catch((err)=> console.log(err, 'error creating')) : c))  
-    .then(() => (!closed ? processor(client) : null));
+    .then((c)=> (commands['xreadgroup'] ? command(['xgroup', commands[1], commands[2], '$']).catch((err)=> console.log(err, 'error creating group')) : c ))  
+    .then(() => (!closed ? processor(client, commands) : null));
   
   return {
     close : () => {
@@ -223,7 +234,7 @@ var disconnectRedis = (ctx, name="redis") => {
   return (client.disconnect(), ctx[name]=null, ctx);
 }
 
-var clientRedis = (ctx, name="redis") => () => getIn(ctx, [name]);
+var getClientRedis = (ctx, name="redis") => () => getIn(ctx, [name]);
 
 
 /*
@@ -245,25 +256,17 @@ var clientRedis = (ctx, name="redis") => () => getIn(ctx, [name]);
   transformCommand(['xreadgroup','key', 'group', 'consumer'])
 */
 
-
 /*
-
-
-  var ftParse = (res) => {
-  let len = parseInt(first(res));
-  let found = isGt(len, 0);
-  let data = rest(res);
-  return {len, found, data};
-  }
-*/
-
-/*
-
   process.env.REDIS_URL ="redis://:redispass@51.255.87.159:11001"
   var ctx = connectRedis(createRedis({ url: process.env.REDIS_URL }));
-  var client = clientRedis(ctx);  
-  var c = block(['xreadgroup', 'stream', 'group1', 'consumer1', '0'], (data)=> console.log(data), client);
+  var client = getClientRedis(ctx);  
 
+  block(['xreadgroup', 'stream', 'group1', 'consumer1', '100', '0', '0'], (data)=> console.log(data), client);
+  reader(['xreadgroup', 'stream', 'group1', 'consumer1', '100', '0', '0'], (data)=> console.log(data), client);
+  reader(['xread', 'stream', '100', '0', '0'], (data)=> console.log(data), client);
+  
+  command(['xadd', 'stream', {data: '1'}], client)
+  
   c.close();
   
   var cmd = ['xreadgroup', 'stream', 'group1', 'consumer1', '0' , '1', ];
