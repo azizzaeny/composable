@@ -121,6 +121,10 @@ var startServer = (ctx, name="server") => (
   getIn(ctx, [name, "listen"]) ? ( ctx[name].listen(ctx.port, ctx.onListen), ctx) : ctx
 );
 
+var stopServer = (ctx, name="server") => {
+  return getIn(ctx, [name, "close"]) ? ( ctx[name].close(), (ctx[name] = null) ) : ctx;
+}
+
 var response = (body) => ({ status: 200, body, headers: {}})
 var redirect = (url) => ({status: 302, headers: {"Location": url}, body: ""});
 var created = (url) => ({ status: 201, headers: {"Location": url}, body: ""});

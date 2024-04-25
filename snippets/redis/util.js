@@ -1,0 +1,282 @@
+/* imported from @zaeny/clojure.core */
+var first = (seq) => seq[0];
+var second = ([_, x]) => x;
+var map = (...args) =>{
+  let [fn, arr] = args;
+  if (args.length === 1) {
+    return coll => map(fn, coll);
+  }
+  return arr.map(fn);
+}
+var concat=(...args)=>{
+  let [arr1, ...rest] = args;
+  if (args.length === 1) {
+    return (...rest) => concat(arr1, ...rest);
+  }
+  return arr1.concat(...rest)
+}
+var merge = (...args) => {
+  let [obj1, obj2] = args;
+  if(args.length === 1) return (obj1) => merge(obj1, obj2);
+  return Object.assign({}, ...args);
+}
+var getIn =(...args) =>{
+  let [coll, keys] = args;
+  if(args.length === 2){
+    return keys.reduce((acc, key) =>{
+      if(acc && typeof acc === "object" && key in acc){
+        return acc[key];
+      }else{
+        return undefined;
+      }
+    }, coll);
+  }else{
+    return (keysA) => getIn(coll, keysA);
+  }
+}
+var isGt = (a, b) => a > b;
+var rest = (seq) => seq.slice(1);
+var isFn = (value) => typeof value === 'function';
+var isString = (value) => typeof value === 'string';
+var isObject = (value) => typeof value === 'object' && value !== null && !Array.isArray(value);
+var lowerCase = (str) =>  str.toLowerCase();
+var upperCase = (str) =>  str.toUpperCase();
+var seq = (arg) =>{
+  if(Array.isArray(arg)){
+    return arg;
+  }
+  if(typeof arg === "object"){
+    return Object.entries(arg);
+  }
+  if(typeof arg === "string"){
+    return Array.from(arg);
+  }
+  return arg;
+}
+var flatten =(...args) => {
+  let [arr, level] = args;
+  if(args.length === 1){
+    level = Infinity;
+  }
+  return arr.flat(level);
+}
+var pop = (stack) => stack.slice(0, -1);
+var peek = (stack) => stack[stack.length - 1];
+
+
+var stringify = (data) => {
+  return isObject(data) ? JSON.stringify(data) : (!isString(data) ? data.toString() : data);
+}
+
+var toString = (k) => k.toString();
+
+var parseData = (data) => {
+  if (isObject(data)) return map(toString, flatten(seq(data)))
+  return data;
+}
+
+var commandType = {
+  'json.set': (args) =>{ //todo: fix if set by integer
+    let [_, entity, data, path='$' ] = args; 
+    return ['JSON.SET', entity, path, stringify(data)];  
+  },
+  'json.get': (args) =>{
+    let [_, entity, path] = args;
+    return (path) ? ['JSON.GET', entity, path] : ['JSON.GET', entity];
+  },
+  'json.mget': (args) => {
+    let path = peek(args) || '$';
+    let keys = pop(rest(args));
+    return concat(['JSON.MGET'], keys, path);
+  },
+  'ft.create': (args) => { 
+    let [_, index, type, prefix, schema] = args;
+    return flatten(concat([
+      'FT.CREATE', index,
+      'ON', upperCase(type),
+      'PREFIX', '1', prefix, // TODO: fix prefix
+      'SCHEMA'
+    ], schema));
+  },
+  'ft.search': (args) => {
+    let [_, index, search, options=['NOCONTENT']] = args;
+    return flatten(concat([
+      'FT.SEARCH',
+      index,
+      search
+    ], options));
+  },
+  'xadd': (args)=> {
+    let [_, key, data, length] = args;
+    if(length) return concat(['xadd', key, 'maxlen', toString(length), '*'], parseData(data));
+    return concat(['xadd', key, '*'], parseData(data));
+  },
+  'xread': (args) => {
+    let [_, key, count="1", start="0", timeout="0"] = args;
+    return ['xread', 'count', count, 'block', timeout, 'streams', key, start];
+  },
+  'xack': (args) => {
+    let [_, key, group, msg ] = args;
+    return ['xack', key, group, msg]
+  },
+  'xgroup': (args) => {
+    let [_, key, group, target='$' ] = args;
+    return ['xgroup', 'create', key, group, target, 'MKSTREAM']
+  },
+  'xreadgroup': (args) => {
+    let [_, key, group, consumer, start=">", count="1", timeout="0"  ] = args;
+    return [
+      'xreadgroup', 'group', group, consumer,
+       'count', count, 'block', timeout, 'streams', key, start
+    ];    
+  }
+};
+
+var transformCommand = (commands) => {
+  let resolve = commandType[lowerCase(first(commands))];
+  if(resolve) return resolve(commands);
+  return commands;
+}
+
+var parseResult = (type) => (result) => {
+  if(!result) return result;
+  if(type === 'json.get'){
+    let res = JSON.parse(result);    
+    return isObject(res) ? res : first(res);
+  }
+  if(type === 'json.mget'){
+    return map((r) => (r ? first(JSON.parse(r)) : r), result);
+  }
+  // TODO: parse search, parse xread  
+  return result;
+};
+
+var command = (...args) =>{
+  let [commands, client] = args;
+  if (args.length === 1) return (client) => command(commands, client);
+  let type = lowerCase(first(commands));  
+  let adaptCommand = transformCommand(commands);
+  if(isFn(client)) (client = client());
+  return client.sendCommand(adaptCommand).then(parseResult(type));
+}
+
+
+var block = (...args) => {
+  let [commands, callback, currentClient] = args;
+  if (args.length === 1) return (callback, currentClient) => block(commands, callback, currentClient);
+  if (args.length === 2) return (currentClient) => block(commands, callback, currentClient);
+  let type = lowerCase(first(commands));
+  if(isFn(currentClient)) (currentClient = currentClient());
+  let client = currentClient.duplicate();
+  let closed = false;
+  // todo: fist starting data
+  let $xreadgroup = (client) =>{
+    console.log('called');
+    return command(commands, client).then((streamData)=>{
+      console.log(streamData);
+      if(!streamData) return (!closed ? $xreadgroup(client) : null);
+      let [[_, data]] = streamData;
+      if(!data || data.length === 0) return (!closed ? $xreadgroup(client) : null);
+      callback(data) //TODO: add ack functions
+      return (!closed ? $xreadgroup(client) : null)
+    }).catch((err) => (console.log(err),(!closed ? $xreadgroup(client) : null)))
+  }
+
+  var blockType = {
+    'xreadgroup': $xreadgroup,
+    // 'xread': null,  
+    // TODO: more blocking commands
+  };
+  
+  let processor = blockType[type];
+
+  console.log(processor);
+  
+  // initiate
+  client.connect()
+    .then((c)=> (commands['xreadgroup'] ? command(['xgroup', commands[1], commands[2], '$']).catch((err)=> console.log(err, 'error creating')) : c))  
+    .then(() => (!closed ? processor(client) : null));
+  
+  return {
+    close : () => {
+      if(closed === false) return (closed=true, client.disconnect());
+      return (closed=true, console.log('closed streams'));
+    }
+  }
+};
+
+var createRedis = (ctx, name="redis") => merge(
+  ctx,
+  { [name]: require('redis').createClient({ url: ctx.url }) }  
+);
+
+var connectRedis = (ctx, name="redis") => {
+  let client = getIn(ctx, [name]);
+  let onError = ctx.onError || ((err) => console.log('Redis error', err));  
+  if(!client) return (console.log("cannot connect to redis"), ctx);
+  return (client.on('error', onError), client.connect(), ctx);
+}
+
+var disconnectRedis = (ctx, name="redis") => {
+  let client = getIn(ctx, [name, "disconnect"]);
+  if (!client) return ctx;
+  return (client.disconnect(), ctx[name]=null, ctx);
+}
+
+var clientRedis = (ctx, name="redis") => () => getIn(ctx, [name]);
+
+
+/*
+  transformCommand(['json.set','foo', 'bar'])
+  transformCommand(['json.set','foo', 1])
+  transformCommand(['json.set','foo', {foo: 1}])
+  transformCommand(['json.set','foo', {foo: 1}, '$'])
+  transformCommand(['json.get','foo'])
+  transformCommand(['json.mget','foo', 'bar', '$']);
+  transformCommand(['ft.create','index', 'json', 'user', ['id', 'as', 'id', 'TAG', ]])
+  transformCommand(['ft.search','index', "*"]);
+  transformCommand(['xadd','foo', {id: 1}])
+  transformCommand(['xadd','foo', {id: 1, calcl: true}, 100])
+  transformCommand(['xadd','foo', ['my', 'data']])
+  transformCommand(['xadd','foo', ['my', 'data'], 100])
+  transformCommand(['xread','foo']);
+  transformCommand(['xack','key', 'group', 'data']);
+  transformCommand(['xgroup','key', 'group'])
+  transformCommand(['xreadgroup','key', 'group', 'consumer'])
+*/
+
+
+/*
+
+
+  var ftParse = (res) => {
+  let len = parseInt(first(res));
+  let found = isGt(len, 0);
+  let data = rest(res);
+  return {len, found, data};
+  }
+*/
+
+/*
+
+  process.env.REDIS_URL ="redis://:redispass@51.255.87.159:11001"
+  var ctx = connectRedis(createRedis({ url: process.env.REDIS_URL }));
+  var client = clientRedis(ctx);  
+  var c = block(['xreadgroup', 'stream', 'group1', 'consumer1', '0'], (data)=> console.log(data), client);
+
+  c.close();
+  
+  var cmd = ['xreadgroup', 'stream', 'group1', 'consumer1', '0' , '1', ];
+
+  transformCommand(cmd);
+  command(['xgroup', cmd[1], cmd[2]], client).then(console.log);
+  command(cmd, client).then(console.log);
+  
+  command(['xadd', 'stream', {data: '1'}], client)
+  command(['json.get', 'foo', '$.data'], client).then(console.log)
+  command(['json.set', 'foo', {data: 1}], client).then(console.log);
+  command(['json.mget', 'foo', 'bar', '$'], client).then(console.log);
+
+  command(['json.get', 'foo'])(client).then(console.log)
+  client().sendCommand(['json.get', 'foo', '$']).then(console.log)  
+*/
