@@ -30,10 +30,18 @@ usage :
 ```js
 var deps = {
   http : "https://cdn.jsdelivr.net/gh/azizzaeny/composable@main/snippets/http/util.js",
-  replClient: "https://cdn.jsdelivr.net/gh/azizzaeny/composable@main/snippets/http/repl-client.js",
+  redis: "https://cdn.jsdelivr.net/gh/azizzaeny/composable@main/snippets/redis/util.js",
 }
 
-addDeps(deps.http);
+// single
+addDeps(deps.http)
+
+// or multiple
+Promise.all([
+  addDeps(deps.http),
+  addDeps(deps.redis)
+]).then(()=> console.log('dependencies loaded'));
+
 ```
 
 ### Snippets
@@ -44,6 +52,7 @@ addDeps(deps.http);
 | development | [aof](./snippets/aof/readme.md) | Efficient appendonly log json |
 | development | [mql](./snippets/mql/readme.md) | Mongodb Query Langauge in memory |
 | development | [http](./snippets/http/readme.md) | Basic utility setup nodejs http server |
+| development | [redis](./snippets/redis/readme.md) | Functional programming utility dealing with redis |
 
 ### Packages
 

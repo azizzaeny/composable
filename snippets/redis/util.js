@@ -235,7 +235,7 @@ var disconnectRedis = (ctx, name="redis") => {
   return (client.disconnect(), ctx[name]=null, ctx);
 }
 
-var getClientRedis = (ctx, name="redis") => () => getIn(ctx, [name]);
+var getClient = (ctx, name="redis") => () => getIn(ctx, [name]);
 
 
 /*
@@ -258,11 +258,6 @@ var getClientRedis = (ctx, name="redis") => () => getIn(ctx, [name]);
 */
 
 /*
-
-  process.env.REDIS_URL ="redis://:redispass@51.255.87.159:11001"
-  var ctx = createRedis({ url: process.env.REDIS_URL });
-  var client = getClientRedis(ctx);  
-  connectRedis(ctx).then(()=> console.log('redis connected'));
  
   reader(['xreadgroup', 'stream', 'group1', 'consumer1', '100', '0', '0'], (data)=> console.log(data), client);
   reader(['xread', 'stream', '100', '0', '0'], (data)=> console.log(data), client);
