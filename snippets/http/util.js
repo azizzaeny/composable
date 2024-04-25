@@ -45,17 +45,76 @@ var assocIn = (...args) => {
   }
 }
 
-/* implementation code*/
+var responseWrite = (ctx, request, response) => {
+  let alreadySent = request.sent;
+  let dispatch = (ctx) => (
+    response.writeHead(ctx.status, ctx.headers),
+    response.write(ctx.body),
+    response.end());  
+  if(alreadySent) return dispatch(alreadySent);  
+  return (ctx) ? dispatch(ctx) : (null);  
+}
 
-var responseWrite = (ctx, response) => (ctx) ? (
-  response.writeHead(ctx.status, ctx.headers),
-  response.write(ctx.body),
-  response.end()
-) : (null);
+var isContentType = (request, type) => {
+  let ctype = getIn(request, ['headers', 'content-type'])
+  return ctype ? ctype.includes(type) : false;
+}
+
+var parseJSON = (request, response) => {
+  try {
+    (request.body = JSON.parse(request.body));
+  }catch(err){
+    console.log(err);
+    (request.body = {});
+    (request.sent = {status: 500, headers:{}, body: "Invalid JSON data:" + err })    
+  }
+};
+
+var parseUrlencoded = (request, response) => (request.body = merge({}, require('querystring').parse(request.body)));   
+
+var parseFormData = (request, response) => {
+  let contentType = getIn(request, ['headers', 'content-type']);  
+  let boundary = contentType.split('; ')[1].split('=')[1];
+  let parts = request.body.split('--' + boundary);
+  let params = parts.reduce((acc, section) =>{
+    if (!section.includes('Content-Disposition')) return acc;    
+    let [_, name] = section.match(/name="(.*)"/) || [];
+    let filenameMatch = section.match(/filename="(.*)"/);
+    if (filenameMatch) {
+      let field = name.split(';')[0];
+      let attr = field.substr(0, field.length -1);
+      (acc[attr] = { "filename": filenameMatch[1] , "data": section.split('\r\n\r\n')[1] });
+    }else{
+      (acc[name] = section.split('\r\n\r\n')[1]);      
+    }
+    return acc;    
+  }, {});
+  (request.body = params);
+}
+
+var parseRequest = (request, buffer) => {
+  (request.$parsed = require('url').parse(request.url, true));
+  (request.query = request.$parsed.query);
+  (request.path = request.$parsed.path);
+  (request.body = Buffer.concat(buffer).toString());
+  if(isContentType(request, 'application/json')) parseJSON(request, response);
+  if(isContentType(request, 'application/x-www-form-urlencoded')) parseUrlencoded(request, response);
+  if(isContentType(request, 'multipart/form-data')) parseFormData(request, response);
+  return request;
+};
+
+var processRequest = (ctx) => (request, response) => {
+  let buffer = [];
+  request.on('data', chunk => buffer.push(chunk));
+  request.on('end', _  => responseWrite(
+    ctx.handler( parseRequest(request, buffer), response),
+    request,
+    response)) 
+}
 
 var createServer = (ctx, name="server") => merge(
   ctx,
-  { [name] : require('http').createServer((request, response) => responseWrite(ctx.handler(request, response), response)) }
+  { [name] : require('http').createServer(processRequest(ctx)) }
 );
 
 var startServer = (ctx, name="server") => (
@@ -74,15 +133,14 @@ var headers = (resp, headers) => merge(resp, headers);
 // TODO: find file automatic haders content-type mime-type and add content-length
 // var findFile = (resp, file, headers) => ({ status: 200, headers: {}})
 
-var http = {
-  createServer,
-  startServer,
-  response,
-  redirect,
-  created,
-  badRequest,
-  notFound,
-  status,
-  header,
-  headers
-}
+/*
+  var mainHandler = (req, res) =>   {
+   console.log(req.headers);
+   console.log(req.body);
+  return response('hellow');
+  }  
+  startServer(createServer({
+    port: 8081,
+    handler:(req, res) => mainHandler(req,res)
+  }))
+*/
