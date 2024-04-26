@@ -11,6 +11,7 @@ TODO: {WIP}
 ### Getting Started 
 all snippets available to downlaod or fetched via cdn
 
+Usage in nodejs
 ```javascript
 
 var evaluate= (...args) => {
@@ -24,13 +25,15 @@ var evaluate= (...args) => {
 var addDeps = url => fetch(url).then(res => res.text()).then(evaluate());
 
 ```
-
-usage : 
+loading in main function
 
 ```js
+var main = () => console.log('dependencies loaded, lets start!')
+
 var deps = {
   http : "https://cdn.jsdelivr.net/gh/azizzaeny/composable@main/snippets/http/util.js",
   redis: "https://cdn.jsdelivr.net/gh/azizzaeny/composable@main/snippets/redis/util.js",
+  mongo: "https://cdn.jsdelivr.net/gh/azizzaeny/composable@main/snippets/mongo/util.js",
 }
 
 // single
@@ -40,10 +43,24 @@ addDeps(deps.http)
 Promise.all([
   addDeps(deps.http),
   addDeps(deps.redis)
-]).then(()=> console.log('dependencies loaded'));
+]).then(main);
 
 ```
 
+usage in browser
+
+```js
+
+var deps = {
+  hiccup : "https://cdn.jsdelivr.net/gh/azizzaeny/composable@main/snippets/hiccup/index.js",
+}
+
+var assignVar = (global, name) => res => Object.assign(global, { [name]: (res.default) });
+
+import(deps.hiccup).then(assignVar(window, "hiccup"));
+
+
+```
 ### Snippets
 
 | Status      | Snippets                    | Descriptions                                                                     |
@@ -51,6 +68,7 @@ Promise.all([
 | developemnt | [hiccup](./snippets/hiccup/readme.md) | UI building with hiccup |
 | development | [http](./snippets/http/readme.md) | Basic utility setup nodejs http server |
 | development | [redis](./snippets/redis/readme.md) | Functional programming utility dealing with redis |
+| development | [mongo](./snippets/mongo/readme.md) | Mongodb wrapper expose two main function `query` and `transact` |
 | development | (wip) [aof](./snippets/aof/readme.md) | Efficient appendonly log json |
 | development | (wip) [mql](./snippets/mql/readme.md) | Mongodb Query Langauge in memory |
 
