@@ -11,7 +11,7 @@ in use
 ```js
 process.env.MONGODB_URI="mongodb://mongouser:mongopass@localhost:27017/test?authSource=admin&tls=false";
 
-var ctx = createDb(process.env.MONGODB_URI);
+var ctx = createDb({ url: process.env.MONGODB_URI});
 connectDb(ctx);
 
 var client = clientDb(ctx);

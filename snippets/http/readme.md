@@ -7,27 +7,6 @@ Translate incomin http request into data strcuture like ring in clojure
 type `node`
 then 
 
-```js
-
-var evalCode= (...args) => {
-  let [vm=require('vm'), ctx=global, addCtx={console, require, module}] = args;
-  return (res) => {
-    let context = vm.createContext(ctx);
-    return vm.runInContext(res, Object.assign(context, addCtx));
-  }
-}
-
-var addDeps = url => fetch(url).then(res => res.text()).then(evalCode());
-
-var deps = {
-  http : "https://cdn.jsdelivr.net/gh/azizzaeny/composable@main/snippets/http/util.js",
-  replClient: "https://cdn.jsdelivr.net/gh/azizzaeny/composable@main/snippets/http/repl-client.js",
-}
-
-Object.values(deps).forEach(addDeps);
-
-```
-
 running it by
 
 ```js

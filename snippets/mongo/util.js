@@ -12,11 +12,11 @@ var isFn = (value) => typeof value === 'function';
 
 var mongodb = require('mongodb');
 
-var createDb = (uri, name="mongodb") => {
-  let client = new mongodb.MongoClient(uri);
+var createDb = ({url}, name="mongodb") => {
+  let client = new mongodb.MongoClient(url);
   return {
     [name]: {
-      uri,      
+      url,      
       client
     }    
   }
@@ -46,7 +46,6 @@ var find = (spec, client) => {
   if(isFn(client)) (client=client());  
   return coll(spec.db, spec.coll, client).find(spec.where).toArray();
 }
-
 
 var query = (spec, client)=>{
   if(isFn(client)) (client=client());  

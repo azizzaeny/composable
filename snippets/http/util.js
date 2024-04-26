@@ -125,6 +125,10 @@ var stopServer = (ctx, name="server") => {
   return getIn(ctx, [name, "close"]) ? ( ctx[name].close(), (ctx[name] = null) ) : ctx;
 }
 
+var getServer = (ctx, name="server") => () => {
+  return getIn(ctx, [name]);
+}
+
 var response = (body) => ({ status: 200, body, headers: {}})
 var redirect = (url) => ({status: 302, headers: {"Location": url}, body: ""});
 var created = (url) => ({ status: 201, headers: {"Location": url}, body: ""});

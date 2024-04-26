@@ -45,6 +45,7 @@ Promise.all([
   addDeps(deps.redis)
 ]).then(main);
 
+// or Promise.all(Object.values(deps).map(addDeps)).then(main);
 ```
 
 usage in browser
