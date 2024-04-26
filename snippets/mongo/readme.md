@@ -63,29 +63,30 @@ var extendOperation = ({upsert}) => {
         }
       },
       "$update": {
-	    updateOne:{
-	      filter: value.$match,
-	      update: value.$set,
-	      upsert: upsert
-	    }
+        updateOne:{
+          filter: value.$match,
+          update: value.$set,
+          upsert: upsert
+        }
       },
       "$updateMany": {
-	    updateMany:{
-	      filter: value.$match,
-	      update: value.$set
-	    }
+        updateMany:{
+          filter: value.$match,
+          update: value.$set
+        }
       },
       "$delete":{
-	    deleteOne: {
-	      filter: value.$match
-	    }
+        deleteOne: {
+          filter: value.$match
+        }
       },
       "$deleteMany":{
-	    deleteMany:{
-	      filter: value.$match
-	    }
+        deleteMany:{
+          filter: value.$match
+        }
       }
-    };    
+    };
+    
     if(operation[key]){
       return operation[key];    
     }
