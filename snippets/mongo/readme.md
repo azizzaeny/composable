@@ -53,14 +53,14 @@ var query = (spec, client)=>{
   return coll(first(spec).$db, first(spec).$coll, client).aggregate(rest(spec)).toArray();  
 }
 
-var extendSyntax = ({upsert}) => {
-  return (op, i) => { // map 
+var extendOperation = ({upsert}) => {
+  return (op, i) => { // map  array
     let [[key, value]] = Object.entries(op);    
     let operation = {
       "$create" : {
-	    insertOne: {
-	      document: value
-	    }
+        insertOne: {
+          document: value
+        }
       },
       "$update": {
 	    updateOne:{
@@ -94,7 +94,7 @@ var extendSyntax = ({upsert}) => {
 }
 
 var write = (spec, client)=>{
-  let operation = map(extendSyntax({upsert: spec.upsert}), rest(spec));
+  let operation = map(extendOperation({upsert: spec.upsert}), rest(spec));
   return coll(first(spec).$db, first(spec).$coll, client).bulkWrite(operation);
 }
 
