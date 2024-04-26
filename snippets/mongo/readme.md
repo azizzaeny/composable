@@ -2,6 +2,16 @@ mongodb wrapper
 
 ```js
 
+var first = (seq) => seq[0];
+var rest = (seq) => seq.slice(1);
+var map = (...args) =>{
+  let [fn, arr] = args;
+  if (args.length === 1) {
+    return coll => map(fn, coll);
+  }
+  return arr.map(fn);
+}
+
 var mongodb = require('mongodb');
 
 var createDb = (uri, name="mongodb") => {
@@ -38,12 +48,54 @@ var find = (spec, client) => {
   return coll(spec.db, spec.coll, client).find(spec.where).toArray();
 }
 
+
 var query = (spec, client)=>{
-  return coll(spec.db, spec.coll, client).aggregate(spec.where).toArray();  
+  return coll(first(spec).$db, first(spec).$coll, client).aggregate(rest(spec)).toArray();  
+}
+
+var extendSyntax = ({upsert}) => {
+  return (op, i) => { // map 
+    let [[key, value]] = Object.entries(op);    
+    let operation = {
+      "$create" : {
+	    insertOne: {
+	      document: value
+	    }
+      },
+      "$update": {
+	    updateOne:{
+	      filter: value.$match,
+	      update: value.$set,
+	      upsert: upsert
+	    }
+      },
+      "$updateMany": {
+	    updateMany:{
+	      filter: value.$match,
+	      update: value.$set
+	    }
+      },
+      "$delete":{
+	    deleteOne: {
+	      filter: value.$match
+	    }
+      },
+      "$deleteMany":{
+	    deleteMany:{
+	      filter: value.$match
+	    }
+      }
+    };    
+    if(operation[key]){
+      return operation[key];    
+    }
+    return operation;
+  }
 }
 
 var write = (spec, client)=>{
-  return coll(spec.db, spec.coll, client).bulkWrite(spec.where);
+  let operation = map(extendSyntax({upsert: spec.upsert}), rest(spec));
+  return coll(first(spec).$db, first(spec).$coll, client).bulkWrite(operation);
 }
 
 ```
@@ -71,25 +123,22 @@ find({
   where: {}
 }, client).then(console.log);
 
+query([
+  {$db: "test", $coll: "tutorial"},
+  {$match: {}},
+  {$project: {_id: 0, title: 1}},
+  {$limit: 10}
+], client).then(console.log);
 
-query({
-  db: "test",
-  coll: "tutorial",
-  where: [
-    {$match: {}},
-    {$project: {_id: 0, title: 1}},
-    {$limit: 10}
-  ]
-}, client).then(console.log);
+query([
+  {$db: "test", $coll: "tutorial"},
+  {$group:{_id: null, total: {$sum: 1}}}
+], client).then(console.log);
 
+write([
+  {$db: "test", $coll: "tutorial"},
+  {$create: {title: "why this is happen", description: "Just tutorial", published: false}}  
+], client).then(console.log);
 
-write({
-  db: "test",
-  coll: "tutorial",
-  where: [
-    {insertOne: { document: {title: "new Ones", description: "just tutorial", published: false}}},
-    {insertOne: { document: {title: "new Ones", description: "just tutorial", published: false}}}    
-  ]
-}, client).then(console.log);
 
 ```
