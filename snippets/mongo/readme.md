@@ -85,8 +85,7 @@ var extendOperation = ({upsert}) => {
           filter: value.$match
         }
       }
-    };
-    
+    };    
     if(operation[key]){
       return operation[key];    
     }
@@ -94,7 +93,7 @@ var extendOperation = ({upsert}) => {
   }
 }
 
-var write = (spec, client)=>{
+var transact = (spec, client)=>{
   let operation = map(extendOperation({upsert: spec.upsert}), rest(spec));
   return coll(first(spec).$db, first(spec).$coll, client).bulkWrite(operation);
 }
@@ -136,7 +135,7 @@ query([
   {$group:{_id: null, total: {$sum: 1}}}
 ], client).then(console.log);
 
-write([
+transact([
   {$db: "test", $coll: "tutorial"},
   {$create: {title: "why this is happen", description: "Just tutorial", published: false}}  
 ], client).then(console.log);
