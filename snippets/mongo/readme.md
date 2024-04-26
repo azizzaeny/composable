@@ -11,6 +11,8 @@ var map = (...args) =>{
   }
   return arr.map(fn);
 }
+var isFn = (value) => typeof value === 'function';
+
 
 var mongodb = require('mongodb');
 
@@ -32,24 +34,26 @@ var disconnectDb = (name) =>{
   return ctx[name].client.close();
 }
 
-var clientDb = (ctx, name="mongodb") => {
+var clientDb = (ctx, name="mongodb") => () => {
   return ctx[name].client;
 }
 
-var db = (nameDb, client) =>{
+var getDb = (nameDb, client) =>{
   return client.db(nameDb);  
 }
 
 var coll = (nameDb, coll, client) => {
-  return db(nameDb, client).collection(coll);    
+  return getDb(nameDb, client).collection(coll);    
 };
 
 var find = (spec, client) => {
+  if(isFn(client)) (client=client());  
   return coll(spec.db, spec.coll, client).find(spec.where).toArray();
 }
 
 
 var query = (spec, client)=>{
+  if(isFn(client)) (client=client());  
   return coll(first(spec).$db, first(spec).$coll, client).aggregate(rest(spec)).toArray();  
 }
 
@@ -94,6 +98,7 @@ var extendOperation = ({upsert}) => {
 }
 
 var transact = (spec, client)=>{
+  if(isFn(client)) (client=client());
   let operation = map(extendOperation({upsert: spec.upsert}), rest(spec));
   return coll(first(spec).$db, first(spec).$coll, client).bulkWrite(operation);
 }
@@ -108,14 +113,15 @@ process.env.MONGODB_URI="mongodb://user:mongopass@51.255.87.159:47000/test?authS
 var ctx = createDb(process.env.MONGODB_URI);
 connectDb(ctx).then(() => console.log('Connected')).catch(err => console.log("err", err));
 
+// raw access
 ctx.mongodb.client.db('tutorial').collection('movies');
 
 var client = clientDb(ctx);
 
-db("test", client);
+getDb("test", client());
 
-coll("test", "tutorial", client).find({}).toArray().then(console.log);
-coll("test", "foo", client).find({}).toArray().then(console.log);
+coll("test", "tutorial", client()).find({}).toArray().then(console.log);
+coll("test", "foo", client()).find({}).toArray().then(console.log);
 
 find({
   db: "test",
