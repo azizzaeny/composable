@@ -22,7 +22,9 @@ var evaluate= (...args) => {
   }
 }
 
-var addDeps = url => fetch(url).then(res => res.text()).then(evaluate());
+var writeFile = (file) => (data) => fs.writeFileSync(file, data);
+var addDeps = (url, file) => fetch(url).then(res => res.text()).then( file ? (writeFile(file) : evaluate()));
+
 
 ```
 loading in main function
@@ -37,9 +39,9 @@ var deps = {
 }
 
 // single
-addDeps(deps.http)
+addDeps(deps.http, './http.js')
 
-// or multiple
+// or multiple evaluate
 Promise.all([
   addDeps(deps.http),
   addDeps(deps.redis)

@@ -152,3 +152,20 @@ var headers = (resp, headers) => merge(resp, headers);
     handler:(req, res) => mainHandler(req,res)
   }))
 */
+
+module.exports = {
+  createServer,
+  startServer,
+  stopServer,
+  getServer,
+  response,
+  redirect,
+  created,
+  badRequest,
+  notFound,
+  status,
+  header,
+  headers,
+  isContentType,
+  responseWrite
+}
