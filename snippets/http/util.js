@@ -171,6 +171,7 @@ module.exports = {
   status,
   header,
   headers,
+  contentType,
   cors,  
   isContentType,
   responseWrite,
