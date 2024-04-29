@@ -168,6 +168,28 @@ type `dev()` to start client or `howTo()` to getting more information
 
 to start sending changes to client, in the repl type `responseWith("console.log(100);");`
 
+simple setup working with client
+
+```js
+var index = (req, res) => contentType(response(`<html><body>web application</body></html>`), "text/html");
+var handler = (req, res) => {
+  let routes = {
+    "GET /": index,
+    "GET /_": responseBuffer
+  };
+  let resolve = routes[`${req.method} ${req.path}`];  
+  if(resolve) return resolve(req, res);
+  return notFound('')
+}
+var server = startServer(createServer({ port: 8081, handler: (req, res)=> handler(req, res)}))
+```
+
+the client evalaute in console browser directly
+
+```js
+var poll = (url) => fetch(url).then(res => res.text()).then(eval).finally(() => setTimeout(()=> poll(url), 200));
+poll('/_');
+```
 
 ### TODO: implementation
 ```js
@@ -304,6 +326,5 @@ to start sending changes to client, in the repl type `responseWith("console.log(
   
   filename-ext
   ext-mime-type filename
-
 */
 ```

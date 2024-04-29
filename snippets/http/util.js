@@ -137,6 +137,7 @@ var notFound = (body) => ({ status: 404, headers:{}, body });
 var status = (resp, code)  => assoc(resp, "status", status);
 var header = (resp, header, value) => assocIn(resp, ["headers", header], value);
 var headers = (resp, headers) => merge(resp, headers);
+var contentType = (resp, type)=> headers(resp, {'Content-Type': type});
 
 var cors = {
   'Access-Control-Allow-Origin': '*',
@@ -149,9 +150,8 @@ var clientRequest = clientRequest || [];
 var responseBuffer = (request, response) => (clientRequest.push({request, response}), null);
 
 var responseWith = (body) => (
-  (clientRequest.forEach(({response}) => responseWrite({status: 200, headers: cors, body }, response)));
-  (clientRequest = [])
-  return true;
+  clientRequest.forEach(({response}) => responseWrite({status: 200, headers: cors, body }, response)),
+  clientRequest = []
 );
 
 
