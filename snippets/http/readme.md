@@ -1,7 +1,6 @@
 Translate incomin http request into data strcuture like ring in clojure
 ### Files
 - [util.js](./util.js)
-- [repl-client.js](./repl-client.js)
 
 ### Usage
 type `node`
@@ -26,11 +25,9 @@ var main = () => {
 
 ```
 the type `main()`
-working with replClient 
+working with repl-client
 
 ```js
-
-
 
 var indexHtml = `
 <html>
