@@ -150,7 +150,7 @@ var clientRequest = clientRequest || [];
 var responseBuffer = (request, response) => (clientRequest.push({request, response}), null);
 
 var responseWith = (body) => (
-  clientRequest.forEach(({response}) => responseWrite({status: 200, headers: cors, body }, response)),
+  clientRequest.forEach(({request, response}) => responseWrite({status: 200, headers: cors, body }, request, response)),
   clientRequest = []
 );
 
@@ -172,7 +172,7 @@ module.exports = {
   header,
   headers,
   contentType,
-  cors,  
+  cors,
   isContentType,
   responseWrite,
   clientRequest,
