@@ -138,20 +138,25 @@ var status = (resp, code)  => assoc(resp, "status", status);
 var header = (resp, header, value) => assocIn(resp, ["headers", header], value);
 var headers = (resp, headers) => merge(resp, headers);
 
+var cors = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization'  
+};
+
+var clientRequest = clientRequest || [];
+
+var responseBuffer = (request, response) => (clientRequest.push({request, response}), null);
+
+var responseWith = (body) => (
+  (clientRequest.forEach(({response}) => responseWrite({status: 200, headers: cors, body }, response)));
+  (clientRequest = [])
+  return true;
+);
+
+
 // TODO: find file automatic haders content-type mime-type and add content-length
 // var findFile = (resp, file, headers) => ({ status: 200, headers: {}})
-
-/*
-  var mainHandler = (req, res) =>   {
-   console.log(req.headers);
-   console.log(req.body);
-  return response('hellow');
-  }  
-  startServer(createServer({
-    port: 8081,
-    handler:(req, res) => mainHandler(req,res)
-  }))
-*/
 
 module.exports = {
   createServer,
@@ -166,6 +171,10 @@ module.exports = {
   status,
   header,
   headers,
+  cors,  
   isContentType,
-  responseWrite
+  responseWrite,
+  clientRequest,
+  responseBuffer,
+  responseWith
 }

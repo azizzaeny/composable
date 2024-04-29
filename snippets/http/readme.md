@@ -30,12 +30,12 @@ working with replClient
 
 ```js
 
-var state = {}
+
 
 var indexHtml = `
 <html>
  <head>
-   <script src="client.js"></script>
+   <script src="client-repl.js"></script>
  </head>
  <body>test</body>
 </html>
@@ -43,17 +43,25 @@ var indexHtml = `
 
 var defaults = (request) => headers(response(indexHtml), {"Content-Type": "text/html"});
 
+var clientRepl = (req, res) => ({
+  status: 200,
+  body: fs.readFileSync('./client-repl.js', 'utf8'),
+  headers: merge(cors, {"Content-Type": 'application/javascript'})
+});
+
 var routes = {
   ["GET /"] : defaults,
-  ["GET /_dev/update"]: responseBuffer,
-  ["GET /client.js"]: clientRepl
+  ["GET /_repl"]: responseBuffer,
+  ["GET /client-repl.js"]: clientRepl
 };
 
 var middleware = (req, res) => {
-  let resolve = routes[`${req.method} ${req.url}`];
+  let resolve = routes[`${req.method} ${req.path}`];
   if(resolve) return resolve(req, res);
   return notFound('');
 }
+
+var state = {}
 
 var main = () => {
   state = startServer(
@@ -66,10 +74,103 @@ var main = () => {
 }
 
 ```
+
+client repl
+
+```js path=client-repl.js
+esprima = window.esprima || {} ;
+escodegen = window.escodegen || {};
+howTo = () => console.log('usage: interactive client development with repl, first initiate dependencies and start pulling by typing  dev() at console');
+assignVar = (global, name) => res => Object.assign(global, { [name]: (res.default) });
+parseCode = (code, es5) => {
+  if(es5){
+    return esprima.parseScript(code, { range: true, tolerant: true});
+  }else{
+    return esprima.parseModule(code, { range: true, tolerant: true });
+  }
+}
+generateCode = (ast) => {
+  return escodegen.generate(ast);
+}
+nodeType = {
+  'VariableDeclaration': (node)=>{
+    return {
+      "type": "ExpressionStatement",
+      "expression": {
+        "type": "AssignmentExpression",
+        "operator": "=",
+        "left": node.declarations[0].id,        
+        "right": node.declarations[0].init,
+        "range": []
+      },
+      "range": node.range
+    }
+  },
+  'FunctionDeclaration': (node)=>{
+    return {
+      "type": "ExpressionStatement",
+      "expression": {
+        "type": "AssignmentExpression",
+        "operator": "=",
+        "left": node.id,        
+        "right": {
+          "type": "ArrowFunctionExpression",
+          "id": null,
+          "params": node.params,
+          "body": node.body
+        },
+        "range": []
+      },
+      "range": node.range
+    }
+  }
+}
+traverse  = (acc, node, index) => {
+  if(nodeType[node.type]){
+    let transform = nodeType[node.type](node);
+    return acc.concat(transform);
+  }else{
+    return acc.concat(node);
+  }
+}
+transformCode = (ast) => {
+  return {
+    ...ast,
+    body: ast.body.reduce(traverse, []).flat().filter(e=> e !== null),
+    sourceType: "module",
+    ecmaVersion: "latest"
+  }
+}
+generateSafeCode = (code, context) => {
+  return generateCode(transformCode(parseCode(code)));
+}
+
+evalJs = (res) => {
+  try{
+    let out = eval(generateSafeCode(res));
+    if(out) console.log(out);
+    return Promise.resolve('evaluate');
+  } catch(e){
+    return Promise.reject(e);
+  }
+}
+
+requestPoll = (url) => fetch(url).then(res => res.text()).then(evalJs).catch(err => console.error(err)).finally((res) => (setTimeout(()=> requestPoll(url, 100), console.log(res)))) ;
+
+dev = (hostUri) => {
+  Promise.all([
+    import('https://cdn.jsdelivr.net/npm/esprima@4.0.1/+esm').then(assignVar(window, "esprima")),
+    import('https://cdn.jsdelivr.net/npm/escodegen@2.1.0/+esm').then(assignVar(window, "escodegen"))
+  ]).then(() => requestPoll(hostUri));
+  return 'evaluated';
+}
+```
+
 then type `main()` to start the server, then at client side browser console, 
 type `dev()` to start client or `howTo()` to getting more information  
 
 to start sending changes to client, in the repl type `responseWith("console.log(100);");`
+
 
 ### TODO: implementation
 ```js
