@@ -45,6 +45,8 @@ var assocIn = (...args) => {
   }
 }
 
+var fs = require('fs');
+
 var responseWrite = (ctx, request, response) => {
   let alreadySent = request.sent;
   let dispatch = (ctx) => (
@@ -134,10 +136,10 @@ var redirect = (url) => ({status: 302, headers: {"Location": url}, body: ""});
 var created = (url) => ({ status: 201, headers: {"Location": url}, body: ""});
 var badRequest = (body) => ({status: 400, headers: {}, body });
 var notFound = (body) => ({ status: 404, headers:{}, body });
-var status = (resp, code)  => assoc(resp, "status", status);
-var header = (resp, header, value) => assocIn(resp, ["headers", header], value);
-var headers = (resp, headers) => merge(resp, headers);
-var contentType = (resp, type)=> headers(resp, {'Content-Type': type});
+var status = (code, resp={body:'', headers:{}})  => assoc(resp, "status", status);
+var header = (header, value, resp={status:200, body:''}) => assocIn(resp, ["headers", header], value);
+var headers = (headers, resp={status:200, body:''}) => merge(resp, headers);
+var contentType = (type, resp={status: 200, body:''})=> headers({'Content-Type': type}, resp);
 
 var cors = {
   'Access-Control-Allow-Origin': '*',
@@ -154,9 +156,17 @@ var responseWith = (body) => (
   clientRequest = []
 );
 
+var isDirectory = (filePath) => fs.statSync(filePath).isDirectory();
+var readFile = (file) => fs.readFielSync(file, 'utf8');
 
-// TODO: find file automatic haders content-type mime-type and add content-length
-// var findFile = (resp, file, headers) => ({ status: 200, headers: {}})
+var findFile = (file, headers={}, resp={status: 200}) => {
+  if(!isDirectory(file)) return merge(resp, {body: readFile(file) }, {headers});
+  let indexPath = require('path').join(filePath, 'index.html');
+  return merge(resp, {
+    body: readFile(indexPath),
+    headers: merge({'Content-Type':'text/html'}, headers)
+  });
+}
 
 module.exports = {
   createServer,
@@ -177,5 +187,7 @@ module.exports = {
   responseWrite,
   clientRequest,
   responseBuffer,
-  responseWith
+  responseWith,
+  readFile,
+  findFile
 }
