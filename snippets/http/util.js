@@ -257,17 +257,15 @@ var mimeType = (type) => {
   return mime[type];
 };
 
+var ext = (file) => require('path').extname(file).slice(1);
 
 var isDirectory = (filePath) => fs.statSync(filePath).isDirectory();
-var readFile = (file) => fs.readFielSync(file, 'utf8');
+var readFile = (file) => fs.readFileSync(file, 'utf8');
 
-var findFile = (file, headers={'Content-Type': mimeType('html')}, resp={status: 200}) => {
-  if(!isDirectory(file)) return merge(resp, {body: readFile(file) }, {headers});
+var findFile = (file, resp={status: 200, headers: {'Content-Type': mimeType(ext(file))} }) => {
+  if(!isDirectory(file)) return merge(resp, {body: readFile(file) });
   let indexPath = require('path').join(filePath, 'index.html');
-  return merge(resp, {
-    body: readFile(indexPath),
-    headers: merge({'Content-Type': mimeType('html')}, headers)
-  });
+  return merge(resp, { body: readFile(indexPath) });
 }
 
 module.exports = {
