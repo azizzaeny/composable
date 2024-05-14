@@ -28,8 +28,6 @@ Provide reusable toolkit, General purpose library Functional Programming, Patter
 | development | (wip) [mql](./snippets/mql/readme.md) | Mongodb Query Langauge in memory |
 
 ### Getting Started 
-todo:
-all snippets available to downlaod or fetched via cdn
 
 Usage in node.js npm install
 
