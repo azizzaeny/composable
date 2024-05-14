@@ -3,12 +3,32 @@
 Collection of functions that can be composed to solve programming problem.  
 Provide reusable toolkit, General purpose library Functional Programming, Pattern & side-effects modules, Data structure algorithm
 
-
     Composable is to make or form by combining things.   
-    
-TODO: {WIP}        
+
+
+
+### Packages
+
+| Status      | Packages                    | Descriptions                                                                     |
+|-------------|-----------------------------|--------------------------------------------------------------------------------- |
+| development | [@zaeny/clojure.core](https://github.com/azizzaeny/clojure.core)  | Translating the clojure core functions into javascript functions |
+| development | [@zaeny/literate](https://github.com/azizzaeny/literate)  | Literate programming, extracting code markdown |
+| development | [@zaeny/env]()  | Read .env files |
+| developemnt | [@zeny/hiccup](https://github.com/azizzaeny/hiccup) | UI building with hiccup |
+| development | [@zaeny/http](https://github.com/azizzaeny/http) | Basic utility setup nodejs http server |
+| development | [@zaeny/redis](https://github.com/azizzaeny/redis) | Functional programming utility dealing with redis |
+| development | [@zaeny/mongodb](https://github.com/azizzaeny/mongodb) | Mongodb wrapper expose two main function `query` and `transact` |
+| development | [@zaeny/expose](https://github.com/azizzaeny/expose) | Utility Functions working with repl node.js, exposing function into global variable repl |
+
+### Snippets
+
+| Status      | Snippets                    | Descriptions                                                                     |
+|-------------|-----------------------------|--------------------------------------------------------------------------------- |
+| development | (wip) [aof](./snippets/aof/readme.md) | Efficient appendonly log json |
+| development | (wip) [mql](./snippets/mql/readme.md) | Mongodb Query Langauge in memory |
 
 ### Getting Started 
+todo:
 all snippets available to downlaod or fetched via cdn
 
 Usage in nodejs
@@ -62,26 +82,7 @@ var assignVar = (global, name) => res => Object.assign(global, { [name]: (res.de
 
 import(deps.hiccup).then(assignVar(window, "hiccup"));
 
-
 ```
-### Snippets
-
-| Status      | Snippets                    | Descriptions                                                                     |
-|-------------|-----------------------------|--------------------------------------------------------------------------------- |
-| developemnt | [hiccup](./snippets/hiccup/readme.md) | UI building with hiccup |
-| development | [http](./snippets/http/readme.md) | Basic utility setup nodejs http server |
-| development | [redis](./snippets/redis/readme.md) | Functional programming utility dealing with redis |
-| development | [mongo](./snippets/mongo/readme.md) | Mongodb wrapper expose two main function `query` and `transact` |
-| development | (wip) [aof](./snippets/aof/readme.md) | Efficient appendonly log json |
-| development | (wip) [mql](./snippets/mql/readme.md) | Mongodb Query Langauge in memory |
-
-### Packages
-
-| Status      | Packages                    | Descriptions                                                                     |
-|-------------|-----------------------------|--------------------------------------------------------------------------------- |
-| development | [@zaeny/clojure.core](https://github.com/azizzaeny/clojure.core)  | Translating the clojure core functions into javascript functions |
-| development | [@zaeny/literate](https://github.com/azizzaeny/literate)  | Literate programming, extracting code markdown |
-| development | [@zaeny/env](https://github.com/azizzaeny/env)  | Read .env files |
 
 ### Workflow
 
