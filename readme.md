@@ -18,7 +18,7 @@ Provide reusable toolkit, General purpose library Functional Programming, Patter
 | development | [@zaeny/http](https://github.com/azizzaeny/http) | Basic utility setup nodejs http server |
 | development | [@zaeny/redis](https://github.com/azizzaeny/redis) | Functional programming utility dealing with redis |
 | development | [@zaeny/mongodb](https://github.com/azizzaeny/mongodb) | Mongodb wrapper expose two main function `query` and `transact` |
-| development | [@zaeny/expose](https://github.com/azizzaeny/expose) | Utility Functions working with repl node.js, exposing function into global variable repl |
+| development | [@zaeny/expose](https://github.com/azizzaeny/expose) | Utility Functions working with repl node.js |
 
 ### Snippets
 
