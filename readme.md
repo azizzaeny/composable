@@ -31,58 +31,59 @@ Provide reusable toolkit, General purpose library Functional Programming, Patter
 todo:
 all snippets available to downlaod or fetched via cdn
 
-Usage in nodejs
-```javascript
+Usage in node.js npm install
 
-var evaluate= (...args) => {
-  let [vm=require('vm'), ctx=global, addCtx={console, require, module}] = args;
+```
+npm i @zaeny/{package}
+```
+
+usage in repl without downloading sepecific the package
+
+```js
+
+var evaluate= (opt) => {
+  if(!opt){opt = { ctx: global, addCtx: {console, require, module}}; }    
   return (res) => {
-    let context = vm.createContext(ctx);
-    return vm.runInContext(res, Object.assign(context, addCtx));
+    let vm = require('vm');
+    let context = vm.createContext(opt.ctx);
+    return vm.runInContext(res, Object.assign(context, opt.addCtx));
   }
 }
 
-var writeFile = (file) => (data) => fs.writeFileSync(file, data);
-var addDeps = (url, file) => fetch(url).then(res => res.text()).then( file ? (writeFile(file) : evaluate()));
+var addDeps = (url) => fetch(url).then(res => res.text()).then(evaluate(null));
 
-
-```
-loading in main function
-
-```js
-var main = () => console.log('dependencies loaded, lets start!')
-
-var deps = {
-  http : "https://cdn.jsdelivr.net/gh/azizzaeny/composable@main/snippets/http/util.js",
-  redis: "https://cdn.jsdelivr.net/gh/azizzaeny/composable@main/snippets/redis/util.js",
-  mongo: "https://cdn.jsdelivr.net/gh/azizzaeny/composable@main/snippets/mongo/util.js",
+//  note: use your favorite cdn js
+var packages = {
+  'clojure.core' : 'https://fastly.jsdelivr.net/npm/@zaeny/clojure.core',
+  'http': 'https://fastly.jsdelivr.net/npm/@zaeny/http'
 }
 
-// single
-addDeps(deps.http, './http.js')
+addDeps(packages['clojure.core']) // avaialabe map, filter, assoc, getIn, etc...
+addDeps(packages['http'])  // createServer, startServer
 
-// or multiple evaluate
-Promise.all([
-  addDeps(deps.http),
-  addDeps(deps.redis)
-]).then(main);
-
-// or Promise.all(Object.values(deps).map(addDeps)).then(main);
 ```
 
-usage in browser
+usage in browser import
 
 ```js
 
 var deps = {
-  hiccup : "https://cdn.jsdelivr.net/gh/azizzaeny/composable@main/snippets/hiccup/index.js",
+  hiccup : "https://fastly.jsdelivr.net/gh/azizzaeny/composable@main/snippets/hiccup/index.js",
 }
 
 var assignVar = (global, name) => res => Object.assign(global, { [name]: (res.default) });
 
+
+// importing via import api
 import(deps.hiccup).then(assignVar(window, "hiccup"));
 
 ```
+
+usage with fetch api
+todo:
+
+usage by creating script directly 
+todo:
 
 ### Workflow
 
