@@ -177,6 +177,93 @@ var ffirst = (seq) => first(seq[0])
 ffirst([[0, 1], [1,2]]) //=> 0
 ```
 
+### second
+```clj context=spec fn=second
+(second x)
+```
+```txt context=desc fn=second
+Same as (first (next x))
+```
+```js context=core fn=second
+var second = ([_, x]) => x;
+```
+```js context=test fn=second
+second([1, 2]); // => 2
+```
+
+### last
+```clj context=spec fn=last
+(last coll)
+```
+```txt context=desc fn=last
+Return the last item in coll, in linear time
+```
+```js context=core fn=last
+var last = (arr) => arr[arr.length - 1];
+```
+```js context=test fn=last
+last([0,1,2,3,4]) // => 4
+```
+
+### next
+```clj context=spec fn=next
+(next coll)
+```
+```txt context=desc fn=next
+Returns a seq of the items after the first. Calls seq on its
+argument.  If there are no more items, returns nil.
+```
+```js context=core fn=next
+var next = ([_, ...rest]) => { return rest; }
+```
+```js context=test fn=next
+next([1,2,3,4]) // [2,3,4]
+next(next([1,2,3,4])); //[3,4]
+next(next(next([1,2,3,4]))); //[4]
+next(next(next(next([1,2,3,4])))); //[]
+```
+
+
+### take 
+```clj context=spec fn=take
+(take n)(take n coll)
+```
+```txt context=desc fn=take
+Returns a lazy sequence of the first n items in coll, or all items if
+there are fewer than n.  Returns a stateful transducer when
+no collection is provided.
+```
+```js context=core fn=take
+var take = (...[n, coll]) => {
+  if(!coll) return (coll) => take(n, coll);
+  return coll.slice(0, n);
+}
+```
+```js context=test fn=take
+take(2, [1,2,3,4,5,6,7,8]) //=> [1,2]
+take(4, [1,2,3,4,5,6,7,8]) //=> [1,2,3,4]
+```
+
+### takeNth
+```clj context=spec fn=takeNth
+(take-nth n)(take-nth n coll)
+```
+```txt context=desc fn=takeNth
+Returns a lazy seq of every nth item in coll.  Returns a stateful
+transducer when no collection is provided.
+```
+```js context=core fn=takeNth
+// todo: check takeNth
+var takeNth = (...[n, coll]) => {
+  if(!coll) return (coll) => takeNth(n, coll);
+  return coll.filter((_, i) => i % n === 0);
+}
+```
+```js context=test fn=takeNth
+takeNth(2,[1,2,3,4,5,6,7,8]) //=> [1,3,5,7]
+takeNth(3, [1,2,3,4,5,6,7,8]) //=> [1,4,7]
+```
+
 ### nth
 ```clj context=spec fn=rest
 (nth coll index)(nth coll index not-found)
