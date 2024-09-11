@@ -253,7 +253,6 @@ mergeWith(inc, {a: 1, b:2}, {c:3, a:2}); //=> { a: 3, b: 3, c: 4 }
 ```
 
 ### selectKeys
-
 ```clj context=spec fn=selectKeys
 (select-keys map keyseq)
 ```
@@ -271,15 +270,50 @@ selectKeys({a: 1, b:2, c:{d:3}}, ['a', 'c']); //=> { a: 1, c: { d: 3 } }
 ```
 
 ### renameKeys
+```clj context=spec fn=renameKeys
+(rename-keys map kmap)
+```
+```txt context=desc fn=renameKeys
+Returns the map with the keys in kmap renamed to the vals in kmap
+```
+```js context=core fn=renameKeys
+var renameKeys = (...[m, ksmap]) => {
+  if(!ksmap) return (ksmap) => renameKeys(m, ksmap);
+  return Object.entries(m).reduce((acc, [key, value]) => ksmap[key] ? { ...acc, [ksmap[key]]: value } : { ...acc, [key]: value }, {});
+}
+```
+```js context=test fn=renameKeys
+renameKeys({a: 1, b:2}, {"b": "intoC"}); // {a:1, intoC: 2}
+```
 
-```clj context=spec fn=
+### keys
+```clj context=spec fn=keys
+(keys map)
 ```
-```txt context=desc fn=
+```txt context=desc fn=keys
+Returns a sequence of the map's keys, in the same order as (seq map).
 ```
-```js context=core fn=
+```js context=core fn=keys
+var keys = (m) => Object.keys(m);
 ```
-```js context=test fn=
+```js context=test fn=keys
+keys({a:1, b:2}); //=> ['a', 'b'];
 ```
+
+### vals
+```clj context=spec fn=vals
+(vals map)
+```
+```txt context=desc fn=vals
+Returns a sequence of the map's values, in the same order as (seq map).
+```
+```js context=core fn=vals
+var vals = (m) => Object.values(m);
+```
+```js context=test fn=vals
+vals({a:1, b:2}); //=> [1,2]
+```
+
 
 ### partial
 ```clj context=spec fn=partial
