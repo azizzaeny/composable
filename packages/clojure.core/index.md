@@ -112,12 +112,20 @@ conj(['a'])('b', 'c') // ['a','b', 'c']
 
 ### cons
 ```clj context=spec fn=cons
+(cons x seq)
 ```
 ```txt context=desc fn=cons
+Returns a new seq where x is the first element and seq is the rest.
 ```
 ```js context=core fn=cons
+var cons = (...[x, ...seq]) =>{
+  if(!seq || seq.length ===0) return (...seq) => cons(x, ...seq);
+  return [x].concat(...seq);
+}
 ```
 ```js context=test fn=cons
+cons(0,[1,2,3]) //=>[0,1,2,3]
+cons(0)([1,2,3]) //=>[0,1,2,3]
 ```
 
 ### first
