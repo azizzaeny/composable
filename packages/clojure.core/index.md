@@ -37,8 +37,35 @@ isMap({}); // => true
 isMap([]); //=> false
 ```
 
-### get
+### keys
+```clj context=spec fn=keys
+(keys map)
+```
+```txt context=desc fn=keys
+Returns a sequence of the map's keys, in the same order as (seq map).
+```
+```js context=core fn=keys
+var keys = (m) => Object.keys(m);
+```
+```js context=test fn=keys
+keys({a:1, b:2}); //=> ['a', 'b'];
+```
 
+### vals
+```clj context=spec fn=vals
+(vals map)
+```
+```txt context=desc fn=vals
+Returns a sequence of the map's values, in the same order as (seq map).
+```
+```js context=core fn=vals
+var vals = (m) => Object.values(m);
+```
+```js context=test fn=vals
+vals({a:1, b:2}); //=> [1,2]
+```
+
+### get
 ```clj context=spec fn=get
 (get map key)(get map key not-found)
 ``` 
@@ -286,32 +313,43 @@ var renameKeys = (...[m, ksmap]) => {
 renameKeys({a: 1, b:2}, {"b": "intoC"}); // {a:1, intoC: 2}
 ```
 
-### keys
-```clj context=spec fn=keys
-(keys map)
+### zipmap
+```clj context=spec fn=zipmap
+(zipmap keys vals)
 ```
-```txt context=desc fn=keys
-Returns a sequence of the map's keys, in the same order as (seq map).
+```txt context=desc fn=zipmap
+Returns a map with the keys mapped to the corresponding vals.
 ```
-```js context=core fn=keys
-var keys = (m) => Object.keys(m);
+```js context=core fn=zipmap
+var zipmap = (...[ks, vals]) =>{
+  if(!vals) return (ks) => zipmap(ks, vals);
+  return ks.reduce((acc, key, i)=> (acc[key]=vals[i], acc), {});
+}
 ```
-```js context=test fn=keys
-keys({a:1, b:2}); //=> ['a', 'b'];
+```js context=test fn=zipmap
+zipmap(['a', 'b'], [1,2]); //, {a:1, b:2}
 ```
 
-### vals
-```clj context=spec fn=vals
-(vals map)
+
+### into
+```clj context=spec fn=into
+(into)(into to)(into to from)(into to xform from)
 ```
-```txt context=desc fn=vals
-Returns a sequence of the map's values, in the same order as (seq map).
+```txt context=desc fn=into
+Returns a new coll consisting of to-coll with all of the items of
+from-coll conjoined. A transducer may be supplied.
 ```
-```js context=core fn=vals
-var vals = (m) => Object.values(m);
+```js context=core fn=into
+// todo: fix into add xform
+var into= (...[to, from]) =>{
+  if(!from) return (from) => into(to, from);
+  if(isMap(to)) return from.reduce((acc, [key, value])=> ({...acc, [key]:value}),{});
+  return Object.entries(from).map(([key, value]) => [key, value]);
+}
 ```
-```js context=test fn=vals
-vals({a:1, b:2}); //=> [1,2]
+```js context=test fn=into
+into([], {a:1, b:2}); // => [ [ 'a', 1 ], [ 'b', 2 ] ]
+into({}, [['a',1], ['b', 2]]); // => { a: 1, b: 2 }
 ```
 
 
