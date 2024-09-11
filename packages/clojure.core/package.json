@@ -1,0 +1,43 @@
+{
+  "name": "@zaeny/clojure.core",
+  "version": "1.2.3",
+  "description": "Clojure core functions in javascript land, an attempt to port clojure core library function so it available in javascript ",
+  "keywords": [
+    "functional",
+    "fn",
+    "pure",
+    "lodash",
+    "underscore",
+    "mori",
+    "clojurescript",
+    "cljs",
+    "clojure",
+    "clojure.core",
+    "core",
+    "function",
+    "functional programming"
+  ],
+  "publishConfig": {
+		"access": "public"
+	},
+  "files": [
+		"./*.js",
+	],
+  "sideEffects": false,
+  "module": "./dist/index.module.js",
+  "main": "./dist/index.js",
+  "scripts": {
+    "extract": "./bin/extract",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/azizzaeny/composable.git"
+  },
+  "author": "Aziz Zaeny (https://azizzaeny.com)",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/azizzaeny/composable/issues"
+  },
+  "homepage": "https://azizzaeny.com/open-source/clojure.core",
+}
