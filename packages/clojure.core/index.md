@@ -306,8 +306,63 @@ takeNth(3, [1,2,3,4,5,6,7,8]) //=> [1,4,7]
 ```
 
 ### takeLast
+```clj context=spec fn=takeLast
+(take-last n coll)
+```
+```txt context=desc fn=takeLast
+Returns a seq of the last n items in coll.  Depending on the type
+of coll may be no better than linear time.  For vectors, see also subvec.
+```
+```js context=core fn=takeLast
+var takeLast= (...[n, coll])=>{  
+  if(!coll) return (coll) => takeLast(n, arr1=coll);
+  return coll.slice(-n);  
+}
+```
+```js context=test fn=takeLast
+takeLast(2, [1,2,3,4,5,6,7]) // [6,7]
+takeLast(3)([1,2,3,4,5,6]) // [4,5,6]
+```
+
 
 ### takeWhile
+```clj context=spec fn=takeWhile
+(take-while pred)(take-while pred coll)
+```
+```txt context=desc fn=takeWhile
+Returns a lazy sequence of successive items from coll while
+(pred item) returns logical true. pred must be free of side-effects.
+Returns a transducer when no collection is provided.
+```
+```js context=core fn=takeWhile
+var takeWhile = (...[pred, coll]) =>{
+  if (!coll) return coll => takeWhile(pred, coll);  
+  let index = coll.findIndex(val => !pred(val))
+  return index === -1 ? coll : coll.slice(0, index);
+}
+```
+```js context=test fn=takeWhile
+takeWhile((n)=> n < 5, [1,2,3,4,5,6,7,8]); // [1,2,3,4]
+```
+
+
+### takeNth
+```clj context=spec fn=takeNth
+(take-nth n)(take-nth n coll)
+```
+```txt context=desc fn=takeNth
+Returns a lazy seq of every nth item in coll.  Returns a stateful
+transducer when no collection is provided.
+```
+```js context=core fn=takeNth
+var takeNth = (...[n, coll]) => {
+  if (!coll) return coll => takeNth(n, coll)
+  return coll.filter((_, i) => i % n === 0);
+}
+```
+```js context=test fn=takeNth
+takeNth(3, [1,2,3,4,5,6,7,8]) //[1,4,7]
+```
 
 ### nth
 ```clj context=spec fn=rest
@@ -331,6 +386,71 @@ nth([1,2,3,4])(2); //=> 3
 ```
 
 ### nthrest
+```clj context=spec fn=nthrest
+(nthrest coll n)
+```
+```txt context=desc fn=nthrest
+Returns the nth rest of coll, coll when n is 0.
+```
+```js context=core fn=nthrest
+var nthrest = (...[coll, n]) =>{
+  if(!n) return (n) => nthrest(coll, n);
+   return coll.filter((_, i) => i >= n)
+}
+```
+```js context=test fn=nthrest
+nthrest([1,2,3,4,5,6], 2) // [3,4,5,6]
+```
+
+
+### drop
+```clj context=spec fn=drop
+(drop n)(drop n coll)
+```
+```txt context=desc fn=drop
+Returns a lazy sequence of all but the first n items in coll.
+Returns a stateful transducer when no collection is provided.
+```
+```js context=core fn=drop
+var drop = (...[n, coll]) => {
+  if(!coll) return (coll) => drop(n, coll);
+  return coll.slice(n);
+}
+```
+```js context=test fn=drop
+drop(2, [1,2,3,4,5]) //=> [3,4,5]
+```
+
+### dropLast
+```clj context=spec fn=dropLast
+(drop-last coll)(drop-last n coll)
+```
+```txt context=desc fn=dropLast
+Return a lazy sequence of all but the last n (default 1) items in coll
+```
+```js context=core fn=dropLast
+var dropLast = (coll) => { return coll.slice(0, -1); }
+```
+```js context=test fn=dropLasy
+dropLast([1,2,3,4]); // => [1,2,3]
+```
+
+### dropWhile
+```clj context=spec fn=dropWhile
+(drop-while pred)(drop-while pred coll)
+```
+```txt context=desc fn=dropWhile
+Returns a lazy sequence of the items in coll starting from the
+first item for which (pred item) returns logical false.  Returns a
+stateful transducer when no collection is provided.
+```
+```js context=core fn=dropWhile
+//TODO;
+```
+```js context=test fn=dropWhile
+//TOOD:
+```
+
 
 ### peek 
 ```clj context=spec fn=peek
