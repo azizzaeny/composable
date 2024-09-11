@@ -129,10 +129,64 @@ cons(0)([1,2,3]) //=>[0,1,2,3]
 ```
 
 ### first
+```clj context=spec fn=first
+(first coll)
+```
+```txt context=desc fn=first
+Returns the first item in the collection. Calls seq on its
+  argument. If coll is nil, returns nil.
+```
+```js context=core fn=first
+var first = (seq) => seq[0];
+```
+```js context=test fn=first
+first([1,2]) //=> 1
+```
 
 ### ffirst
+```clj context=spec fn=ffirst
+(ffirst x)
+```
+```txt context=desc fn=ffirst
+Same as (first (first x))
+```
+```js context=core fn=ffirst
+var ffirst = (seq) => first(seq[0])
+```
+```js context=test fn=ffirst
+ffirst([[0, 1], [1,2]]) //=> 0
+```
+
+### nth
+```clj context=spec fn=rest
+(nth coll index)(nth coll index not-found)
+```
+```txt context=desc fn=rest
+Returns the value at the index. get returns nil if index out of
+bounds, nth throws an exception unless not-found is supplied.  nth
+also works for strings, Java arrays, regex Matchers and Lists, and,
+in O(n) time, for sequences.
+```
+```js context=core fn=rest
+var nth = (...[coll, index]) =>{
+  if(!index) return (index) => nth(coll, index);
+  return coll[index];
+}
+```
+```js context=test fn=rest
+nth([1,2,3,4], 2) //=> 3
+nth([1,2,3,4])(2); //=> 3
+```
 
 ### rest
+```clj context=spec fn=rest
+```
+```txt context=desc fn=rest
+```
+```js context=core fn=rest
+```
+```js context=test fn=rest
+```
 
 ### get
 ```clj context=spec fn=get
@@ -420,6 +474,33 @@ var into= (...[to, from]) =>{
 into([], {a:1, b:2}); // => [ [ 'a', 1 ], [ 'b', 2 ] ]
 into({}, [['a',1], ['b', 2]]); // => { a: 1, b: 2 }
 ```
+
+### seq
+```clj context=spec fn=seq
+(seq coll)
+```
+```txt context=desc fn=seq
+Returns a seq on the collection. If the collection is
+  empty, returns nil.  (seq nil) returns nil. seq also works on
+  Strings, native Java arrays (of reference types) and any objects
+  that implement Iterable. Note that seqs cache values, thus seq
+  should not be used on any Iterable whose iterator repeatedly
+  returns the same mutable object.
+```
+```js context=core fn=seq
+var seq = (coll) =>{
+  if(Array.isArray(coll)) return coll;
+  if(typeof coll === 'object') return Object.entries(coll);
+  if(typeof coll === 'string') return Array.from(coll);
+  return coll;
+}
+```
+```js context=test fn=seq
+seq({a:1, b:2}) //=> [["a", 1], ["b", 2]]
+seq('aziz') //=> ['a', 'z','i', 'z']
+
+```
+
 
 
 ### partial
