@@ -65,6 +65,67 @@ var vals = (m) => Object.values(m);
 vals({a:1, b:2}); //=> [1,2]
 ```
 
+### count
+```clj context=spec fn=count
+(count coll)
+```
+```txt context=desc fn=count
+Returns the number of items in the collection. (count nil) returns
+0.  Also works on strings, arrays, and Java Collections and Maps
+```
+```js context=core fn=count
+var count  = (coll) =>{
+  if(isMap(coll)) return keys(coll).length;
+  return coll.length;
+}
+```
+```js context=test fn=count
+count([1,2]); //=> 2
+count({a:1}); //=> 1
+```
+
+### conj
+```clj context=spec fn=conj
+(conj)(conj coll)(conj coll x)(conj coll x & xs)
+```
+```txt context=desc fn=conj
+conj[oin]. Returns a new collection with the xs
+'added'. (conj nil item) returns (item).
+(conj coll) returns coll. (conj) returns [].
+The 'addition' may happen at different 'places' depending
+on the concrete type.
+```
+```js context=core fn=conj
+var conj = (...[coll, ...xs]) =>{
+  if(!xs || xs.length === 0) return (...xs) => conj(coll, ...xs);
+  return [...coll, ...xs];
+}
+```
+```js context=test fn=conj
+conj(['a'], 'a') // ['a','a']
+conj(['a', 'b'], ['c']) // ['a', 'b', ['c']]
+conj(['a'], 'b', 'c') // ['a', 'b', 'c']
+conj(['a'])('a') // ['a','a']
+conj(['a'])('b', 'c') // ['a','b', 'c']
+
+```
+
+### cons
+```clj context=spec fn=cons
+```
+```txt context=desc fn=cons
+```
+```js context=core fn=cons
+```
+```js context=test fn=cons
+```
+
+### first
+
+### ffirst
+
+### rest
+
 ### get
 ```clj context=spec fn=get
 (get map key)(get map key not-found)
