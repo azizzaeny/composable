@@ -92,7 +92,6 @@ assocIn({a: 1}, ['c'], 1) //=> {a: 1, c: 1}
 ```
 
 
-
 ### dissoc
 ```clj context=spec fn=dissoc
 (dissoc map)(dissoc map key)(dissoc map key & ks)
@@ -139,6 +138,30 @@ var update = (...[m, k, fn]) =>{
 update({a:1, b: 2}, "b", (val) => val + 1); // => {a: 1, b: 3}
 ```
 
+### updateIn
+```clj context=spec fn=updateIn
+(update-in m ks f & args)
+```
+```txt context=desc fn=updateIn
+'Updates' a value in a nested associative structure, where ks is a
+sequence of keys and f is a function that will take the old value
+and any supplied args and return the new value, and returns a new
+nested structure.  If any levels do not exist, hash-maps will be
+created.
+```
+```js context=core fn=updateIn
+var updateIn = (...[m, ks, fn]) =>{
+  if(!ks || !fn) return (ks, fn) => updateIn(m, ks, fn);
+  if(!fn) return (fn) => updateIn(m, ks, fn);
+  let [k, ...rk] = ks;
+  return (rk.length === 0)
+    ? update(m, k, fn)
+    : update(m, k, (v) => updateIn(v, rk, fn));  
+}
+```
+```js context=test fn=updateIn
+updateIn({ name:{ full_name: "aziz zaeny"}}, ["name", "full_name"], (val)=> val.toUpperCase()); //=> { name: { full_name: 'AZIZ ZAENY' } }
+```
 
 ### partial
 ```clj context=spec fn=partial
