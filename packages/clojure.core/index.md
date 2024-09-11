@@ -222,6 +222,47 @@ next(next([1,2,3,4])); //[3,4]
 next(next(next([1,2,3,4]))); //[4]
 next(next(next(next([1,2,3,4])))); //[]
 ```
+### nfirst
+```clj context=spec fn=nfirst
+(nfirst x)
+```
+```txt context=desc fn=nfirst
+Same as (next (first x))
+```
+```js context=core fn=nfirst
+var nfirst = (x) =>  next(first(x));
+```
+```js context=test fn=nfirst
+nfirst([[1,2,3], [4,6,7]]) //=> [2,3]
+```
+
+### nnext
+```clj context=spec fn=nnext
+(nnext x)
+```
+```txt context=desc fn=nnext
+Same as (next (next x))
+```
+```js context=core fn=nnext
+var nnext = (x) => next(next(x));
+```
+```js context=test fn=nnext
+nnext([1,2,3,4]) //=> [3,4]
+```
+
+### fnext
+```clj context=spec fn=fnext
+(fnext x)
+```
+```txt context=desc fn=fnext
+Same as (first (next x))
+```
+```js context=core fn=fnext
+var fnext = (x) => first(next(x));
+```
+```js context=test fn=fnext
+fnext([[1,2,3], [4,5,6]]) //=> [4,5,6];
+```
 
 
 ### take 
@@ -264,6 +305,10 @@ takeNth(2,[1,2,3,4,5,6,7,8]) //=> [1,3,5,7]
 takeNth(3, [1,2,3,4,5,6,7,8]) //=> [1,4,7]
 ```
 
+### takeLast
+
+### takeWhile
+
 ### nth
 ```clj context=spec fn=rest
 (nth coll index)(nth coll index not-found)
@@ -285,6 +330,7 @@ nth([1,2,3,4], 2) //=> 3
 nth([1,2,3,4])(2); //=> 3
 ```
 
+### nthrest
 
 ### peek 
 ```clj context=spec fn=peek
