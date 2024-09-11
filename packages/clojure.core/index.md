@@ -66,6 +66,33 @@ var assoc = (...[m, key, val]) =>{
 assoc({}, 'a', 1); // => {a: 1}
 assoc({}, 'a')(2); // => {a: 2}
 ```
+
+### assocIn
+
+```clj context=spec fn=assocIn
+(assoc-in m [k & ks] v)
+```
+```txt context=desc fn=assocIn
+Associates a value in a nested associative structure, where ks is a sequence of keys and v is the new value and returns a new nested structure. If any levels do not exist, hash-maps will be created.
+```
+```js context=core fn=assocIn
+var assocIn = (...[m, ks, v]) =>{
+  if(!ks || !v) return (ks, v) => assocIn(m, ks, v);
+  if(!v) return (v) => assocIn(m, ks, v);
+  let keys = Array.isArray(ks) ? ks : [ks];
+  let [fk, ...rk] = keys;
+  let val = rk.length === 0 ? v : assocIn(m[fk] || {}, rk, v);
+  return assoc(m, fk, val);
+}
+```
+```js context=test fn=assocIn
+assocIn({a: 1}, ['a', 'b'], 1); //=> {a: {b: 1}};
+assocIn({}, ['a', 'b', 'c'], 1) //=> { a: { b: { c: 1 } } }
+assocIn({a: 1}, ['c'], 1) //=> {a: 1, c: 1}
+```
+
+
+
 ### dissoc
 ```clj context=spec fn=dissoc
 (dissoc map)(dissoc map key)(dissoc map key & ks)
@@ -86,27 +113,50 @@ dissoc({a:1, b: 2}, 'a'); // => { b: 2}
 partial(dissoc, 'a')({a: 1, b: 2}); // => { b: 2}
 ```
 
-### partial
-`(partial f) (partial f arg1) (partial f arg1 arg2 arg3 & more)`    
 
+### update
+```clj context=spec fn=update
+(update m k f)(update m k f x)(update m k f x y)(update m k f x y z)(update m k f x y z & more)
+```
+```txt context=desc fn=update
+'Updates' a value in an associative structure, where k is a
+key and f is a function that will take the old value
+and any supplied args and return the new value, and returns a new
+structure.  If the key does not exist, nil is passed as the old value.
+```
+```js context=core fn=update
+var update = (...[m, k, fn]) =>{
+  if(!k || !fn) return (k, fn) => update(m, k, fn);
+  if(!fn) return (fn) => update(m, k, fn);
+  if(Array.isArray(m)){
+    let coll = [...m];
+    return (coll[k]= fn(coll[k]), coll);
+  }
+  return {...m, [k]: fn(m[k]) };
+}
+```
+```js context=test fn=update
+update({a:1, b: 2}, "b", (val) => val + 1); // => {a: 1, b: 3}
+```
+
+
+### partial
+```clj context=spec fn=partial
+(partial f) (partial f arg1) (partial f arg1 arg2 arg3 & more)
+```
+```txt context=desc fn=partial
 Takes a function f and fewer than the normal arguments to f, and
 returns a fn that takes a variable number of additional args. When
 called, the returned function calls f with args + additional args.
-
+```
 ```js context=core fn=partial
-
 var partial = (fn, ...rightArgs) => {
   return (...leftArgs) => {
     return fn(...leftArgs, ...rightArgs);
   };
 };
-
 ```
-
-try partial
-
 ```js context=test fn=partial
-
 var getA = partial(get, 'a');
 getA({a: '10'});
 
@@ -115,19 +165,19 @@ getA({a: '10'});
 
 
 
-export module 
+### export module 
 
 ```js context=core path=./dist/index.js
 
 ```
 
-export commonjs
+### export commonjs
 
 ```js context=core path=./dist/index.common.js
 
 ```
 
-export global variable
+### export global variable
 
 ```js context=core path=./dist/index.def.js
 
