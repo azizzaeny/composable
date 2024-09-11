@@ -209,6 +209,78 @@ var updateIn = (...[m, ks, fn]) =>{
 updateIn({ name:{ full_name: "aziz zaeny"}}, ["name", "full_name"], (val)=> val.toUpperCase()); //=> { name: { full_name: 'AZIZ ZAENY' } }
 ```
 
+### merge 
+
+```clj context=spec fn=merge
+(merge & maps)
+```
+```txt context=desc fn=merge
+Returns a map that consists of the rest of the maps conj-ed onto
+the first.  If a key occurs in more than one map, the mapping from
+the latter (left-to-right) will be the mapping in the result.
+```
+```js context=core fn=merge
+var merge = (...[m, ...rest]) => {
+  if(!rest || rest.length === 0) return (...rest) => merge(m, ...rest);
+  return Object.assign({}, m, ...rest);
+}
+```
+```js context=test fn=merge
+merge({a:1}, {b:2}, {c:2}); //=> {a:1, b:2, c:2}
+```
+
+### mergeWith
+```clj context=spec fn=mergeWith
+(merge-with f & maps)
+```
+```txt context=desc fn=mergeWith
+Returns a map that consists of the rest of the maps conj-ed onto
+the first.  If a key occurs in more than one map, the mapping(s)
+from the latter (left-to-right) will be combined with the mapping in
+the result by calling (f val-in-result val-in-latter).
+```
+```js context=core fn=mergeWith
+var mergeWith = (...[fn, ...maps]) => {
+  if(!maps || maps.length === 0) return (...maps) => mergeWith(fn, ...maps);
+  let [m, ...coll ] = maps;
+  let newMap =  Object.assign({}, m, ...coll );
+  return Object.entries(newMap).reduce((acc, [k, v])=> (acc[k] = fn(v), acc),{});
+}
+```
+```js context=test fn=mergeWith
+var inc = (a) => a + 1;
+mergeWith(inc, {a: 1, b:2}, {c:3, a:2}); //=> { a: 3, b: 3, c: 4 }
+```
+
+### selectKeys
+
+```clj context=spec fn=selectKeys
+(select-keys map keyseq)
+```
+```txt context=desc fn=selectKeys
+Returns a map containing only those entries in map whose key is in keys
+```
+```js context=core fn=selectKeys
+var selectKeys = (...[m, ks]) =>{
+  if(!ks) return (ks) => selectKeys(m, ks);
+  return Object.fromEntries(Object.entries(m).filter(([key, value]) => ks.includes(key)));
+}
+```
+```js context=test fn=selectKeys
+selectKeys({a: 1, b:2, c:{d:3}}, ['a', 'c']); //=> { a: 1, c: { d: 3 } }
+```
+
+### renameKeys
+
+```clj context=spec fn=
+```
+```txt context=desc fn=
+```
+```js context=core fn=
+```
+```js context=test fn=
+```
+
 ### partial
 ```clj context=spec fn=partial
 (partial f) (partial f arg1) (partial f arg1 arg2 arg3 & more)
@@ -226,8 +298,8 @@ var partial = (fn, ...rightArgs) => {
 };
 ```
 ```js context=test fn=partial
-var getA = partial(get, 'a');
-getA({a: '10'});
+var getName = partial(get, 'name');
+getName({ name: 'aziz zaeny'});
 
 ```
 
