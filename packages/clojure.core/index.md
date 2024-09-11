@@ -128,6 +128,26 @@ cons(0,[1,2,3]) //=>[0,1,2,3]
 cons(0)([1,2,3]) //=>[0,1,2,3]
 ```
 
+
+### disj
+```clj context=spec fn=disj
+(disj set)(disj set key)(disj set key & ks)
+```
+```txt context=desc fn=disj
+disj[oin]. Returns a new set of the same (hashed/sorted) type, that
+does not contain key(s).
+```
+```js context=core fn=disj
+// todo: fix disj
+var disj = (...[st, k, ...ks]) =>{
+  if(!k) return (k, ...ks) => disj(st, k, ...ks);
+  return st.filter(item => item !== k)
+}
+```
+```js context=test fn=disj
+disj([1,2, 3], 1) //=>  [2,3]
+```
+
 ### first
 ```clj context=spec fn=first
 (first coll)
@@ -178,15 +198,57 @@ nth([1,2,3,4], 2) //=> 3
 nth([1,2,3,4])(2); //=> 3
 ```
 
+
+### peek 
+```clj context=spec fn=peek
+(peek coll)
+```
+```txt context=desc fn=peek
+For a list or queue, same as first, for a vector, same as, but much
+more efficient than, last. If the collection is empty, returns nil.
+```
+```js context=core fn=peek
+var peek = (coll) => coll[coll.length - 1];
+```
+```js context=test fn=peek
+peek([1,2,3,4])  //=> 4
+```
+
 ### rest
 ```clj context=spec fn=rest
+(rest coll)
 ```
 ```txt context=desc fn=rest
+Returns a possibly empty seq of the items after the first. Calls seq on its
+argument.
 ```
 ```js context=core fn=rest
+var rest = (coll) => coll.slice(1);
 ```
 ```js context=test fn=rest
+rest([1,2,3]) //=> [2,3]
 ```
+
+### pop
+```clj context=spec fn=pop
+(pop coll)
+```
+```txt context=desc fn=pop
+For a list or queue, returns a new list/queue without the first
+item, for a vector, returns a new vector without the last item. If
+the collection is empty, throws an exception.  Note - not the same
+as next/butlast.
+```
+```js context=core fn=pop
+var pop = ([f,...coll]) => coll
+```
+```js context=test fn=pop
+pop([1,2,3]) // => [1,2]
+pop(['a', 'b', 'c']); //=> ['b', 'c']
+
+```
+
+
 
 ### get
 ```clj context=spec fn=get
