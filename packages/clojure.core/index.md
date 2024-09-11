@@ -1,6 +1,42 @@
 
 specification and refrence  from: [clojuredocs](https://clojuredocs.org/)
 
+### isColl
+```clj context=spec fn=isColl
+(coll? x)
+```
+```txt context=desc fn=isColl
+Returns true if x implements IPersistentCollection
+```
+```js context=core fn=isColl
+var isColl = (value) =>  (value !== null && typeof value === 'object');
+```
+```js context=test fn=isColl
+isColl([]) // => true
+isColl({}) // => true
+isColl(null) //=> false
+isColl(undefined) //=> false
+isColl(NaN) //=>false
+isColl('') // => false
+isColl(0)  //=> false
+```
+
+### isMap
+aka isObject
+```clj context=spec fn=isMap
+(map? x)
+```
+```txt context=desc fn=isMap
+Return true if x implements IPersistentMap
+```
+```js context=core fn=isMap
+var isMap = (value) => typeof value === 'object' && value !== null && !Array.isArray(value);
+```
+```js context=test fn=isMap
+isMap({}); // => true
+isMap([]); //=> false
+```
+
 ### get
 
 ```clj context=spec fn=get
@@ -13,7 +49,7 @@ in associative collection, set, string, array, or ILookup instance.
 ```
 
 ```js context=core fn=get
-var get = (...[map, key]) => {
+var get = (...[map, key]) =>{
   if(!key) return (key) => map[key];
   return map[key];
 }
@@ -58,15 +94,21 @@ val(s). When applied to a vector, returns a new vector that
 contains val at index. Note - index must be <= (count vector).
 ```
 ```js context=core fn=assoc
-var assoc = (...[m, key, val]) =>{
+var assoc = (...[m, key, val]) => {
   if(!key && !val) return (key, val) => assoc(m, key, val);
   if(!val) return (val) => assoc(m, key, val);
-  return {...m, [key]: val};
+  if(isMap(m)) return {...m, [key]: val};
+  if(isColl(m)){
+    let coll = [...m];
+    return (coll[key] = val ,coll);
+  }
 }
 ```
 ```js context=test fn=assoc
 assoc({}, 'a', 1); // => {a: 1}
 assoc({}, 'a')(2); // => {a: 2}
+assoc([], 0, 1); // => [1]
+assoc([], 1, 1); // => [null, 1];
 ```
 
 ### assocIn
@@ -78,7 +120,7 @@ assoc({}, 'a')(2); // => {a: 2}
 Associates a value in a nested associative structure, where ks is a sequence of keys and v is the new value and returns a new nested structure. If any levels do not exist, hash-maps will be created.
 ```
 ```js context=core fn=assocIn
-var assocIn = (...[m, ks, v]) =>{
+var assocIn =(...[m, ks, v]) => {
   if(!ks || !v) return (ks, v) => assocIn(m, ks, v);
   if(!v) return (v) => assocIn(m, ks, v);
   let keys = Array.isArray(ks) ? ks : [ks];
@@ -105,13 +147,15 @@ that does not contain a mapping for key(s).
 ```js context=core fn=dissoc
 var dissoc = (...[m, ...keys]) => {
   if(!keys || keys.length === []) return (...keys) => dissoc(m, ...keys);
-  let coll = {...m};
-  return (keys.map(key => delete coll[key]), coll);
+  let coll = isMap(m) ? {...m} : [...m];
+  return (keys.map(key => delete coll[key]), (isMap(m) ? coll : coll.filter(f => f !== null)));
 }
 ```
 ```js context=test fn=dissoc
 dissoc({a:1, b: 2}, 'a'); // => { b: 2}
 partial(dissoc, 'a')({a: 1, b: 2}); // => { b: 2}
+dissoc([1,2,3], 0); //=> [ 2, 3 ];
+dissoc([1,2,3], 1); //=> [1, 3 ];
 ```
 
 
