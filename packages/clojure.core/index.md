@@ -31,7 +31,22 @@ var getIn = (...[m, ks, notFound=undefined]) =>{
 }
 
 ```
+### assoc 
+`(assoc map key val)(assoc map key val & kvs)`
+assoc[iate]. When applied to a map, returns a new map of the
+same (hashed/sorted) type, that contains the mapping of key(s) to
+val(s). When applied to a vector, returns a new vector that
+contains val at index. Note - index must be <= (count vector).
 
+```js context=core id=assoc
+
+var assoc = (...[m, key, val]) =>{
+  if(!key && !val) return (key, val) => assoc(m, key, val);
+  if(!val) return (val) => assoc(m, key, val);
+  return {...m, [key]: val};
+}
+
+```
 
 ### partial
 `(partial f) (partial f arg1) (partial f arg1 arg2 arg3 & more)`

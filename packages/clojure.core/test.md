@@ -13,6 +13,13 @@ getIn({a: {b: 'data'}})(['a', 'b']) // => 'data'
 
 ```
 
+### assoc
+
+```js context=test id=assoc
+assoc({}, 'a', 1); // => {a: 1}
+assoc({}, 'a')(2); // => {a: 2}
+
+```
 ### partial
 
 ```js context=test id=get
