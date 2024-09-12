@@ -343,6 +343,80 @@ isMap({}); // => true
 isMap([]); //=> false
 ```
 
+### isEmpty 
+```clj context=spec fn=isEmpty
+(empty? coll)
+```
+```txt context=desc fn=isEmpty
+Returns true if coll has no items - same as (not (seq coll)).
+Please use the idiom (seq x) rather than (not (empty? x))
+```
+```js context=core fn=isEmpty
+var isEmpty = (coll) => {
+  if(typeof coll === 'object'){
+    return (Object.keys(coll).length === 0);
+  }
+  return coll.length === 0;
+}
+```
+```js context=test fn=isEmpty
+isEmpty([]); // true
+isEmpty({}) // true
+```
+
+### not
+```clj context=spec fn=not
+(not x)
+```
+```txt context=desc fn=not
+Returns true if x is logical false, false otherwise.
+```
+```js context=core fn=not
+var not = (x) => !x;
+```
+```js context=test fn=not
+not(true); // false
+not(false); true
+not(isEmpty({})); // false
+```
+
+### isContains
+```clj context=spec fn=isContains
+(contains? coll key)
+```
+```txt context=desc fn=isContains
+Returns true if key is present in the given collection, otherwise
+returns false.  Note that for numerically indexed collections like
+vectors and Java arrays, this tests if the numeric key is within the
+range of indexes. 'contains?' operates constant or logarithmic time;
+it will not perform a linear search for a value.  See also 'some'.
+```
+```js context=core fn=isContains
+var isContains = (...args)=>{
+  let [coll, key] = args;
+  if(args.length === 1) return (keyN) => isContains(coll, keyN);
+  if (coll instanceof Map || coll instanceof Set) {
+    return coll.has(key);
+  } else if (typeof coll === "object"){
+    if(Array.isArray(coll)){
+      return coll.includes(key);
+    }else{
+      return Object.prototype.hasOwnProperty.call(coll, key);
+    }
+  } else if (typeof coll === "string") {
+    return coll.includes(key);
+  } else {
+    return false;
+  }
+};
+```
+```js context=test fn=isContains
+isContains([1,2,3,4], 2); // true
+isContains({a:1, b:2}, "b"); // true
+isContains('foo', 'o'); // true
+
+```
+
 
 ### tfirst
 ```clj context=spec fn=tfirst
@@ -401,6 +475,11 @@ var tlast = (val, ...forms) => {
 tlast([11], [map, (x) => x * 7]); // [77]
 tlast(range(10), [map, (x) => x * 2], [filter, isEven], [take, 5]); //[ 0, 2, 4, 6, 8 ]
 ```
+
+### cond
+### condtlast
+### condtfirst
+### doseq
 
 ### keys
 ```clj context=spec fn=keys
