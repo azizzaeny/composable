@@ -273,6 +273,167 @@ var replace = (...args) =>{
 replace("hello world", "o", "a"); // "hella warld"
 ```
 
+### isZero
+```clj context=spec fn=isZero
+```
+```txt context=desc fn=isZero
+```
+```js context=core fn=isZero
+var isZero = (x) =>  x === 0;
+```
+```js context=test fn=isZero
+isZero(0);
+```
+
+### isPos
+```clj context=spec fn=isPos
+```
+```txt context=desc fn=isPos
+```
+```js context=core fn=isPos
+var isPos = (x) => x > 0;
+```
+```js context=test fn=isPos
+isPos(-1); // false
+```
+
+### isNeg
+```clj context=spec fn=isNeg
+```
+```txt context=desc fn=isNeg
+```
+```js context=core fn=isNeg
+var isNeg = (x) => x < 0;
+```
+```js context=test fn=isNeg
+isNeg(-1); // true
+```
+
+### isInt
+```clj context=spec fn=isInt
+```
+```txt context=desc fn=isInt
+```
+```js context=core fn=isInt
+var isInt = (x) => Number.isInteger(x);
+```
+```js context=test fn=isInt
+isInt(0.1); // false
+```
+
+### isBoolean
+```clj context=spec fn=isBoolean
+```
+```txt context=desc fn=isBoolean
+```
+```js context=core fn=isBoolean
+var isBoolean = (x) => typeof x === 'boolean';
+```
+```js context=test fn=isBoolean
+isBoolean(true);
+```
+
+### isTrue
+```clj context=spec fn=isTrue
+```
+```txt context=desc fn=isTrue
+```
+```js context=core fn=isTrue
+var isTrue = x => x === true;
+```
+```js context=test fn=isTrue
+isTrue(1); // false
+isTrue(true); // true
+```
+### isFalse
+```clj context=spec fn=isFalse
+```
+```txt context=desc fn=isFalse
+```
+```js context=core fn=isFalse
+var isFalse = x => x === false;
+```
+```js context=test fn=isFalse
+isFalse(false); // true
+```
+
+### isInstance
+```clj context=spec fn=isInstance
+```
+```txt context=desc fn=isInstance
+```
+```js context=core fn=isInstance
+var isInstance = (x, type) => x instanceof type;
+```
+```js context=test fn=isInstance
+isInstance([],Array);  // true
+isInstance([], Object); // true
+
+```
+
+### isNil
+```clj context=spec fn=isNil
+```
+```txt context=desc fn=isNil
+```
+```js context=core fn=isNil
+var isNil = (x) => x === null; 
+```
+```js context=test fn=isNil
+isNil(null);
+```
+
+### isSome
+```clj context=spec fn=isSome
+```
+```txt context=desc fn=isSome
+```
+```js context=core fn=isSome
+var isSome = x => x !== null;
+```
+```js context=test fn=isSome
+isSome(null); // false
+isSome('a'); // true
+isSome(1); // true
+```
+
+
+### isFn
+```clj context=spec fn=isFn
+```
+```txt context=desc fn=isFn
+```
+```js context=core fn=isFn
+var isFn = (x) => typeof x === 'function';
+```
+```js context=test fn=isFn
+isFn(map); // true
+```
+
+### isBlank
+```clj context=spec fn=isBlank
+```
+```txt context=desc fn=isBlank
+```
+```js context=core fn=isBlank
+var isBlank = x => typeof x === 'string' && x.trim() === '';
+```
+```js context=test fn=isBlank
+isBlank(''); // true
+```
+
+### isNumber
+```clj context=spec fn=isNumber
+```
+```txt context=desc fn=isNumber
+```
+```js context=core fn=isNumber
+var isNumber = value => typeof value === 'number' && !Number.isNaN(value)
+```
+```js context=test fn=isNumber
+isNumber('a'); // false
+isNumber(1); // true
+```
 
 ### isEven
 ```clj context=spec fn=isEven
@@ -306,7 +467,6 @@ isOdd(1); // true
 isOdd(5); // true
 ```
 
-
 ### isColl
 ```clj context=spec fn=isColl
 (coll? x)
@@ -327,7 +487,25 @@ isColl('') // => false
 isColl(0)  //=> false
 ```
 
-### isMap
+### isVector (isArray)
+```clj context=spec fn=isVector
+(vector? x)
+```
+```txt context=desc fn=isVector
+Return true if x implements IPersistentVector
+```
+```js context=core fn=isVector
+var isVector =(value) =>  Array.isArray(value);
+var isArray = isVector;
+```
+```js context=test fn=isVector
+isVector(1); // false
+isArray(1); // false
+isVector([]); // true
+isVector({}); // false
+```
+
+### isMap (isObject)
 aka isObject
 ```clj context=spec fn=isMap
 (map? x)
@@ -337,10 +515,12 @@ Return true if x implements IPersistentMap
 ```
 ```js context=core fn=isMap
 var isMap = (value) => typeof value === 'object' && value !== null && !Array.isArray(value);
+var isObject = isMap;
 ```
 ```js context=test fn=isMap
 isMap({}); // => true
 isMap([]); //=> false
+isObject({})
 ```
 
 ### isEmpty 
@@ -414,11 +594,26 @@ var isContains = (...args)=>{
 isContains([1,2,3,4], 2); // true
 isContains({a:1, b:2}, "b"); // true
 isContains('foo', 'o'); // true
+```
 
+### isIncludes
+```clj context=spec fn=isIncludes
+(includes? s substr)
+```
+```txt context=desc fn=isIncludes
+True if s includes substr.
+```
+```js context=core fn=isIncludes
+var isIncludes = (s, substr) => {
+  if(!substr) return (substr) => isIncludes(s, substr);
+  return s.includes(substr)
+}
+```
+```js context=test fn=isIncludes
+isIncludes('aziz zaeny', 'zaeny'); // true
 ```
 
 
-### tfirst
 ```clj context=spec fn=tfirst
 (-> x & forms)
 ```
@@ -428,6 +623,8 @@ second item in the first form, making a list of it if it is not a
 list already. If there are more forms, inserts the first form as the
 second item in second form, etc.
 ```
+
+### tfirst
 ```js context=core fn=tfirst
 var tfirst = (val, ...forms)=>{
   return forms.reduce((acc, form) => {
