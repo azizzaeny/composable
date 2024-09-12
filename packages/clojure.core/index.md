@@ -1187,20 +1187,20 @@ remove((x)=> x % 2 === 0, range(0, 20)); // => [  1,  3,  5,  7,  9,  11, 13, 15
 ```
 
 ### isEvery
-```clj context=spec fn=remove
+```clj context=spec fn=isEvery
 (every? pred coll)
 ```
-```txt context=desc fn=remove
+```txt context=desc fn=isEvery
 Returns true if (pred x) is logical true for every x in coll, else
 false.
 ```
-```js context=core fn=remove
+```js context=core fn=isEvery
 var isEvery = (...[pred, coll]) =>{
   if(!coll) return (coll) => isEvery(pred, coll);
   return coll.every(pred, coll);
 }
 ```
-```js context=test fn=remove
+```js context=test fn=isEvery
 isEvery(n => n > 0, [1,2,3,34,5]); //=> true
 ```
 
@@ -1248,6 +1248,91 @@ reduce((acc, v) => acc + v, 0, [1,23,4,5,6,77]); // => 116
 reduce((acc, v) => merge(acc, v))([{a:1}, {b:2}]); // => {a:1, b:2}
 ```
 
+### sort
+```clj context=spec fn=sort
+(sort coll)(sort comp coll)
+```
+```txt context=desc fn=sort
+Returns a sorted sequence of the items in coll. If no comparator is supplied, uses compare. comparator must implement java.util.Comparator. Guaranteed to be stable: equal elements will not be reordered. If coll is a Java array, it will be modified. To avoid this, sort a copy of the array...
+```
+```js context=core fn=sort
+var sort = (...args) => {
+  let [arr, comp = (a, b) => a - b] = args;
+  return args.length === 1 ? [...arr].sort() : [...arr].sort(comp);
+}
+```
+```js context=test fn=sort
+sort([1,2,3,4,5,6,5,4,1]); // [1,1,2,3,4,4,5,5,6]
+```
+
+### sortBy
+```clj context=spec fn=sortBy
+(sort-by keyfn coll)(sort-by keyfn comp coll)
+```
+```txt context=desc fn=sortBy
+Returns a sorted sequence of the items in coll, where the sort order is determined by comparing (keyfn item). If no comparator is supplied, uses compare. comparator must implement java.util.Comparator. Guaranteed to be stable: equal elements will not be reordered. If coll is a Java array...
+```
+```js context=core fn=sortBy
+// todo: fix keyFn comp
+var sortBy=(...args) =>{
+  let [fn, coll] = args;
+  if (args.length === 1) {
+    return coll => [...coll].sort((a, b) => fn(a) - fn(b));
+  } else {
+    return [...coll].sort((a, b) => fn(a) - fn(b));
+  }
+}
+```
+```js context=test fn=sortBy
+sortBy((n)=> n.length, ["aaa", "bb", "c"]); // ['c', 'bb', 'aaa']
+```
+
+### reverse
+```clj context=spec fn=reverse
+(reverse coll)
+```
+```txt context=desc fn=reverse
+Returns a seq of the items in coll in reverse order. Not lazy.
+```
+```js context=core fn=reverse
+var reverse = (coll) => [...coll].reverse();
+```
+```js context=test fn=reverse
+reverse([1,2,4,6,7,9]); // =>[ 9, 7, 6, 4, 2, 1 ]
+```
+
+### interleave
+
+```clj context=spec fn=interleave
+```
+```txt context=desc fn=interleave
+```
+```js context=core fn=interleave
+```
+```js context=test fn=interleave
+```
+
+### interpose
+
+```clj context=spec fn=interpose
+```
+```txt context=desc fn=interpose
+```
+```js context=core fn=interpose
+```
+```js context=test fn=interpose
+```
+
+### distinct
+
+```clj context=spec fn=distinct
+```
+```txt context=desc fn=distinct
+```
+```js context=core fn=distinct
+```
+```js context=test fn=distinct
+```
 
 
 ### export module 
