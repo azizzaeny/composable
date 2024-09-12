@@ -8,8 +8,8 @@ specification and refrence  from: [clojuredocs](https://clojuredocs.org/)
 ```
 ```txt context=desc fn=partial
 Takes a function f and fewer than the normal arguments to f, and
-returns a fn that takes a variable number of additional args. When
-called, the returned function calls f with args + additional args.
+    returns a fn that takes a variable number of additional args. When
+        called, the returned function calls f with args + additional args.
 ```
 ```js context=core fn=partial
 var partial = (fn, ...rightArgs) => {
@@ -93,7 +93,7 @@ vals({a:1, b:2}); //=> [1,2]
 ```
 ```txt context=desc fn=count
 Returns the number of items in the collection. (count nil) returns
-0.  Also works on strings, arrays, and Java Collections and Maps
+        0.  Also works on strings, arrays, and Java Collections and Maps
 ```
 ```js context=core fn=count
 var count  = (coll) =>{
@@ -112,10 +112,10 @@ count({a:1}); //=> 1
 ```
 ```txt context=desc fn=conj
 conj[oin]. Returns a new collection with the xs
-'added'. (conj nil item) returns (item).
-(conj coll) returns coll. (conj) returns [].
-The 'addition' may happen at different 'places' depending
-on the concrete type.
+    'added'. (conj nil item) returns (item).
+    (conj coll) returns coll. (conj) returns [].
+    The 'addition' may happen at different 'places' depending
+        on the concrete type.
 ```
 ```js context=core fn=conj
 var conj = (...[coll, ...xs]) =>{
@@ -157,7 +157,7 @@ cons(0)([1,2,3]) //=>[0,1,2,3]
 ```
 ```txt context=desc fn=disj
 disj[oin]. Returns a new set of the same (hashed/sorted) type, that
-does not contain key(s).
+        does not contain key(s).
 ```
 ```js context=core fn=disj
 // todo: fix disj
@@ -195,7 +195,7 @@ concat([1], [2], [3], [4]); //[1,2,3,4]
 ```
 ```txt context=desc fn=first
 Returns the first item in the collection. Calls seq on its
-  argument. If coll is nil, returns nil.
+        argument. If coll is nil, returns nil.
 ```
 ```js context=core fn=first
 var first = (seq) => seq[0];
@@ -252,7 +252,7 @@ last([0,1,2,3,4]) // => 4
 ```
 ```txt context=desc fn=next
 Returns a seq of the items after the first. Calls seq on its
-argument.  If there are no more items, returns nil.
+        argument.  If there are no more items, returns nil.
 ```
 ```js context=core fn=next
 var next = ([_, ...rest]) => { return rest; }
@@ -312,8 +312,8 @@ fnext([[1,2,3], [4,5,6]]) //=> [4,5,6];
 ```
 ```txt context=desc fn=take
 Returns a lazy sequence of the first n items in coll, or all items if
-there are fewer than n.  Returns a stateful transducer when
-no collection is provided.
+    there are fewer than n.  Returns a stateful transducer when
+        no collection is provided.
 ```
 ```js context=core fn=take
 var take = (...[n, coll]) => {
@@ -332,7 +332,7 @@ take(4, [1,2,3,4,5,6,7,8]) //=> [1,2,3,4]
 ```
 ```txt context=desc fn=takeNth
 Returns a lazy seq of every nth item in coll.  Returns a stateful
-transducer when no collection is provided.
+        transducer when no collection is provided.
 ```
 ```js context=core fn=takeNth
 // todo: check takeNth
@@ -352,7 +352,7 @@ takeNth(3, [1,2,3,4,5,6,7,8]) //=> [1,4,7]
 ```
 ```txt context=desc fn=takeLast
 Returns a seq of the last n items in coll.  Depending on the type
-of coll may be no better than linear time.  For vectors, see also subvec.
+        of coll may be no better than linear time.  For vectors, see also subvec.
 ```
 ```js context=core fn=takeLast
 var takeLast= (...[n, coll])=>{  
@@ -1287,6 +1287,30 @@ var sortBy=(...args) =>{
 sortBy((n)=> n.length, ["aaa", "bb", "c"]); // ['c', 'bb', 'aaa']
 ```
 
+### compare
+```clj context=spec fn=compare
+(compare x y)
+```
+```txt context=desc fn=compare
+Comparator. Returns a negative number, zero, or a positive number
+when x is logically 'less than', 'equal to', or 'greater than'
+y.
+```
+```js context=core fn=compare
+var compare = (a , b) => {
+  if (a < b) {
+    return -1;
+  } else if (a > b) {
+    return 1;
+  } else {
+    return 0;
+  }
+}
+```
+```js context=test fn=compare
+compare(1, 2); // => -1
+```
+
 ### reverse
 ```clj context=spec fn=reverse
 (reverse coll)
@@ -1302,38 +1326,89 @@ reverse([1,2,4,6,7,9]); // =>[ 9, 7, 6, 4, 2, 1 ]
 ```
 
 ### interleave
-
 ```clj context=spec fn=interleave
+(interleave)(interleave c1)(interleave c1 c2)(interleave c1 c2 & colls)
 ```
 ```txt context=desc fn=interleave
+Returns a lazy seq of the first item in each coll, then the second etc.
 ```
 ```js context=core fn=interleave
+// TODO: fix multi collection
+var interleave = (...args) => {
+  let [c1, c2, ...colls] = args;
+  if(args.length === 2) return c1.map((v, i) => [v, c2[i]]).flat();
+}
 ```
 ```js context=test fn=interleave
+interleave([1,2,3], ["a", "b","c"]) // []
 ```
 
 ### interpose
-
 ```clj context=spec fn=interpose
+(interpose sep)(interpose sep coll)
 ```
 ```txt context=desc fn=interpose
+Returns a lazy seq of the elements of coll separated by sep. Returns a stateful transducer when no collection is provided.
 ```
 ```js context=core fn=interpose
+var interpose = (...args) => {
+  let [sep, coll] = args;
+  if (args.length === 1) {
+    return coll => coll.flatMap((val, i) => i === coll.length - 1 ? val : [val, sep]);
+  } else {
+    return coll.flatMap((val, i) => i === coll.length - 1 ? val : [val, sep]);
+  } 
+}
 ```
 ```js context=test fn=interpose
+interpose(",", ["one", "two", "three"]); // => [ 'one', ',', 'two', ',', 'three' ]
 ```
 
 ### distinct
-
 ```clj context=spec fn=distinct
+(distinct)(distinct coll)
 ```
 ```txt context=desc fn=distinct
+Returns a lazy sequence of the elements of coll with duplicates removed.
+Returns a stateful transducer when no collection is provided.
 ```
 ```js context=core fn=distinct
+var distinct = (coll) => [...new Set(coll)];
 ```
 ```js context=test fn=distinct
+distinct([1,2,1,2,4,5,6,6,7,6,8]); // => [1, 2, 4, 5, 6, 7, 8]
 ```
 
+### groupBy
+```clj context=spec fn=groupBy
+(group-by f coll)
+```
+```txt context=desc fn=groupBy
+Returns a map of the elements of coll keyed by the result of
+f on each element. The value at each key will be a vector of the
+corresponding elements, in the order they appeared in coll.
+```
+```js context=core fn=groupBy
+var groupBy = (...[f, coll]) =>{
+  if(!coll) return (coll) => groupBy(f, coll);
+  return coll.reduce((acc, curr) => {
+    let key = f(curr);
+    if(!acc[key]) (acc[key]=[]);
+    return (acc[key].push(curr), acc);
+  }, {});
+}
+```
+```js context=test fn=groupBy
+groupBy(n => n > 0)([-1,2,3,4,5, -9,-2]); // { false: [ -1, -9, -2 ], true: [ 2, 3, 4, 5 ] }
+groupBy(count,["a","as","asd","aa","asdf","qwer"]);
+/*
+  {
+  '1': [ 'a' ],
+  '2': [ 'as', 'aa' ],
+  '3': [ 'asd' ],
+  '4': [ 'asdf', 'qwer' ]
+}*/
+```
 
 ### export module 
 
