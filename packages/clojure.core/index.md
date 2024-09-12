@@ -1170,7 +1170,39 @@ filter(n=> n > 2)([1,2,3,4,5,6]); // => [ 3, 4, 5, 6 ]
 
 
 ### remove
-### every
+```clj context=spec fn=remove
+(remove pred)(remove pred coll)
+```
+```txt context=desc fn=remove
+Returns a lazy sequence of the items in coll for which (pred item) returns logical false. pred must be free of side-effects. Returns a transducer when no collection is provided.
+```
+```js context=core fn=remove
+var remove = (...[pred, coll]) => {
+  if(!coll) return (coll) => remove(pred, coll);
+  return coll.filter(item => !pred(item));
+}
+```
+```js context=test fn=remove
+remove((x)=> x % 2 === 0, range(0, 20)); // => [  1,  3,  5,  7,  9,  11, 13, 15, 17, 19]
+```
+
+### isEvery
+```clj context=spec fn=remove
+(every? pred coll)
+```
+```txt context=desc fn=remove
+Returns true if (pred x) is logical true for every x in coll, else
+false.
+```
+```js context=core fn=remove
+var isEvery = (...[pred, coll]) =>{
+  if(!coll) return (coll) => isEvery(pred, coll);
+  return coll.every(pred, coll);
+}
+```
+```js context=test fn=remove
+isEvery(n => n > 0, [1,2,3,34,5]); //=> true
+```
 
 ### flatten
 ```clj context=spec fn=flatten
