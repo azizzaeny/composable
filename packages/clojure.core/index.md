@@ -1,6 +1,28 @@
 
 specification and refrence  from: [clojuredocs](https://clojuredocs.org/)
 
+
+### partial
+```clj context=spec fn=partial
+(partial f) (partial f arg1) (partial f arg1 arg2 arg3 & more)
+```
+```txt context=desc fn=partial
+Takes a function f and fewer than the normal arguments to f, and
+returns a fn that takes a variable number of additional args. When
+called, the returned function calls f with args + additional args.
+```
+```js context=core fn=partial
+var partial = (fn, ...rightArgs) => {
+  return (...leftArgs) => {
+    return fn(...leftArgs, ...rightArgs);
+  };
+};
+```
+```js context=test fn=partial
+var getName = partial(get, 'name');
+getName({ name: 'aziz zaeny'});
+```
+
 ### isColl
 ```clj context=spec fn=isColl
 (coll? x)
@@ -498,28 +520,22 @@ var pop = ([f,...coll]) => coll
 ```js context=test fn=pop
 pop([1,2,3]) // => [1,2]
 pop(['a', 'b', 'c']); //=> ['b', 'c']
-
 ```
-
-
 
 ### get
 ```clj context=spec fn=get
 (get map key)(get map key not-found)
 ``` 
-
 ```txt context=desc fn=get
 Returns the value mapped to key, not-found or nil if key not present  
 in associative collection, set, string, array, or ILookup instance.
 ```
-
 ```js context=core fn=get
 var get = (...[map, key]) =>{
   if(!key) return (key) => map[key];
   return map[key];
 }
 ```
-
 ```js context=test fn=get
 get({a:1}, 'a'); // => 1 
 get(['a','b','c'], 1) //=> 'b'
@@ -675,7 +691,6 @@ updateIn({ name:{ full_name: "aziz zaeny"}}, ["name", "full_name"], (val)=> val.
 ```
 
 ### merge 
-
 ```clj context=spec fn=merge
 (merge & maps)
 ```
@@ -816,29 +831,229 @@ seq('aziz') //=> ['a', 'z','i', 'z']
 
 ```
 
+### vec
+```clj context=spec fn=vec
+(vec coll)
+```
+```txt context=desc fn=vec
+Creates a new vector containing the contents of coll. Java arrays
+will be aliased and should not be modified.
+```
+```js context=core fn=vec
+var vec = (coll) =>{
+  if (!coll) return [];
+  if (Array.isArray(coll)) return coll;
+  if (typeof coll === 'string') return coll.split('');
+  if (typeof coll[Symbol.iterator] === 'function') return Array.from(coll);
+  return Object.values(coll);
+}
+```
+```js context=test fn=vec
+vec({a: 'b'}); // ['b']
+vec('asdff');  // ['a', 's', 'd', 'f','f']
+vec([1,2,3,4,5]); //[1,2,3,4,5]
+```
+
+### subvec
+```clj context=spec fn=subvec
+(subvec v start)(subvec v start end)
+```
+```txt context=desc fn=subvec
+Returns a persistent vector of the items in vector from
+start (inclusive) to end (exclusive).  If end is not supplied,
+defaults to (count vector). This operation is O(1) and very fast, as
+the resulting vector shares structure with the original and no
+trimming is done.
+```
+```js context=core fn=subvec
+var subvec = (...[v, start, end]) => {
+  if(!end) end = v.length;
+  if(start < 0 || end < 0) return null;
+  return v.slice(start, end);
+}
+```
+```js context=test fn=subvec
+subvec([1,2,3], 1); // [2,3]
+subvec([1,2,3,4,5,65,76,8], 2, 5); //[ 3, 4, 5 ]
+```
+
+### vector
+### vectorOf
+### vectorZip
+
+### repeat
+```clj context=spec fn=repeat
+(repeat x)(repeat n x)
+```
+```txt context=desc fn=repeat
+Returns a lazy (infinite!, or length n if supplied) sequence of xs.
+```
+```js context=core fn=repeat
+
+var repeat = (...[n, x]) =>{
+  if(!x) return (x) => repeat(n, x);
+  return Array(n).fill(x);
+}
+```
+```js context=test fn=repeat
+repeat(5)(2); // [2,2,2,2,2]
+repeat(5, 2); // [2,2,2,2,2]
+```
 
 
-### partial
-```clj context=spec fn=partial
-(partial f) (partial f arg1) (partial f arg1 arg2 arg3 & more)
+### repeatedly
+
+### range
+```clj context=spec fn=range
+(range)(range end)(range start end)(range start end step)
 ```
-```txt context=desc fn=partial
-Takes a function f and fewer than the normal arguments to f, and
-returns a fn that takes a variable number of additional args. When
-called, the returned function calls f with args + additional args.
+```txt context=desc fn=range
+Returns a lazy seq of nums from start (inclusive) to end (exclusive), by step, where start defaults to 0, step to 1, and end to infinity. When step is equal to 0, returns an infinite sequence of start. When start is equal to end, returns empty list.
 ```
-```js context=core fn=partial
-var partial = (fn, ...rightArgs) => {
-  return (...leftArgs) => {
-    return fn(...leftArgs, ...rightArgs);
-  };
+```js context=core fn=range
+// todo: fix args
+var range = (...args)  =>{
+  let [start, end, step=1] = args
+  if (args.length === 1) (end = start, start = 0);
+  let result = [];
+  for (let i = start; i < end; i += step) { result.push(i);  }
+  return result;
+}
+```
+```js context=test fn=range
+range(0, 5); //=> [ 0, 1, 2, 3, 4 ]
+```
+
+### keep
+```clj context=spec fn=keep
+(keep f)(keep f coll)
+```
+```txt context=desc fn=keep
+Returns a lazy sequence of the non-nil results of (f item). Note,
+this means false return values will be included.  f must be free of
+side-effects.  Returns a transducer when no collection is provided.
+```
+```js context=core fn=keep
+var keep = (...[f, coll]) =>{
+  if(!coll) return (coll) => keep(f, coll);
+  return coll.reduce((acc, curr)=>{
+    let res = f(curr);
+    if(res !== null && res !== undefined) return acc.concat(res);
+    return acc;
+  }, []);
+}
+```
+```js context=test fn=keep
+keep(n => (n % 2 === 0 ) ? n : null, range(0, 10)); // => [ 0, 2, 4, 6, 8 ]
+```
+
+### keepIndexed
+```clj context=spec fn=keepIndexed
+(keep-indexed f)(keep-indexed f coll)
+```
+```txt context=desc fn=keepIndexed
+Returns a lazy sequence of the non-nil results of (f index item). Note,
+this means false return values will be included.  f must be free of
+side-effects.  Returns a stateful transducer when no collection is
+provided.
+```
+```js context=core fn=keepIndexed
+var keepIndexed = (...[f, coll]) =>{
+  if(!coll) return (coll) => keep(f, coll);
+  return coll.reduce((acc, curr, i)=>{
+    let res = f(i, curr);
+    if(res !== null && res !== undefined) return acc.concat(res);
+    return acc;
+  }, []);
+}
+```
+```js context=test fn=keepIndexed
+keepIndexed((n,i)=> (i % 2 ===0) ? n : null, range(0, 10)); //=> [ 0, 2, 4, 6, 8 ]
+```
+
+### split
+```clj context=spec fn=split
+(split p ch)(split p ch t-buf-or-n f-buf-or-n)
+```
+```txt context=desc fn=split
+Splits string on a regular expression.  Optional argument limit is
+the maximum number of parts. Not lazy. Returns vector of the parts.
+Trailing empty strings are not returned - pass limit of -1 to return all.
+```
+```js context=core fn=split
+//TODO: fix split reg
+var split = (...[p, ch]) => {
+  if(!ch) return (ch) => split(p, ch);
+  return p.split(ch);
+}
+```
+```js context=test fn=split
+split('asdf asdf', ' '); //[ 'asdf', 'asdf' ]
+```
+
+### splitAt
+```clj context=spec fn=splitAt
+(split-at n coll)
+```
+```txt context=desc fn=splitAt
+Returns a vector of [(take n coll) (drop n coll)]
+```
+```js context=core fn=splitAt
+var splitAt = (...[n, coll])=>{
+  if(!coll) return (coll) => splitAt(n, coll);
+  return [coll.slice(0, n), coll.slice(n)];
+}
+```
+```js context=test fn=splitAt
+splitAt(2, [1,2,3,4,5,6]) //[ [ 1, 2 ], [ 3, 4, 5, 6 ] ]
+```
+
+
+### splitWith
+### splitLines
+
+### shuffle
+```clj context=spec fn=shuffle
+(shuffle coll)
+```
+```txt context=desc fn=shuffle
+Return a random permutation of coll
+```
+```js context=core fn=shuffle
+var shuffle = (coll) => {
+  let result = coll.slice();
+  for (let i = result.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [result[i], result[j]] = [result[j], result[i]];
+  }
+  return result;
 };
 ```
-```js context=test fn=partial
-var getName = partial(get, 'name');
-getName({ name: 'aziz zaeny'});
-
+```js context=test fn=shufle
+shuffle([1,2,3,4,5,6,7,7,8]);
 ```
+
+
+### randNth
+```clj context=spec fn=randNth
+(rand-nth coll)
+```
+```txt context=desc fn=randNth
+Return a random element of the (sequential) collection. Will have
+the same performance characteristics as nth for the given
+collection.
+```
+```js context=core fn=randNth
+var randNth = (coll) => {
+  let i = Math.floor(Math.random() * coll.length);
+  return coll[i];
+};
+```
+```js context=test fn=randNth
+randNth([1,2,3,4,5,6,7]); // rnd
+```
+
+### randInt
 
 
 
