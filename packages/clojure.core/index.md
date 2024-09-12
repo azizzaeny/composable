@@ -273,10 +273,35 @@ var replace = (...args) =>{
 replace("hello world", "o", "a"); // "hella warld"
 ```
 
+### or
+
+```clj context=spec fn=or
+(or)(or x)(or x & next)
+```
+```txt context=desc fn=or
+Evaluates exprs one at a time, from left to right. If a form
+returns a logical true value, or returns that value and doesn't
+evaluate any of the other expressions, otherwise it returns the
+value of the last expression. (or) returns nil.
+```
+```js context=core fn=or
+var or = (...args) =>  args.find(Boolean) || false;
+```
+```js context=test fn=or
+or(); //false
+or(false); // false
+or(true, false); // true
+or(false, null, 0, '', 'hello'); // 'hello'
+or(false, 0, undefined, 42); // 42
+```
+
+
 ### isZero
 ```clj context=spec fn=isZero
+(zero? num)
 ```
 ```txt context=desc fn=isZero
+Returns true if num is zero, else false
 ```
 ```js context=core fn=isZero
 var isZero = (x) =>  x === 0;
@@ -287,8 +312,10 @@ isZero(0);
 
 ### isPos
 ```clj context=spec fn=isPos
+(pos? num)
 ```
 ```txt context=desc fn=isPos
+Returns true if num is greater than zero, else false
 ```
 ```js context=core fn=isPos
 var isPos = (x) => x > 0;
@@ -299,8 +326,10 @@ isPos(-1); // false
 
 ### isNeg
 ```clj context=spec fn=isNeg
+(neg? num)
 ```
 ```txt context=desc fn=isNeg
+Returns true if num is less than zero, else false
 ```
 ```js context=core fn=isNeg
 var isNeg = (x) => x < 0;
@@ -311,8 +340,10 @@ isNeg(-1); // true
 
 ### isInt
 ```clj context=spec fn=isInt
+(int? x)
 ```
 ```txt context=desc fn=isInt
+Return true if x is a fixed precision integer
 ```
 ```js context=core fn=isInt
 var isInt = (x) => Number.isInteger(x);
@@ -323,8 +354,10 @@ isInt(0.1); // false
 
 ### isBoolean
 ```clj context=spec fn=isBoolean
+(boolean? x)
 ```
 ```txt context=desc fn=isBoolean
+Return true if x is a Boolean
 ```
 ```js context=core fn=isBoolean
 var isBoolean = (x) => typeof x === 'boolean';
@@ -335,8 +368,10 @@ isBoolean(true);
 
 ### isTrue
 ```clj context=spec fn=isTrue
+(true? x)
 ```
 ```txt context=desc fn=isTrue
+Returns true if x is the value true, false otherwise.
 ```
 ```js context=core fn=isTrue
 var isTrue = x => x === true;
@@ -347,8 +382,10 @@ isTrue(true); // true
 ```
 ### isFalse
 ```clj context=spec fn=isFalse
+(false? x)
 ```
 ```txt context=desc fn=isFalse
+Returns true if x is the value false, false otherwise.
 ```
 ```js context=core fn=isFalse
 var isFalse = x => x === false;
@@ -359,8 +396,11 @@ isFalse(false); // true
 
 ### isInstance
 ```clj context=spec fn=isInstance
+(instance? c x)
 ```
 ```txt context=desc fn=isInstance
+Evaluates x and tests if it is an instance of the class
+  c. Returns true or false
 ```
 ```js context=core fn=isInstance
 var isInstance = (x, type) => x instanceof type;
@@ -373,8 +413,10 @@ isInstance([], Object); // true
 
 ### isNil
 ```clj context=spec fn=isNil
+(nil? x)
 ```
 ```txt context=desc fn=isNil
+Returns true if x is nil, false otherwise.
 ```
 ```js context=core fn=isNil
 var isNil = (x) => x === null; 
@@ -385,8 +427,10 @@ isNil(null);
 
 ### isSome
 ```clj context=spec fn=isSome
+(some? x)
 ```
 ```txt context=desc fn=isSome
+Returns true if x is not nil, false otherwise.
 ```
 ```js context=core fn=isSome
 var isSome = x => x !== null;
@@ -400,8 +444,10 @@ isSome(1); // true
 
 ### isFn
 ```clj context=spec fn=isFn
+(fn? x)
 ```
 ```txt context=desc fn=isFn
+Returns true if x implements Fn, i.e. is an object created via fn.
 ```
 ```js context=core fn=isFn
 var isFn = (x) => typeof x === 'function';
@@ -412,8 +458,10 @@ isFn(map); // true
 
 ### isBlank
 ```clj context=spec fn=isBlank
+(blank? s)
 ```
 ```txt context=desc fn=isBlank
+True if s is nil, empty, or contains only whitespace.
 ```
 ```js context=core fn=isBlank
 var isBlank = x => typeof x === 'string' && x.trim() === '';
@@ -424,8 +472,10 @@ isBlank(''); // true
 
 ### isNumber
 ```clj context=spec fn=isNumber
+(number? x)
 ```
 ```txt context=desc fn=isNumber
+Returns true if x is a Number
 ```
 ```js context=core fn=isNumber
 var isNumber = value => typeof value === 'number' && !Number.isNaN(value)
