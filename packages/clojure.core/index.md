@@ -23,6 +23,75 @@ var getName = partial(get, 'name');
 getName({ name: 'aziz zaeny'});
 ```
 
+### apply
+```clj context=spec fn=apply
+(apply f args)(apply f x args)(apply f x y args)(apply f x y z args)(apply f a b c d & args)
+```
+```txt context=desc fn=apply
+Applies fn f to the argument list formed by prepending intervening arguments to args.
+```
+```js context=core fn=apply
+var apply = (...argv) => {
+  let [fn, ...args] = argv;  
+  return (argv.length === 1) ? (argn) => apply(fn, argn) : fn(...args);
+}
+```
+```js context=test fn=apply
+apply(get, {a: 1}, "a"); // 1
+apply(assoc, {}, 'a', 20); // {a: 20};
+```
+
+### comp
+```clj context=spec fn=
+```
+```txt context=desc fn=
+```
+```js context=core fn=
+```
+```js context=test fn=
+```
+
+### constantly
+```clj context=spec fn=
+```
+```txt context=desc fn=
+```
+```js context=core fn=
+```
+```js context=test fn=
+```
+
+### identity
+```clj context=spec fn=
+```
+```txt context=desc fn=
+```
+```js context=core fn=
+```
+```js context=test fn=
+```
+
+### fnil
+```clj context=spec fn=
+```
+```txt context=desc fn=
+```
+```js context=core fn=
+```
+```js context=test fn=
+```
+
+### memoize
+```clj context=spec fn=
+```
+```txt context=desc fn=
+```
+```js context=core fn=
+```
+```js context=test fn=
+```
+
+
 ### isColl
 ```clj context=spec fn=isColl
 (coll? x)
@@ -1202,6 +1271,35 @@ var isEvery = (...[pred, coll]) =>{
 ```
 ```js context=test fn=isEvery
 isEvery(n => n > 0, [1,2,3,34,5]); //=> true
+```
+
+### everyPred 
+```clj context=spec fn=everyPred
+(every-pred p)(every-pred p1 p2)(every-pred p1 p2 p3)(every-pred p1 p2 p3 & ps)
+```
+```txt context=desc fn=everyPred
+Takes a set of predicates and returns a function f that returns true if all of its
+composing predicates return a logical true value against all of its arguments, else it returns
+false. Note that f is short-circuiting in that it will stop execution on the first
+argument that triggers a logical false result against the original predicate.
+```
+```js context=core fn=everyPred
+var everyPred = (...fns) => {
+  return function(x) {
+    for (let i = 0; i < fns.length; i++) {
+      if (!fns[i](x)) {
+        return false;
+      }
+    }
+    return true;
+  };
+}
+```
+```js context=test fn=everyPred
+var isPos = n => n > 0;
+var isEven = n => n % 2 === 0;
+everyPred(isPos,isEven)(2); //true 
+everyPred(n => n > 0)(1) // true
 ```
 
 ### flatten
