@@ -170,6 +170,25 @@ var disj = (...[st, k, ...ks]) =>{
 disj([1,2, 3], 1) //=>  [2,3]
 ```
 
+
+### concat
+```clj context=spec fn=concat
+(concat)(concat x)(concat x y)(concat x y & zs)
+```
+```txt context=desc fn=concat
+Returns a lazy seq representing the concatenation of the elements in the supplied colls.
+```
+```js context=core fn=concat
+var concat = (...[x,...zs]) => {
+  if(!zs) return (...zs) => concat(x, ...zs);
+  return x.concat(...zs);
+}
+```
+```js context=test fn=concat
+concat([1], [2], [3], [4]); //[1,2,3,4]
+```
+
+
 ### first
 ```clj context=spec fn=first
 (first coll)
@@ -1093,16 +1112,45 @@ map(n => n * 2, [12,13,14,15,16]); // => [ 24, 26, 28, 30, 32 ]
 ```
 
 ### mapcat
-```clj context=spec fn=
+```clj context=spec fn=mapcat
+(mapcat f)(mapcat f & colls)
 ```
-```txt context=desc fn=
+```txt context=desc fn=mapcat
+Returns the result of applying concat to the result of applying map
+to f and colls.  Thus function f should return a collection. Returns
+a transducer when no collections are provided
 ```
-```js context=core fn=
+```js context=core fn=mapcat
+var mapcat = (...[f, ...coll]) => {
+  if(!coll || coll.length === 0) return (...coll) => mapcat(f, ...coll);
+  return coll.flat().map(f).reduce((acc, val) => acc.concat(val), [])
+}
 ```
-```js context=test fn=
+```js context=test fn=mapcat
+mapcat(x => [x, x * 2], [1,2,3,4]); // [ 1, 2, 2, 4,  3, 6, 4, 8]
+// todo: test reverse
 ```
 
 ### mapOf
+
+### mapIndexed
+```clj context=spec fn=mapIndexed
+(map-indexed f)(map-indexed f coll)
+```
+```txt context=desc fn=mapIndexed
+Returns a lazy sequence consisting of the result of applying f to 0
+and the first item of coll, followed by applying f to 1 and the second
+item in coll, etc, until coll is exhausted. Thus function f should
+accept 2 arguments, index and item. Returns a stateful transducer when
+no collection is provided.
+```
+```js context=core fn=mapIndexed
+var mapIndexed = (...[f, coll]) => (!coll) ? (coll) => map(f, coll) : coll.map((val, idx)=> f(val, idx));
+```
+```js context=test fn=mapIndexed
+mapIndexed((n, i) => [n, i], [1,2,3,4,5]); //=> [ [ 1, 0 ], [ 2, 1 ], [ 3, 2 ], [ 4, 3 ], [ 5, 4 ] ]
+```
+
 
 ### filter
 ```clj context=spec fn=filter
@@ -1119,9 +1167,26 @@ var filter = (...[pred, coll]) => (!coll) ? (coll) => filter(pred, coll) : coll.
 ```js context=test fn=filter
 filter(n=> n > 2)([1,2,3,4,5,6]); // => [ 3, 4, 5, 6 ]
 ```
+
+
 ### remove
 ### every
 
+### flatten
+```clj context=spec fn=flatten
+(flatten x)
+```
+```txt context=desc fn=flatten
+Takes any nested combination of sequential things (lists, vectors,
+etc.) and returns their contents as a single, flat lazy sequence.
+(flatten nil) returns an empty sequence.
+```
+```js context=core fn=flatten
+var flatten = (x) => x.flat();
+```
+```js context=test fn=flatten
+flatten([1,2,[3,4],[[1,2,3,4]]]); //=> [ 1, 2, 3, 4, [ 1, 2, 3, 4 ] ]
+```
 
 ### reduce
 ```clj context=spec fn=reduce
