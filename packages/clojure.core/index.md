@@ -163,6 +163,81 @@ memohai(2); // print hai 3
 memohai(2); //3
 ```
 
+### complement
+```clj context=spec fn=complement
+(complement f)
+```
+```txt context=desc fn=complement
+Takes a fn f and returns a fn that takes the same arguments as f,
+has the same effects, if any, and returns the opposite truth value.
+```
+```js context=core fn=complement
+var complement = (f) => {
+  return function(...args) {
+    return !f(...args);
+  };
+}
+```
+```js context=test fn=complement
+var empty = (arr) => arr.length === 0;
+var isNotEmpty = complement(empty);
+isNotEmpty([]); // false
+```
+
+### juxt
+```clj context=spec fn=juxt
+(juxt f)(juxt f g)(juxt f g h)(juxt f g h & fs)
+```
+```txt context=desc fn=juxt
+Takes a set of functions and returns a fn that is the juxtaposition
+of those fns.  The returned fn takes a variable number of args, and
+returns a vector containing the result of applying each fn to the
+args (left-to-right).
+((juxt a b c) x) => [(a x) (b x) (c x)]
+```
+```js context=core fn=juxt
+var juxt =(...fns) => {
+  return function(...args) {
+    return fns.map(function(fn) {
+      return fn(...args);
+    });
+  };
+}
+```
+```js context=test fn=juxt
+juxt((n)=> n*2, (n)=> n + 10, (n)=> n*100)(10) //  [20, 20, 1000]
+```
+
+
+### someFn
+```clj context=spec fn=sameFn
+(some-fn p)(some-fn p1 p2)(some-fn p1 p2 p3)(some-fn p1 p2 p3 & ps)
+```
+```txt context=desc fn=sameFn
+Takes a set of predicates and returns a function f that returns the first logical true value
+returned by one of its composing predicates against any of its arguments, else it returns
+logical false. Note that f is short-circuiting in that it will stop execution on the first
+argument that triggers a logical true result against the original predicates.
+```
+```js context=core fn=sameFn
+var someFn = (...fns) =>{
+  return function(x) {
+    for (let i = 0; i < fns.length; i++) {
+      if (fns[i](x)) {
+        return true;
+      }
+    }
+    return false;
+  };
+}
+```
+```js context=test fn=sameFn
+someFn((n) => n % 2 === 0)(2); // true
+
+```
+
+
+
 ### isColl
 ```clj context=spec fn=isColl
 (coll? x)
