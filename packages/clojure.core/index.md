@@ -1055,6 +1055,101 @@ randNth([1,2,3,4,5,6,7]); // rnd
 
 ### randInt
 
+### find
+```clj context=spec fn=find
+(find map key)
+```
+```txt context=desc fn=find
+Returns the map entry for key, or nil if key not present.
+```
+```js context=core fn=find
+var find = (...[map, key]) => {
+  if(!key) return (key) => find(map, key);
+  return Object.entries(map).find(([k, v])=> k === key);
+}
+```
+```js context=test fn=find
+find({a: 1, b:2}, 'a'); // => ['a', 1]
+```
+
+### map
+```clj context=spec fn=map
+(map f)(map f coll)(map f c1 c2)(map f c1 c2 c3)(map f c1 c2 c3 & colls)
+```
+```txt context=desc fn=map
+Returns a lazy sequence consisting of the result of applying f to
+the set of first items of each coll, followed by applying f to the
+set of second items in each coll, until any one of the colls is
+exhausted.  Any remaining items in other colls are ignored. Function
+f should accept number-of-colls arguments. Returns a transducer when
+no collection is provided.
+```
+```js context=core fn=map
+// todo: add more arguments
+var map = (...[f, coll]) => (!coll) ? (coll) => map(f, coll) : coll.map(f);
+```
+```js context=test fn=map
+map(n => n * 2, [12,13,14,15,16]); // => [ 24, 26, 28, 30, 32 ]
+```
+
+### mapcat
+```clj context=spec fn=
+```
+```txt context=desc fn=
+```
+```js context=core fn=
+```
+```js context=test fn=
+```
+
+### mapOf
+
+### filter
+```clj context=spec fn=filter
+(filter pred)(filter pred coll)
+```
+```txt context=desc fn=filter
+Returns a lazy sequence of the items in coll for which
+(pred item) returns logical true. pred must be free of side-effects.
+Returns a transducer when no collection is provided.
+```
+```js context=core fn=filter
+var filter = (...[pred, coll]) => (!coll) ? (coll) => filter(pred, coll) : coll.filter(pred);
+```
+```js context=test fn=filter
+filter(n=> n > 2)([1,2,3,4,5,6]); // => [ 3, 4, 5, 6 ]
+```
+### remove
+### every
+
+
+### reduce
+```clj context=spec fn=reduce
+(reduce f coll)(reduce f val coll)
+```
+```txt context=desc fn=reduce
+f should be a function of 2 arguments. If val is not supplied,
+returns the result of applying f to the first 2 items in coll, then
+applying f to that result and the 3rd item, etc. If coll contains no
+items, f must accept no arguments as well, and reduce returns the
+result of calling f with no arguments.  If coll has only 1 item, it
+is returned and f is not called.  If val is supplied, returns the
+result of applying f to val and the first item in coll, then
+applying f to that result and the 2nd item, etc. If coll contains no
+items, returns val and f is not called.
+```
+```js context=core fn=reduce
+var reduce = (...args) => {
+  let [f, val, coll] = args;
+  if(args.length === 1) return (coll) => reduce(f, undefined, coll);
+  if(args.length === 2) return (coll) => reduce(f, val, coll);
+  return coll.reduce(f, val);
+}
+```
+```js context=test fn=reduce
+reduce((acc, v) => acc + v, 0, [1,23,4,5,6,77]); // => 116
+reduce((acc, v) => merge(acc, v))([{a:1}, {b:2}]); // => {a:1, b:2}
+```
 
 
 
