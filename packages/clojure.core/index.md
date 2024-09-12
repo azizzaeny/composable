@@ -42,55 +42,126 @@ apply(assoc, {}, 'a', 20); // {a: 20};
 ```
 
 ### comp
-```clj context=spec fn=
+```clj context=spec fn=comp
+(comp)(comp f)(comp f g)(comp f g & fs)
 ```
-```txt context=desc fn=
+```txt context=desc fn=comp
+Takes a set of functions and returns a fn that is the composition
+of those fns.  The returned fn takes a variable number of args,
+applies the rightmost of fns to the args, the next
+fn (right-to-left) to the result, etc.
 ```
-```js context=core fn=
+```js context=core fn=comp
+var comp = (...fns) => {
+  return function(x) {
+    return fns.reduceRight(function(acc, fn) {
+      return fn(acc);
+    }, x);
+  };
+}
 ```
-```js context=test fn=
+```js context=test fn=comp
+var addTwo = (x) => x + 2;
+var square = (x) => x * x;
+var doubleIt = (x) => x * 2;
+var calculate = comp(addTwo, square, doubleIt); // right -> to left, start from doubleIt
+calculate(3); // 38
 ```
 
 ### constantly
-```clj context=spec fn=
+```clj context=spec fn=constantly
+(constantly x)
 ```
-```txt context=desc fn=
+```txt context=desc fn=constantly
+Returns a function that takes any number of arguments and returns x.
 ```
-```js context=core fn=
+```js context=core fn=constantly
+var constantly = (x) => {
+  return function() {
+    return x;
+  };
+}
 ```
-```js context=test fn=
+```js context=test fn=constantly
+[1,2,3,4,5].map(constantly(10)); // [10, 10, 10, 10, 10]
 ```
 
 ### identity
-```clj context=spec fn=
+```clj context=spec fn=identity
+(identity x)
 ```
-```txt context=desc fn=
+```txt context=desc fn=identity
+Returns its argument.
 ```
-```js context=core fn=
+```js context=core fn=identity
+var identity = (x) =>  x;
 ```
-```js context=test fn=
+```js context=test fn=identity
+[1,2,3,4,5,6].map(identity); //=>[1,2,3,4,5,6]
+[1,2,3,null,4,false,true,1234].filter(identity); // [ 1, 2, 3, 4, true, 1234 ]
+identity(4); // 4
 ```
 
 ### fnil
-```clj context=spec fn=
+```clj context=spec fn=fnil
+(fnil f x)(fnil f x y)(fnil f x y z)
 ```
-```txt context=desc fn=
+```txt context=desc fn=fnil
+Takes a function f, and returns a function that calls f, replacing
+a nil first argument to f with the supplied value x. Higher arity
+versions can replace arguments in the second and third
+positions (y, z). Note that the function f can take any number of
+arguments, not just the one(s) being nil-patched.
 ```
-```js context=core fn=
+```js context=core fn=fnil
+// todo: add more args
+var fnil = (f, x) =>{
+  return function() {
+    const args = Array.from(arguments);
+    const numArgs = f.length;
+    while (args.length < numArgs) {
+      args.push(x);
+    }
+    return f.apply(null, args);
+  };
+}
 ```
-```js context=test fn=
+```js context=test fn=fnil
+var sayhello = fnil((name) => "Hello " + name, "Sir")
+sayhello('aziz'); // 'hello aziz'
+sayhello(); // hello sir
+
 ```
 
 ### memoize
-```clj context=spec fn=
+```clj context=spec fn=memoize
+(memoize f)
 ```
-```txt context=desc fn=
+```txt context=desc fn=memoize
+Returns a memoized version of a referentially transparent function. The memoized version of the function keeps a cache of the mapping from arguments to results and, when calls with the same arguments are repeated often, has higher performance at the expense of higher memory use.
 ```
-```js context=core fn=
+```js context=core fn=memoize
+var memoize = (f) =>{
+  const cache = new Map();
+  return function(...args) {
+    const key = JSON.stringify(args);
+    if (!cache.has(key)) {
+      const result = f(...args);
+      cache.set(key, result);
+      return result;
+    }
+    return cache.get(key);
+  };
+}
 ```
-```js context=test fn=
+```js context=test fn=memoize
+var myfn = (a) => (console.log('hai'), (a+1));
+var memohai = memoize(myfn)
+memohai(1); // print hai 2
+memohai(1); // 2
+memohai(2); // print hai 3
+memohai(2); //3
 ```
-
 
 ### isColl
 ```clj context=spec fn=isColl
@@ -257,6 +328,7 @@ var concat = (...[x,...zs]) => {
 concat([1], [2], [3], [4]); //[1,2,3,4]
 ```
 
+### cat
 
 ### first
 ```clj context=spec fn=first
