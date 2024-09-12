@@ -1430,53 +1430,151 @@ frequencies([1,1,1,2,2,2,3,4,5,6,7,8,8]); // { '1': 3, '2': 3, '3': 1, '4': 1, '
 ```
 
 ### partition
-```clj context=spec fn=
+```clj context=spec fn=partition
+(partition n coll)(partition n step coll)(partition n step pad coll)
 ```
-```txt context=desc fn=
+```txt context=desc fn=partition
+Returns a lazy sequence of lists of n items each, at offsets step
+apart. If step is not supplied, defaults to n, i.e. the partitions
+do not overlap. If a pad collection is supplied, use its elements as
+necessary to complete last partition upto n items. In case there are
+not enough padding elements, return a partition with less than n items.
 ```
-```js context=core fn=
+```js context=core fn=partition
+// todo: multi arity arguments, step, and so on
+var partition=(...args) =>{
+  let [n, coll] = args;
+  if(args.length === 1) return (coll) => partition(n, coll);
+  let result = [];
+  for (let i = 0; i < coll.length; i += n) { result.push(coll.slice(i, i + n));  }
+  return result;
+}
 ```
-```js context=test fn=
+```js context=test fn=partition
+partition(4, [1,2,3,4,5,6,7,8,9]); // => [ [ 1, 2, 3, 4 ], [ 5, 6, 7, 8 ], [ 9 ] ]
 ```
 
 ### partitionBy
-```clj context=spec fn=
+```clj context=spec fn=partitionBy
+(partition-by f)(partition-by f coll)
 ```
-```txt context=desc fn=
+```txt context=desc fn=partitionBy
+Applies f to each value in coll, splitting it each time f returns a
+ new value.  Returns a lazy seq of partitions.  Returns a stateful
+ transducer when no collection is provided.
 ```
-```js context=core fn=
+```js context=core fn=partitionBy
+var partitionBy=(...args)=>{
+  let [fn, coll] = args;
+  if(args.length === 1){
+    return (coll) => partitionBy(fn, coll);
+  }
+  const result = [];
+  let group = [];
+  let prevValue;
+  for (const elem of coll) {
+    const value = fn(elem);
+    if (value === prevValue || prevValue === undefined) {
+      group.push(elem);
+    } else {
+      result.push(group);
+      group = [elem];
+    }
+    prevValue = value;
+  }
+  if (group.length > 0) {
+    result.push(group);
+  }
+  return result;
+}
 ```
-```js context=test fn=
+```js context=test fn=partitionBy
+partitionBy(n => n % 2 !== 0)([1,1,1,1,2,2,2,3,3,3,4,4,5]); // => [ [ 1, 1, 1, 1 ], [ 2, 2, 2 ], [ 3, 3, 3 ], [ 4, 4 ], [ 5 ] ]
+```
+
+
+### partitionAll
+```clj context=spec fn=partitionAll
+(partition-all n)(partition-all n coll)(partition-all n step coll)
+```
+```txt context=desc fn=partitionAll
+Returns a lazy sequence of lists like partition, but may include
+partitions with fewer than n items at the end.  Returns a stateful
+transducer when no collection is provided.
+```
+```js context=core fn=partitionAll
+var partitionAll=(...args) =>{
+  let [size, arr] = args;
+  if(args.length === 1){
+    return (coll) => partitionAll(size, coll);
+  }
+  if (!arr || !arr.length) return [];
+  const result = [];
+  for (let i = 0; i < arr.length; i += size) {
+    result.push(arr.slice(i, i + size));
+  }
+  return result;
+}
+```
+```js context=test fn=partitionAll
+partitionAll(4, [1,2,3,4,5,6,7,8,9]); // => [ [ 1, 2, 3, 4 ], [ 5, 6, 7, 8 ], [ 9 ] ]
 ```
 
 ### union
-```clj context=spec fn=
+```clj context=spec fn=union
+(union)(union s1)(union s1 s2)(union s1 s2 & sets)
 ```
-```txt context=desc fn=
+```txt context=desc fn=union
+Return a set that is the union of the input sets
 ```
-```js context=core fn=
+```js context=core fn=union
+// TODO: more args
+var union = (...args) => {
+  let [s1, s2, ...sets] = args;
+  return (args.length == 1) ? (s2, ...sets) => union(s1, s2, ...sets) : Array.from(new Set([...s1, ...s2, ...sets]));
+}
 ```
-```js context=test fn=
+```js context=test fn=union
+union([1,2,3,4,5], [1,2,3,8,9]); // => [ 1, 2, 3, 4, 5, 8, 9 ]
 ```
 
+
 ### difference
-```clj context=spec fn=
+```clj context=spec fn=difference
+(difference s1)(difference s1 s2)(difference s1 s2 & sets)
 ```
-```txt context=desc fn=
+```txt context=desc fn=difference
+Return a set that is the first set without elements of the remaining sets
 ```
-```js context=core fn=
+```js context=core fn=difference
+// TODO: more arguments sets
+var difference =(...args) => {
+  let [s1, s2, ...sets] = args;
+  if(args.length === 1) return (s2, ...sets) => difference(s1, s2, ...sets);
+  return s1.filter((x) => !s2.includes(x)); // TODO: more args
+}
 ```
-```js context=test fn=
+```js context=test fn=difference
+difference([1,2,3,4,5], [0, 3, 5,6]); // [1,2,4]
 ```
 
 ### intersection
-```clj context=spec fn=
+```clj context=spec fn=intersection
+(intersection s1)(intersection s1 s2)(intersection s1 s2 & sets)
 ```
-```txt context=desc fn=
+```txt context=desc fn=intersection
+Return a set that is the intersection of the input sets
 ```
-```js context=core fn=
+```js context=core fn=intersection
+// TODO: more arguments sets
+var intersection = (...args) =>{
+  let [s1, s2, ...sets] = args;
+  if(args.length === 1) return (s2, ...sets) => intersection(s1, s2, ...sets);
+  return s1.filter((x) => s2.includes(x));
+}
 ```
-```js context=test fn=
+```js context=test fn=intersection
+intersection([1,2], [2,3]); // [2]
 ```
 
 ### export module 
