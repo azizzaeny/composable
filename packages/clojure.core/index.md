@@ -233,9 +233,78 @@ var someFn = (...fns) =>{
 ```
 ```js context=test fn=sameFn
 someFn((n) => n % 2 === 0)(2); // true
-
+```
+### partialRight
+```clj context=spec fn=partialRight
+;; not-exists
+```
+```txt context=desc fn=partialRight
+not-exists
+```
+```js context=core fn=partialRight
+var partialRight = (fn, ...leftArgs) => {
+  return (...rightArgs) => {
+    return fn(...leftArgs, ...rightArgs);
+  };
+};
+```
+```js context=test fn=threadLast
+var myfn1 = (a, b, c, d) => a + b + c + d;
+var newFn = partialRight(myfn1, 'a', 'z', 'i');
+newFn('z'); // 'aziz'
 ```
 
+
+### replace 
+```clj context=spec fn=replace
+(replace s match replacement)
+```
+```txt context=desc fn=replace
+Given a map of replacement pairs and a vector/collection, returns a vector/seq with any elements = a key in smap replaced with the corresponding val in smap. Returns a transducer when no collection is provided.
+```
+```js context=core fn=replace
+var replace = (...args) =>{
+  let [s, match, replacement] = args;
+  if(args.length === 1) return (match, replacement) => s.replace(match, replacement);
+  return s.replace(new RegExp(match, "g"), replacement);
+}
+```
+```js context=test fn=replace
+replace("hello world", "o", "a"); // "hella warld"
+```
+
+
+### isEven
+```clj context=spec fn=isEven
+(even? n)
+```
+```txt context=desc fn=isEven
+Returns true if n is even, throws an exception if n is not an integer
+```
+```js context=core fn=isEven
+var isEven = (x) =>  x % 2 === 0;
+```
+```js context=test fn=isEven
+isEven(0); // true
+isEven(1); // false
+isEven(5); // false
+```
+
+### isOdd
+```clj context=spec fn=isOdd
+(odd? n)
+```
+```txt context=desc fn=isOdd
+Returns true if n is odd, throws an exception if n is not an integer
+```
+```js context=core fn=isOdd
+var isOdd= (x) =>  x % 2 !== 0;
+```
+```js context=test fn=isOdd
+isOdd(0); // false
+isOdd(1); // true
+isOdd(5); // true
+```
 
 
 ### isColl
@@ -272,6 +341,65 @@ var isMap = (value) => typeof value === 'object' && value !== null && !Array.isA
 ```js context=test fn=isMap
 isMap({}); // => true
 isMap([]); //=> false
+```
+
+
+### tfirst
+```clj context=spec fn=tfirst
+(-> x & forms)
+```
+```txt context=desc fn=tfirst
+Threads the expr through the forms. Inserts x as the
+second item in the first form, making a list of it if it is not a
+list already. If there are more forms, inserts the first form as the
+second item in second form, etc.
+```
+```js context=core fn=tfirst
+var tfirst = (val, ...forms)=>{
+  return forms.reduce((acc, form) => {
+    let [fn, ...rest] = form;
+    if(rest && rest.length > 0){      
+      let fns = partial(fn, ...rest);
+      return fns(acc);
+    }else{
+      return fn(acc);
+    }
+  }, val);
+}
+```
+```js context=test fn=tfirst
+var associative = [{id:0}, [assoc, 'name', 'azizzaeny'], [assoc, 'id', '1']];
+tfirst(...associative); //=> { id:'1', name: 'azizzaeny' }
+tfirst('a b c d', [replace, 'a', 'x'], [split, ' ']); // [ 'x', 'b', 'c', 'd' ]
+```
+
+
+### tlast
+```clj context=spec fn=tlast
+(->> x & forms)
+```
+```txt context=desc fn=tlast
+Threads the expr through the forms. Inserts x as the
+last item in the first form, making a list of it if it is not a
+list already. If there are more forms, inserts the first form as the
+last item in second form, etc.
+```
+```js context=core fn=tlast
+var tlast = (val, ...forms) => {
+  return forms.reduce((acc, form) => {
+    let [fn, ...rest] = form;
+    if(rest && rest.length > 0){
+      let fns = partialRight(fn, ...rest);
+      return fns(acc);      
+    }else{
+      return fn(acc);      
+    }
+  }, val);
+}
+```
+```js context=test fn=tlast
+tlast([11], [map, (x) => x * 7]); // [77]
+tlast(range(10), [map, (x) => x * 2], [filter, isEven], [take, 5]); //[ 0, 2, 4, 6, 8 ]
 ```
 
 ### keys
