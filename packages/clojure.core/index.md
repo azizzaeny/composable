@@ -1410,20 +1410,89 @@ groupBy(count,["a","as","asd","aa","asdf","qwer"]);
 }*/
 ```
 
+### frequencies
+```clj context=spec fn=frequencies
+(frequencies coll)
+```
+```txt context=desc fn=frequencies
+Returns a map from distinct items in coll to the number of times
+they appear.
+```
+```js context=core fn=frequencies
+var frequencies = (coll) => {
+  let freqMap = new Map();
+  for (const el of coll) { freqMap.set(el, (freqMap.get(el) || 0) + 1);  }
+  return Object.fromEntries(freqMap);
+}
+```
+```js context=test fn=frequencies
+frequencies([1,1,1,2,2,2,3,4,5,6,7,8,8]); // { '1': 3, '2': 3, '3': 1, '4': 1, '5': 1, '6': 1, '7': 1, '8': 2 }
+```
+
+### partition
+```clj context=spec fn=
+```
+```txt context=desc fn=
+```
+```js context=core fn=
+```
+```js context=test fn=
+```
+
+### partitionBy
+```clj context=spec fn=
+```
+```txt context=desc fn=
+```
+```js context=core fn=
+```
+```js context=test fn=
+```
+
+### union
+```clj context=spec fn=
+```
+```txt context=desc fn=
+```
+```js context=core fn=
+```
+```js context=test fn=
+```
+
+### difference
+```clj context=spec fn=
+```
+```txt context=desc fn=
+```
+```js context=core fn=
+```
+```js context=test fn=
+```
+
+### intersection
+```clj context=spec fn=
+```
+```txt context=desc fn=
+```
+```js context=core fn=
+```
+```js context=test fn=
+```
+
 ### export module 
 
-```js context=core path=./dist/index.js
+```js context=export path=./dist/index.js
 
 ```
 
 ### export commonjs
 
-```js context=core path=./dist/index.common.js
+```js context=export path=./dist/index.common.js
 
 ```
 
 ### export global variable
 
-```js context=core path=./dist/index.def.js
+```js context=export path=./dist/index.def.js
 
 ```
