@@ -809,8 +809,39 @@ threadl(range(10), [map, (x) => x * 2], [filter, isEven], [take, 5]); //[ 0, 2, 
 ```
 
 ### cond
-### condtlast
-### condtfirst
+```clj context=spec fn=cond
+```
+```txt context=desc fn=cond
+```
+```js context=core fn=cond
+var cond = (...clauses) => {
+  return clauses.reduce((acc, [condition, result]) => {
+    return acc === undefined && (condition === true || Boolean(condition)) ? result : acc;
+  }, undefined);
+};
+```
+```js context=test fn=cond
+cond(
+  [false, "never reached"],
+  [true, "this will be returned"],
+  [true, "not evaluated"]
+); // "this will be returned"
+
+var checkNumber = (n) => cond(
+  [n < 0, "negative"],
+  [n > 0, "positive"],
+  [true, "zero"] // Fallback, acts like :else
+);
+checkNumber(-5); // negative
+checkNumber(10); // positive
+checkNumber(0);  // zero
+
+```
+
+### condp
+### condThreadl
+### condThreadf
+
 ### doseq
 
 ### rand 
