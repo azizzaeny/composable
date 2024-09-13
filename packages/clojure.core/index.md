@@ -295,6 +295,109 @@ or(false, null, 0, '', 'hello'); // 'hello'
 or(false, 0, undefined, 42); // 42
 ```
 
+### isGt
+```clj context=spec fn=isGt
+(> x)(> x y)(> x y & more)
+```
+```txt context=desc fn=isGt
+Returns non-nil if nums are in monotonically decreasing order, otherwise false.
+```
+```js context=core fn=isGt
+var isGt = (a, b) => {
+  if(!b) return (b) => isGt(a, b);
+  return a > b;
+}
+```
+```js context=test fn=isGt
+isGt(10, 20); // false
+```
+
+### isGte 
+```clj context=spec fn=isGte
+(>= x)(>= x y)(>= x y & more)
+```
+```txt context=desc fn=isGte
+Returns non-nil if nums are in monotonically non-increasing order, otherwise false.
+```
+```js context=core fn=isGte
+var isGte = (a, b) => {
+  if(!b) return  (b) => isGte(a,b);
+  return a >= b;
+}
+```
+```js context=test fn=isGte
+```
+
+### isLt
+```clj context=spec fn=isLt
+(< x)(< x y)(< x y & more)
+```
+```txt context=desc fn=isLt
+Returns non-nil if nums are in monotonically increasing order, otherwise false.
+```
+```js context=core fn=isLt
+var isLt = (a, b) => {
+  if(!b) return (b) => isLt(a, b);
+  return a < b;
+}
+```
+```js context=test fn=isLt
+isLt(10, 20);
+```
+
+### isLte
+```clj context=spec fn=isLte
+(<= x)(<= x y)(<= x y & more)
+```
+```txt context=desc fn=isLte
+Returns non-nil if nums are in monotonically non-decreasing order, otherwise false.
+```
+```js context=core fn=isLte
+var isLte = (a, b) => {
+  if(!b) return (b) => isLt(a, b);
+  return a <= b;
+}
+```
+```js context=test fn=isLte
+isLte(10, 10);
+```
+
+### isEqual
+```clj context=spec fn=isEqual
+(== x)(== x y)(== x y & more)
+```
+```txt context=desc fn=isEqual
+Equality. Returns true if x equals y, false if not.
+```
+```js context=core fn=isEqual
+var isEqual = (...args) =>{
+  let [a, b] = args;
+  if(args.length === 1) return (b) => isEqual(a, b);  
+  if (Array.isArray(a) && Array.isArray(b)) {
+    if (a.length !== b.length) return false;
+    for (let i = 0; i < a.length; i++) {
+      if (!isDeepEqual(a[i], b[i])) return false;
+    }
+    return true;
+  } else if (typeof a === 'object' && typeof b === 'object') {
+    let aKeys = Object.keys(a);
+    let bKeys = Object.keys(b);
+    if (aKeys.length !== bKeys.length) return false;
+    for (const key of aKeys) {
+      if (!isDeepEqual(a[key], b[key])) return false;
+    }
+    return true;
+  } else {
+    return a === b;
+  }
+}
+```
+```js context=test fn=isEqual
+isEqual(10, 10);
+isEqual({a:1, b:{c:1}}, {a:1, b:{c:1}}); // true
+```
+
+### diff
 
 ### isZero
 ```clj context=spec fn=isZero
@@ -664,19 +767,20 @@ isIncludes('aziz zaeny', 'zaeny'); // true
 ```
 
 
-```clj context=spec fn=tfirst
+
+### threadf
+```clj context=spec fn=threadf
 (-> x & forms)
 ```
-```txt context=desc fn=tfirst
+```txt context=desc fn=threadf
 Threads the expr through the forms. Inserts x as the
 second item in the first form, making a list of it if it is not a
 list already. If there are more forms, inserts the first form as the
 second item in second form, etc.
 ```
 
-### tfirst
-```js context=core fn=tfirst
-var tfirst = (val, ...forms)=>{
+```js context=core fn=threadf
+var threadf = (val, ...forms)=>{
   return forms.reduce((acc, form) => {
     let [fn, ...rest] = form;
     if(rest && rest.length > 0){      
@@ -688,25 +792,25 @@ var tfirst = (val, ...forms)=>{
   }, val);
 }
 ```
-```js context=test fn=tfirst
+```js context=test fn=threadf
 var associative = [{id:0}, [assoc, 'name', 'azizzaeny'], [assoc, 'id', '1']];
-tfirst(...associative); //=> { id:'1', name: 'azizzaeny' }
-tfirst('a b c d', [replace, 'a', 'x'], [split, ' ']); // [ 'x', 'b', 'c', 'd' ]
+threadf(...associative); //=> { id:'1', name: 'azizzaeny' }
+threadf('a b c d', [replace, 'a', 'x'], [split, ' ']); // [ 'x', 'b', 'c', 'd' ]
 ```
 
 
-### tlast
-```clj context=spec fn=tlast
+### threadl
+```clj context=spec fn=threadl
 (->> x & forms)
 ```
-```txt context=desc fn=tlast
+```txt context=desc fn=threadl
 Threads the expr through the forms. Inserts x as the
 last item in the first form, making a list of it if it is not a
 list already. If there are more forms, inserts the first form as the
 last item in second form, etc.
 ```
-```js context=core fn=tlast
-var tlast = (val, ...forms) => {
+```js context=core fn=threadl
+var threadl = (val, ...forms) => {
   return forms.reduce((acc, form) => {
     let [fn, ...rest] = form;
     if(rest && rest.length > 0){
@@ -718,9 +822,9 @@ var tlast = (val, ...forms) => {
   }, val);
 }
 ```
-```js context=test fn=tlast
-tlast([11], [map, (x) => x * 7]); // [77]
-tlast(range(10), [map, (x) => x * 2], [filter, isEven], [take, 5]); //[ 0, 2, 4, 6, 8 ]
+```js context=test fn=threadl
+threadl([11], [map, (x) => x * 7]); // [77]
+threadl(range(10), [map, (x) => x * 2], [filter, isEven], [take, 5]); //[ 0, 2, 4, 6, 8 ]
 ```
 
 ### cond
