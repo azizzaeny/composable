@@ -114,14 +114,11 @@ positions (y, z). Note that the function f can take any number of
 arguments, not just the one(s) being nil-patched.
 ```
 ```js context=core fn=fnil
-// todo: add more args
 var fnil = (f, x) =>{
   return function() {
     const args = Array.from(arguments);
     const numArgs = f.length;
-    while (args.length < numArgs) {
-      args.push(x);
-    }
+    while (args.length < numArgs) { args.push(x); }
     return f.apply(null, args);
   };
 }
@@ -278,13 +275,13 @@ or(false, 0, undefined, 42); // 42
 
 ### and 
 ```clj context=spec fn=and
+(and)(and x)(and x & next)
 ```
 ```txt context=desc fn=and
+Evaluates exprs one at a time, from left to right. If a form returns logical false (nil or false), and returns that value and doesn't evaluate any of the other expressions, otherwise it returns the value of the last expr. (and) returns true.
 ```
 ```js context=core fn=and
-var and = (...tests) => {
-  return tests.every(Boolean);
-};
+var and = (...tests) =>  tests.every(Boolean);
 ```
 ```js context=test fn=and
 and(true, 1, 'non-empty', {}); // true
@@ -292,8 +289,11 @@ and(true, 1, 'non-empty', {}); // true
 
 ### complement
 ```clj context=spec fn=complement
+(complement f)
 ```
 ```txt context=desc fn=complement
+Takes a fn f and returns a fn that takes the same arguments as f,
+has the same effects, if any, and returns the opposite truth value.
 ```
 ```js context=core fn=complement
 var complement = (f) => {
@@ -309,8 +309,12 @@ isNotPositive(5); // false
 
 ### doseq
 ```clj context=spec fn=doseq
+(doseq seq-exprs & body)
 ```
 ```txt context=desc fn=doseq
+Repeatedly executes body (presumably for side-effects) with
+bindings and filtering as provided by "for".  Does not retain
+the head of the sequence. Returns nil.
 ```
 ```js context=core fn=doseq
 var doseq = (seq, bodyFn) => {
@@ -323,8 +327,12 @@ doseq([1, 2, 3], (x) => console.log(`Item: ${x}`));
 
 ### do$
 ```clj context=spec fn=do$
+(do &expr)
 ```
 ```txt context=desc fn=do$
+Evaluates the expressions in order and returns the value of the last. If no
+expressions are supplied, returns nil. See http://clojure.org/special_forms
+for more information.
 ```
 ```js context=core fn=do$
 var do$ = (...exprs) => {
@@ -375,6 +383,7 @@ var isGte = (a, b) => {
 }
 ```
 ```js context=test fn=isGte
+isGte(10)(100); // false
 ```
 
 ### isLt
@@ -445,8 +454,6 @@ var isEqual = (...args) =>{
 isEqual(10, 10);
 isEqual({a:1, b:{c:1}}, {a:1, b:{c:1}}); // true
 ```
-
-### diff
 
 ### isZero
 ```clj context=spec fn=isZero
@@ -532,6 +539,7 @@ var isTrue = x => x === true;
 isTrue(1); // false
 isTrue(true); // true
 ```
+
 ### isFalse
 ```clj context=spec fn=isFalse
 (false? x)
@@ -690,17 +698,17 @@ isColl(0)  //=> false
 ```
 
 ### isVector (isArray)
-```clj context=spec fn=isVector
+```clj context=spec fn=isVector alias=isArray
 (vector? x)
 ```
-```txt context=desc fn=isVector
+```txt context=desc fn=isVector alias=isArray
 Return true if x implements IPersistentVector
 ```
-```js context=core fn=isVector
+```js context=core fn=isVector alias=isArray
 var isVector =(value) =>  Array.isArray(value);
 var isArray = isVector;
 ```
-```js context=test fn=isVector
+```js context=test fn=isVector alias=isArray
 isVector(1); // false
 isArray(1); // false
 isVector([]); // true
@@ -709,17 +717,17 @@ isVector({}); // false
 
 ### isMap (isObject)
 aka isObject
-```clj context=spec fn=isMap
+```clj context=spec fn=isMap alias=isObject
 (map? x)
 ```
-```txt context=desc fn=isMap
+```txt context=desc fn=isMap alias=isObject
 Return true if x implements IPersistentMap
 ```
-```js context=core fn=isMap
+```js context=core fn=isMap alias=isObject
 var isMap = (value) => typeof value === 'object' && value !== null && !Array.isArray(value);
 var isObject = isMap;
 ```
-```js context=test fn=isMap
+```js context=test fn=isMap alias=isObject
 isMap({}); // => true
 isMap([]); //=> false
 isObject({})
@@ -827,7 +835,6 @@ second item in the first form, making a list of it if it is not a
 list already. If there are more forms, inserts the first form as the
 second item in second form, etc.
 ```
-
 ```js context=core fn=threadf
 var threadf = (val, ...forms)=>{
   return forms.reduce((acc, form) => {
@@ -878,8 +885,10 @@ threadl(range(10), [map, (x) => x * 2], [filter, isEven], [take, 5]); //[ 0, 2, 
 
 ### cond
 ```clj context=spec fn=cond
+(cond & clauses)
 ```
 ```txt context=desc fn=cond
+Takes a binary predicate, an expression, and a set of clauses. Each clause can take the form of either: test-expr result-expr test-expr :>> result-fn Note :>> is an ordinary keyword. For each clause, (pred test-expr expr) is evaluated. If it returns logical true, the clause is a matc...
 ```
 ```js context=core fn=cond
 var cond = (...clauses) => {
@@ -903,9 +912,7 @@ var checkNumber = (n) => cond(
 checkNumber(-5); // negative
 checkNumber(10); // positive
 checkNumber(0);  // zero
-
 ```
-
 
 ### condp
 ```clj context=spec fn=condp
@@ -954,11 +961,14 @@ expression is true. Note that, unlike cond branching, cond-> threading does
 not short circuit after the first true test expression.
 ```
 ```js context=core fn=condtf
-var condtf = (expr, ...clauses) => {
-  return clauses.reduce((acc, [condition, fn]) => {
-    return condition ? fn(acc) : acc;
-  }, expr);
-}
+var condtf = (val, ...clauses) => {
+  return clauses.reduce((acc, [condition, fn, ...args]) => {
+    if (condition) {
+      return fn(acc, ...args);  // Thread the value as the first argument
+    }
+    return acc;  // Skip if the condition is false
+  }, val);
+};
 ```
 ```js context=test fn=condtf
 condtf(
@@ -970,12 +980,53 @@ condtf(
 ```
 
 ### condtl
+```clj context=spec fn=condtl
+(cond->> expr & clauses)
+```
+```txt context=desc fn=condtl
+Takes an expression and a set of test/form pairs. Threads expr (via ->)
+through each form for which the corresponding test
+expression is true. Note that, unlike cond branching, cond-> threading does
+not short circuit after the first true test expression.
+```
+```js context=core fn=condtl
+var condtl = (val, ...clauses) => {
+  return clauses.reduce((acc, [condition, fn, ...args]) => {
+    if (condition) {
+      let fns = partialRight(fn, ...args);
+      return fns(acc);  // Thread the value as the last argument
+    }
+    return acc;  // Skip if condition is false
+  }, val);
+};
+```
+```js context=test fn=condtl
+var inc = (n) => n + 1;
+var mult = (n, factor) => n * factor;
+var fact = (n, factor) => [n, factor];
+
+condtl(
+  1,              // Starting value
+  [true, inc],    // Condition true, so inc(1) => 2
+  [false, mult, 42],  // Condition false, so this is skipped
+  [true, fact, 3] // Condition true, so mult(2, 3) => 6
+); // [3, 2]
+
+condtf(
+  1,              // Starting value
+  [true, inc],    // Condition true, so inc(1) => 2
+  [false, mult, 42],  // Condition false, so this is skipped
+  [true, fact, 3] // Condition true, so mult(2, 3) => 6
+); // [2, 3]
+
+```
 
 ### when
 ```clj context=spec fn=when
 (when test & body)
 ```
 ```txt context=desc fn=when
+Evaluates test. If logical true, evaluates body in an implicit do.
 ```
 ```js context=core fn=when
 var when = (test, ...body) => {
@@ -991,8 +1042,10 @@ when(false, () => console.log("Will not print")); // No output
 
 ### whenNot 
 ```clj context=spec fn=whenNot 
+(when-not test & body)
 ```
 ```txt context=desc fn=whenNot 
+Evaluates test. If logical false, evaluates body in an implicit do.
 ```
 ```js context=core fn=whenNot 
 var whenNot = (test, ...body) => {
@@ -1004,10 +1057,12 @@ whenNot(false,
   () => console.log("Condition is false!")); // Output: "Condition is false!"
 ```
 
-### iff
+### if$
 ```clj context=spec fn=if$
+(if & body)
 ```
 ```txt context=desc fn=if$
+evalautes test
 ```
 ```js context=core fn=if$
 var if$ = (test, thenFn, elseFn = () => {}) => {
@@ -1022,8 +1077,10 @@ if$(true,
 
 ### ifNot
 ```clj context=spec fn=ifNot
+(if-not test then)(if-not test then else)
 ```
 ```txt context=desc fn=ifNot
+Evaluates test. If logical false, evaluates and returns then expr, otherwise else expr, if supplied, else nil.
 ```
 ```js context=core fn=ifNot
 var ifNot = (test, thenFn, elseFn = () => {}) => {
@@ -1040,13 +1097,24 @@ ifNot(false,
   () => "Condition is true!"); // "Condition is false!"
 ```
 
-### casef
-```clj context=spec fn=casef
+### case$
+```clj context=spec fn=case$
+(case e & clauses)
 ```
-```txt context=desc fn=casef
+```txt context=desc fn=case$
+Takes an expression, and a set of clauses.
+ Each clause can take the form of either:
+ test-constant result-expr
+ (test-constant1 ... test-constantN)  result-expr
+ The test-constants are not evaluated. They must be compile-time
+literals, and need not be quoted.  If the expression is equal to a
+test-constant, the corresponding result-expr is returned. A single
+default expression can follow the clauses, and its value will be
+returned if no clause matches. If no default expression is provided
+and no clause matches, an IllegalArgumentException is thrown.
 ```
-```js context=core fn=casef
-var casef = (e, ...clauses) => {
+```js context=core fn=case$
+var case$ = (e, ...clauses) => {
   for (let i = 0; i < clauses.length - 1; i += 2) {
     if (clauses[i] === e) {
       return clauses[i + 1];
@@ -1057,74 +1125,52 @@ var casef = (e, ...clauses) => {
 ```
 ```js context=test fn=casef
 var value = 3
-casef(value,
+case$(value,
   1, "one",
   2, "two",
   3, "three",
       "default"); // 3
 ```
 
-### rand 
-```clj context=spec fn=rand 
-(rand)(rand n)
-```
-```txt context=desc fn=rand 
-Returns a random floating point number between 0 (inclusive) and n (default 1) (exclusive).
-```
-```js context=core fn=rand 
-var rand = () => Math.random();
-```
-```js context=test fn=rand 
-rand(); // 0.912919809
-```
-
-### randInt 
-```clj context=spec fn=randInt
-(rand-int n)
-```
-```txt context=desc fn=randInt
-Returns a random integer between 0 (inclusive) and n (exclusive).
-```
-```js context=core fn=randInt
-var randInt = (max=100) => {
-  return Math.floor(Math.random() * max);
-}
-```
-```js context=test fn=randInt
-randInt(); //25
-```
 
 ### add 
 ```clj context=spec fn=add
+(+')(+' x)(+' x y)(+' x y & more)
 ```
 ```txt context=desc fn=add
+Returns the sum of nums. (+') returns 0. Supports arbitrary precision. See also: +
 ```
 ```js context=core fn=add
 var add = (...args) => {
   let [a, b] = args;
   if(args.length === 1) return (b) => a + b;
-  return a + b;
+  if(args.length === 2) return a + b;
+  return args.reduce((sum, num) => sum + num, 0);
 }
-
 ```
 ```js context=test fn=add
 add(1,2); // 3
+add(1,2,3,4); // 10;
 ```
 
 ### subtract
 ```clj context=spec fn=subtract
+(-' x)(-' x y)(-' x y & more)
 ```
 ```txt context=desc fn=subtract
+If no ys are supplied, returns the negation of x, else subtracts the ys from x and returns the result. Supports arbitrary precision
 ```
 ```js context=core fn=subtract
 var subtract = (...args) => {
   let [a, b] = args;
   if(args.length === 1) return (b) => a - b;
-  return a - b;
+  if(args.length === 2) return a - b;
+  return args.reduce((sum, num) => sum - num);
 }
 ```
 ```js context=test fn=subtract
 subtract(10,-2); // 12
+subtract(10, 2, 2, 2); // 4
 ```
 
 ### multiply
@@ -1139,33 +1185,42 @@ longs, will throw on overflow. See also: *
 var multiply = (...args) => {
   let [a, b] = args;
   if(args.length === 1) return (b) => a * b;
-  return a * b;
+  if(args.length === 2) return a * b;
+  return args.reduce((acc, n) => acc * n);
 }
 ```
 ```js context=test fn=multiply
 multiply(1, 10); // 10
+multiply(1, 2, 3); // 6
 ```
 
 ### divide
 ```clj context=spec fn=divide
+(/ x)(/ x y)(/ x y & more)
 ```
 ```txt context=desc fn=divide
+If no denominators are supplied, returns 1/numerator,
+else returns numerator divided by all of the denominators.
 ```
 ```js context=core fn=divide
 var divide = (...args) => {
   let [a, b] = args;
   if(args.length === 1) return (b) => a / b;
-  return a / b;
+  if(args.length === 2) return a / b;
+  return args.reduce((acc, n) => acc / n);
 }
 ```
 ```js context=test fn=divide
 divide(100, 10); //10
+divide(100, 10, 2); //5
 ```
 
 ### quot
 ```clj context=spec fn=quot
+(quot num div)
 ```
 ```txt context=desc fn=quot
+quot[ient] of dividing numerator by denominator.
 ```
 ```js context=core fn=quot
 var quot = (...args) => {
@@ -1176,12 +1231,15 @@ var quot = (...args) => {
 ```
 ```js context=test fn=quot
 quot(100, 10); // 10
+quot(10, 3); // 3
 ```
 
 ### mod
 ```clj context=spec fn=mod
+(mod num div)
 ```
 ```txt context=desc fn=mod
+Modulus of num and div. Truncates toward negative infinity.
 ```
 ```js context=core fn=mod
 var mod = (...args) => {
@@ -1196,8 +1254,10 @@ mod(10, 2); // 0;
 
 ### rem
 ```clj context=spec fn=rem
+(rem num div)
 ```
 ```txt context=desc fn=rem
+remainder of dividing numerator by denominator.
 ```
 ```js context=core fn=rem
 var rem = (...args) => {
@@ -1208,68 +1268,86 @@ var rem = (...args) => {
 ```
 ```js context=test fn=rem
 rem(100, 20); //0
+rem(10, 9); //1
+rem(2, 2); //0
 ```
 
-### incr
-```clj context=spec fn=incr
+### inc
+```clj context=spec fn=inc
+(inc x)
 ```
-```txt context=desc fn=incr
+```txt context=desc fn=inc
+Returns a number one greater than num. Does not auto-promote
+longs, will throw on overflow. See also: inc'
 ```
-```js context=core fn=incr
-var incr = num => num + 1;
+```js context=core fn=inc
+var inc = num => num + 1;
 ```
-```js context=test fn=incr
-incr(1);
+```js context=test fn=inc
+inc(1);
 ```
 
-### decr
-```clj context=spec fn=decr
+### dec
+```clj context=spec fn=dec
+(dec x)
 ```
-```txt context=desc fn=decr
+```txt context=desc fn=dec
+Returns a number one less than num. Does not auto-promote
+longs, will throw on overflow. See also: dec'
 ```
 ```js context=core fn=decr
-var decr = num => num - 1;
+var dec = num => num - 1;
 ```
 ```js context=test fn=decr
-decr(10); //9
+dec(10); //9
 ```
 
 ### max
 ```clj context=spec fn=max
+(max x)(max x y)(max x y & more)
 ```
 ```txt context=desc fn=max
+Returns the greatest of the nums.
 ```
 ```js context=core fn=max
 var max = (...args) => {
   let [a, b] = args;
   if(args.length === 1) return (b) => Math.max(a, b);  
-  return Math.max(a, b);
+  if(args.length === 2) return Math.max(a, b);
+  return args.reduce((acc, val) => Math.max(acc, val))
 }
 ```
 ```js context=test fn=max
 max(100, 10); // 100
+max(0, 100, 1000, 90); // 1000
 ```
 
 ### min
 ```clj context=spec fn=min
+(min x)(min x y)(min x y & more)
 ```
 ```txt context=desc fn=min
+Returns the least of the nums.
 ```
 ```js context=core fn=min
 var min = (...args) => {
   let [a, b] = args;
   if(args.length === 1) return (b) => Math.min(a, b);
-  return Math.min(a, b);
+  if(args.length === 2) return Math.min(a, b);
+  return args.reduce((acc, val) => Math.min(acc, val));
 }
 ```
 ```js context=test fn=min
 min(100, 1); //1
+min(100, 1, 0, -1); // -1
 ```
 
 ### toInt
 ```clj context=spec fn=toInt
+(int x)
 ```
 ```txt context=desc fn=toInt
+Coerce to int
 ```
 ```js context=core fn=toInt
 var toInt = (num) => parseInt(num.toString());
@@ -1280,8 +1358,11 @@ toInt(9.12);
 
 ### subs
 ```clj context=spec fn=subs
+(subs s start)(subs s start end)
 ```
 ```txt context=desc fn=subs
+Returns the substring of s beginning at start inclusive, and ending
+at end (defaults to length of string), exclusive.
 ```
 ```js context=core fn=subs
 var subs = (...args) => {
@@ -1292,6 +1373,7 @@ var subs = (...args) => {
 ```
 ```js context=test fn=subs
 subs("foo", 0, 2); //fo
+subs('My name is Aziz', 8); // is Aziz
 ```
 
 ### replace 
@@ -1342,8 +1424,10 @@ replaceFirst("hello world", "o", "a"); // "hella world"
 
 ### join
 ```clj context=spec fn=join
+(join coll)(join separator coll)
 ```
 ```txt context=desc fn=join
+Returns a string of all elements in coll, as returned by (seq coll), separated by an optional separator.
 ```
 ```js context=core fn=join
 var join =(...args) => {
@@ -1358,8 +1442,13 @@ join(["hello", "world"], " "); // "hello world"
 
 ### escape
 ```clj context=spec fn=escape
+(escape s cmap)
 ```
 ```txt context=desc fn=escape
+Return a new string, using cmap to escape each character ch
+ from s as follows: 
+ If (cmap ch) is nil, append ch to the new string.
+ If (cmap ch) is non-nil, append (str (cmap ch)) instead.
 ```
 ```js context=core fn=escape
 var escape = (str) =>  str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -1368,10 +1457,15 @@ var escape = (str) =>  str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 escape("hello.world"); // "hello\.world"
 ```
 
+### reSeq
+
 ### rePattern
 ```clj context=spec fn=rePattern
+(re-pattern s)
 ```
 ```txt context=desc fn=rePattern
+Returns an instance of java.util.regex.Pattern, for use, e.g. in
+re-matcher.
 ```
 ```js context=core fn=rePattern
 var rePattern = (pattern) =>  new RegExp(pattern);
@@ -1382,8 +1476,12 @@ rePattern("hello.*"); // /hello.*/
 
 ### reMatches
 ```clj context=spec fn=reMatches
+(re-matches re s)
 ```
 ```txt context=desc fn=reMatches
+Returns the match, if any, of string to pattern, using
+java.util.regex.Matcher.matches().  Uses re-groups to return the
+groups.
 ```
 ```js context=core fn=reMatches
 var reMatches = (...args) => {
@@ -1400,10 +1498,15 @@ var reMatches = (...args) => {
 reMatches("hello world", "l+"); // ["ll", 'l']
 ```
 
+### reMatcher
+
 ### capitalize
 ```clj context=spec fn=capitalize
+(capitalize s)
 ```
 ```txt context=desc fn=capitalize
+Converts first character of the string to upper-case, all other
+characters to lower-case.
 ```
 ```js context=core fn=capitalize
 var capitalize = (str) => {
@@ -1416,8 +1519,10 @@ capitalize("hello world"); // "Hello world"
 
 ### lowerCase
 ```clj context=spec fn=lowerCase
+(lower-case s)
 ```
 ```txt context=desc fn=lowerCase
+Converts string to all lower-case.
 ```
 ```js context=core fn=lowerCase
 var lowerCase = (str) => {
@@ -1430,11 +1535,13 @@ lowerCase("HELLO WORLD"); // "hello world"
 
 ### upperCase
 ```clj context=spec fn=upperCase
+(upper-case s)
 ```
 ```txt context=desc fn=upperCase
+Converts string to all upper-case.
 ```
 ```js context=core fn=upperCase
-function upperCase(str) {
+var upperCase = (str) => {
   return str.toUpperCase();
 }
 ```
@@ -1444,8 +1551,10 @@ upperCase("hello world"); // "HELLO WORLD"
 
 ### trim
 ```clj context=spec fn=trim
+(trim s)
 ```
 ```txt context=desc fn=trim
+Removes whitespace from both ends of string.
 ```
 ```js context=core fn=trim
 var trim = (str) => {
@@ -1458,8 +1567,11 @@ trim(' aziz '); // 'aziz'
 
 ### trimNewline
 ```clj context=spec fn=trimNewline
+(trim-newline s)
 ```
 ```txt context=desc fn=trimNewline
+Removes all trailing newline \n or return \r characters from
+string.  Similar to Perl's chomp.
 ```
 ```js context=core fn=trimNewline
 var trimNewline = (str) => {
@@ -1472,8 +1584,10 @@ trimNewline('\nhello\nworld\n')
 
 ### triml
 ```clj context=spec fn=triml
+(triml s)
 ```
 ```txt context=desc fn=triml
+Removes whitespace from the left side of string.
 ```
 ```js context=core fn=triml
 var triml =(str) => {
@@ -1486,8 +1600,10 @@ triml('\nfoo'); // 'foo'
 
 ### trimr
 ```clj context=spec fn=trimr
+(trimr s)
 ```
 ```txt context=desc fn=trimr
+Removes whitespace from the right side of string.
 ```
 ```js context=core fn=trimr
 var trimr(str) {
@@ -1500,8 +1616,10 @@ trimr('foo\n');
 
 ### char
 ```clj context=spec fn=char
+(char x)
 ```
 ```txt context=desc fn=char
+Coerce to char
 ```
 ```js context=core fn=char
 var char = (n) => {
@@ -1640,8 +1758,6 @@ var concat = (...[x,...zs]) => {
 ```js context=test fn=concat
 concat([1], [2], [3], [4]); //[1,2,3,4]
 ```
-
-### cat
 
 ### first
 ```clj context=spec fn=first
@@ -1940,10 +2056,17 @@ first item for which (pred item) returns logical false.  Returns a
 stateful transducer when no collection is provided.
 ```
 ```js context=core fn=dropWhile
-//TODO;
+var dropWhile = (pred, coll) => {
+  let index = 0;
+  while (index < coll.length && pred(coll[index])) { index++;  }
+  return coll.slice(index);
+};
 ```
 ```js context=test fn=dropWhile
-//TOOD:
+var isEven = num => num % 2 === 0;
+dropWhile(isEven, [2, 4, 6, 7, 8]); // [7,8]
+dropWhile(isEven, [2, 4, 6]); //[]
+dropWhile(num => num < 5, [1, 2, 3, 6, 7]); // [6,7]
 ```
 
 
@@ -2066,7 +2189,6 @@ assoc([], 1, 1); // => [null, 1];
 ```
 
 ### assocIn
-
 ```clj context=spec fn=assocIn
 (assoc-in m [k & ks] v)
 ```
@@ -2375,6 +2497,35 @@ repeat(5, 2); // [2,2,2,2,2]
 
 
 ### repeatedly
+```clj context=spec fn=repeatedly
+(repeatedly f)(repeatedly n f)
+```
+```txt context=desc fn=repeatedly
+Takes a function of no args, presumably with side effects, and
+returns an infinite (or length n if supplied) lazy sequence of calls
+to it
+```
+```js context=core fn=repeatedly
+var repeatedly = (...args) => {
+  let n, fn;
+  if(args.length === 1) (fn = args[0]);
+  if(args.length === 2) (n=args[0], fn = args[1]);
+  if (n === undefined) {
+    return function* () {
+      while (true) {
+        yield fn();
+      }
+    };
+  } else {
+    return Array.from({ length: n }, () => fn());
+  }
+};
+
+```
+```js context=test fn=repeatedly
+repeatedly(5, randInt); // [50, 0, 1, 2,3];
+repeatedly(randInt)()
+```
 
 ### range
 ```clj context=spec fn=range
@@ -2480,7 +2631,29 @@ var splitAt = (...[n, coll])=>{
 ```js context=test fn=splitAt
 splitAt(2, [1,2,3,4,5,6]) //[ [ 1, 2 ], [ 3, 4, 5, 6 ] ]
 ```
+
 ### splitWith
+```clj context=spec fn=splitWith
+(split-with pred coll)
+```
+```txt context=desc fn=splitWith
+Returns a vector of [(take-while pred coll) (drop-while pred coll)]
+```
+```js context=core fn=splitWith
+var splitWith = (pred, coll) => {
+  let index = coll.findIndex(element => !pred(element));
+  if (index === -1) {
+    return [coll, []];
+  }
+  return [coll.slice(0, index), coll.slice(index)];
+};
+```
+```js context=test fn=splitWith
+var isEven = num => num % 2 === 0;
+var numbers = [2, 4, 6, 7, 8];
+splitWith(isEven, numbers); // [ [ 2, 4, 6 ], [ 7, 8 ] ]
+```
+
 
 ### splitLines
 ```clj context=spec fn=splitLines
@@ -2519,7 +2692,6 @@ var shuffle = (coll) => {
 shuffle([1,2,3,4,5,6,7,7,8]);
 ```
 
-
 ### randNth
 ```clj context=spec fn=randNth
 (rand-nth coll)
@@ -2539,7 +2711,35 @@ var randNth = (coll) => {
 randNth([1,2,3,4,5,6,7]); // rnd
 ```
 
-### randInt
+### rand 
+```clj context=spec fn=rand 
+(rand)(rand n)
+```
+```txt context=desc fn=rand 
+Returns a random floating point number between 0 (inclusive) and n (default 1) (exclusive).
+```
+```js context=core fn=rand 
+var rand = () => Math.random();
+```
+```js context=test fn=rand 
+rand(); // 0.912919809
+```
+
+### randInt 
+```clj context=spec fn=randInt
+(rand-int n)
+```
+```txt context=desc fn=randInt
+Returns a random integer between 0 (inclusive) and n (exclusive).
+```
+```js context=core fn=randInt
+var randInt = (max=100) => {
+  return Math.floor(Math.random() * max);
+}
+```
+```js context=test fn=randInt
+randInt(); //25
+```
 
 ### find
 ```clj context=spec fn=find
@@ -2571,7 +2771,6 @@ f should accept number-of-colls arguments. Returns a transducer when
 no collection is provided.
 ```
 ```js context=core fn=map
-// todo: add more arguments
 var map = (...[f, coll]) => (!coll) ? (coll) => map(f, coll) : coll.map(f);
 ```
 ```js context=test fn=map
@@ -2595,10 +2794,7 @@ var mapcat = (...[f, ...coll]) => {
 ```
 ```js context=test fn=mapcat
 mapcat(x => [x, x * 2], [1,2,3,4]); // [ 1, 2, 2, 4,  3, 6, 4, 8]
-// todo: test reverse
 ```
-
-### mapOf
 
 ### mapIndexed
 ```clj context=spec fn=mapIndexed
@@ -3075,9 +3271,18 @@ intersection([1,2], [2,3]); // [2]
 
 ### atom 
 ```clj context=spec fn=atom
-atom
+(atom x)(atom x & options)
 ```
 ```txt context=desc fn=atom
+Creates and returns an Atom with an initial value of x and zero or
+more options (in any order):
+ :meta metadata-map
+ :validator validate-fn
+ If metadata-map is supplied, it will become the metadata on the
+atom. validate-fn must be nil or a side-effect-free fn of one
+argument, which will be passed the intended new state on any state
+change. If the new state is unacceptable, the validate-fn should
+return false or throw an exception
 ```
 ```js context=core fn=atom
 var atom = (value) => {
@@ -3179,10 +3384,23 @@ state.deref(); // cahnged into -100
 
 ### deref
 ```clj context=spec fn=deref
+(deref ref)(deref ref timeout-ms timeout-val)
 ```
 ```txt context=desc fn=deref
+Also reader macro: @ref/@agent/@var/@atom/@delay/@future/@promise. Within a transaction,
+returns the in-transaction-value of ref, else returns the
+most-recently-committed value of ref. When applied to a var, agent
+or atom, returns its current state. When applied to a delay, forces
+it if not already forced. When applied to a future, will block if
+computation not complete. When applied to a promise, will block
+until a value is delivered.  The variant taking a timeout can be
+used for blocking references (futures and promises), and will return
+timeout-val if the timeout (in milliseconds) is reached before a
+value is available. See also - realized?.
+
 ```
 ```js context=core fn=deref
+// todo: add ore args, timout-ms timout-val
 var deref =(atom) => {
   if(!atom.deref) return null;
   return atom.deref();
@@ -3276,8 +3494,10 @@ reset(state, 100); // printed
 
 ### removeWatch
 ```clj context=spec fn=removeWatch
+(remove-watch reference key)
 ```
 ```txt context=desc fn=removeWatch
+Removes a watch (set by add-watch) from a reference
 ```
 ```js context=core fn=removeWatch
 var removeWatch = (...args) => {
@@ -3317,22 +3537,4 @@ var setValidator = (...args) => {
 var state = atom(9);
 setValidator(state, (n) => n < 0);
 reset(state, 100); // it keep 9 because validated
-```
-
-### export module 
-
-```js context=export path=./dist/index.js
-
-```
-
-### export commonjs
-
-```js context=export path=./dist/index.common.js
-
-```
-
-### export global variable
-
-```js context=export path=./dist/index.def.js
-
 ```

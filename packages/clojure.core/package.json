@@ -24,10 +24,11 @@
 		"./*.js",
 	],
   "sideEffects": false,
-  "module": "./dist/index.module.js",
-  "main": "./dist/index.js",
+  "module": "./core.esm.js",
+  "commonJs": "./core.cjs.js",
+  "main": "./core.js",
   "scripts": {
-    "extract": "./bin/extract",
+    "build": "./bin/build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -39,5 +40,5 @@
   "bugs": {
     "url": "https://github.com/azizzaeny/composable/issues"
   },
-  "homepage": "https://azizzaeny.com/open-source/clojure.core",
+  "homepage": "https://github.com/azizzaeny/composable",
 }
