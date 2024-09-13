@@ -254,25 +254,6 @@ var newFn = partialRight(myfn1, 'a', 'z', 'i');
 newFn('z'); // 'aziz'
 ```
 
-
-### replace 
-```clj context=spec fn=replace
-(replace s match replacement)
-```
-```txt context=desc fn=replace
-Given a map of replacement pairs and a vector/collection, returns a vector/seq with any elements = a key in smap replaced with the corresponding val in smap. Returns a transducer when no collection is provided.
-```
-```js context=core fn=replace
-var replace = (...args) =>{
-  let [s, match, replacement] = args;
-  if(args.length === 1) return (match, replacement) => s.replace(match, replacement);
-  return s.replace(new RegExp(match, "g"), replacement);
-}
-```
-```js context=test fn=replace
-replace("hello world", "o", "a"); // "hella warld"
-```
-
 ### or
 
 ```clj context=spec fn=or
@@ -846,7 +827,6 @@ var rand = () => Math.random();
 rand(); // 0.912919809
 ```
 
-
 ### randInt 
 ```clj context=spec fn=randInt
 (rand-int n)
@@ -864,11 +844,422 @@ randInt(); //25
 ```
 
 ### add 
+```clj context=spec fn=add
+```
+```txt context=desc fn=add
+```
+```js context=core fn=add
+var add = (...args) => {
+  let [a, b] = args;
+  if(args.length === 1) return (b) => a + b;
+  return a + b;
+}
+
+```
+```js context=test fn=add
+add(1,2); // 3
+```
+
 ### subtract
+```clj context=spec fn=subtract
+```
+```txt context=desc fn=subtract
+```
+```js context=core fn=subtract
+var subtract = (...args) => {
+  let [a, b] = args;
+  if(args.length === 1) return (b) => a - b;
+  return a - b;
+}
+```
+```js context=test fn=subtract
+subtract(10,-2); // 12
+```
+
 ### multiply
+```clj context=spec fn=multiply
+(*)(* x)(* x y)(* x y & more)
+```
+```txt context=desc fn=multiply
+Returns the product of nums. (*) returns 1. Does not auto-promote
+longs, will throw on overflow. See also: *
+```
+```js context=core fn=multiply
+var multiply = (...args) => {
+  let [a, b] = args;
+  if(args.length === 1) return (b) => a * b;
+  return a * b;
+}
+```
+```js context=test fn=multiply
+multiply(1, 10); // 10
+```
+
 ### divide
+```clj context=spec fn=divide
+```
+```txt context=desc fn=divide
+```
+```js context=core fn=divide
+var divide = (...args) => {
+  let [a, b] = args;
+  if(args.length === 1) return (b) => a / b;
+  return a / b;
+}
+```
+```js context=test fn=divide
+divide(100, 10); //10
+```
+
 ### quot
+```clj context=spec fn=quot
+```
+```txt context=desc fn=quot
+```
+```js context=core fn=quot
+var quot = (...args) => {
+  let [a, b] = args;
+  if(args.length === 1) return (b) => Math.floor(a / b);
+  return Math.floor(a / b);
+}
+```
+```js context=test fn=quot
+quot(100, 10); // 10
+```
+
 ### mod
+```clj context=spec fn=mod
+```
+```txt context=desc fn=mod
+```
+```js context=core fn=mod
+var mod = (...args) => {
+  let [a, b] = args;
+  if(args.length === 1) return (b) => a % b;
+  return a % b;
+}
+```
+```js context=test fn=mod
+mod(10, 2); // 0;
+```
+
+### rem
+```clj context=spec fn=rem
+```
+```txt context=desc fn=rem
+```
+```js context=core fn=rem
+var rem = (...args) => {
+  let [a, b] = args;
+  if (args.length === 1) return (b) => ((a % b) + b) % b;
+  return ((a % b) + b) % b;
+}
+```
+```js context=test fn=rem
+rem(100, 20); //0
+```
+
+### incr
+```clj context=spec fn=incr
+```
+```txt context=desc fn=incr
+```
+```js context=core fn=incr
+var incr = num => num + 1;
+```
+```js context=test fn=incr
+incr(1);
+```
+
+### decr
+```clj context=spec fn=decr
+```
+```txt context=desc fn=decr
+```
+```js context=core fn=decr
+var decr = num => num - 1;
+```
+```js context=test fn=decr
+decr(10); //9
+```
+
+### max
+```clj context=spec fn=max
+```
+```txt context=desc fn=max
+```
+```js context=core fn=max
+var max = (...args) => {
+  let [a, b] = args;
+  if(args.length === 1) return (b) => Math.max(a, b);  
+  return Math.max(a, b);
+}
+```
+```js context=test fn=max
+max(100, 10); // 100
+```
+
+### min
+```clj context=spec fn=min
+```
+```txt context=desc fn=min
+```
+```js context=core fn=min
+var min = (...args) => {
+  let [a, b] = args;
+  if(args.length === 1) return (b) => Math.min(a, b);
+  return Math.min(a, b);
+}
+```
+```js context=test fn=min
+min(100, 1); //1
+```
+
+### toInt
+```clj context=spec fn=toInt
+```
+```txt context=desc fn=toInt
+```
+```js context=core fn=toInt
+var toInt = (num) => parseInt(num.toString());
+```
+```js context=test fn=toInt
+toInt(9.12);
+```
+
+### subs
+```clj context=spec fn=subs
+```
+```txt context=desc fn=subs
+```
+```js context=core fn=subs
+var subs = (...args) => {
+  let [str, start, end] = args;
+  if(args.length === 1) return (start, end) => str.substring(start, end);
+  return str.substring(start, end);
+}
+```
+```js context=test fn=subs
+subs("foo", 0, 2); //fo
+```
+
+### replace 
+```clj context=spec fn=replace
+(replace s match replacement)
+```
+```txt context=desc fn=replace
+Given a map of replacement pairs and a vector/collection, returns a vector/seq with any elements = a key in smap replaced with the corresponding val in smap. Returns a transducer when no collection is provided.
+```
+```js context=core fn=replace
+var replace = (...args) =>{
+  let [s, match, replacement] = args;
+  if(args.length === 1) return (match, replacement) => s.replace(match, replacement);
+  return s.replace(new RegExp(match, "g"), replacement);
+}
+```
+```js context=test fn=replace
+replace("hello world", "o", "a"); // "hella warld"
+```
+
+### replaceFirst
+```clj context=spec fn=replaceFirst
+(replace-first s match replacement)
+```
+```txt context=desc fn=replaceFirst
+Replaces the first instance of match with replacement in s.
+  match/replacement can be:
+  char / char
+  string / string
+  pattern / (string or function of match).
+  See also replace.
+  The replacement is literal (i.e. none of its characters are treated
+  specially) for all cases above except pattern / string.
+  For pattern / string, $1, $2, etc. in the replacement string are
+ substituted with the string that matched the corresponding
+ parenthesized group in the pattern. 
+```
+```js context=core fn=replaceFirst
+var replaceFirst = (...args) => {
+  let [str, pattern, replacement] = args;
+  if(args.length === 1) return (pattern, replacement) => str.replace(pattern, replacement);
+  return str.replace(pattern, replacement);
+}
+```
+```js context=test fn=replaceFirst
+replaceFirst("hello world", "o", "a"); // "hella world"
+```
+
+### join
+```clj context=spec fn=join
+```
+```txt context=desc fn=join
+```
+```js context=core fn=join
+var join =(...args) => {
+  let [arr, separator] = args;
+  if(args.length === 1) return (separator) => arr.join(separator);
+  return arr.join(separator);
+}
+```
+```js context=test fn=join
+join(["hello", "world"], " "); // "hello world"
+```
+
+### escape
+```clj context=spec fn=escape
+```
+```txt context=desc fn=escape
+```
+```js context=core fn=escape
+var escape = (str) =>  str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+```
+```js context=test fn=escape
+escape("hello.world"); // "hello\.world"
+```
+
+### rePattern
+```clj context=spec fn=rePattern
+```
+```txt context=desc fn=rePattern
+```
+```js context=core fn=rePattern
+var rePattern = (pattern) =>  new RegExp(pattern);
+```
+```js context=test fn=rePattern
+rePattern("hello.*"); // /hello.*/
+```
+
+### reMatches
+```clj context=spec fn=reMatches
+```
+```txt context=desc fn=reMatches
+```
+```js context=core fn=reMatches
+var reMatches = (...args) => {
+  let [str, pattern] = args;
+  if(args.length === 1) return (pattern) => reMatches(str, pattern);
+  var regex = new RegExp(pattern, "g");
+  var matches = [];
+  var match;
+  while ((match = regex.exec(str)) !== null) { matches.push(match[0]); }
+  return matches;
+}
+```
+```js context=test fn=reMatches
+reMatches("hello world", "l+"); // ["ll", 'l']
+```
+
+### capitalize
+```clj context=spec fn=capitalize
+```
+```txt context=desc fn=capitalize
+```
+```js context=core fn=capitalize
+var capitalize = (str) => {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+```
+```js context=test fn=capitalize
+capitalize("hello world"); // "Hello world"
+```
+
+### lowerCase
+```clj context=spec fn=lowerCase
+```
+```txt context=desc fn=lowerCase
+```
+```js context=core fn=lowerCase
+var lowerCase = (str) => {
+  return str.toLowerCase();
+}
+```
+```js context=test fn=lowerCase
+lowerCase("HELLO WORLD"); // "hello world"
+```
+
+### upperCase
+```clj context=spec fn=upperCase
+```
+```txt context=desc fn=upperCase
+```
+```js context=core fn=upperCase
+function upperCase(str) {
+  return str.toUpperCase();
+}
+```
+```js context=test fn=upperCase
+upperCase("hello world"); // "HELLO WORLD"
+```
+
+### trim
+```clj context=spec fn=trim
+```
+```txt context=desc fn=trim
+```
+```js context=core fn=trim
+var trim = (str) => {
+  return str.trim();
+}
+```
+```js context=test fn=trim
+trim(' aziz '); // 'aziz'
+```
+
+### trimNewline
+```clj context=spec fn=trimNewline
+```
+```txt context=desc fn=trimNewline
+```
+```js context=core fn=trimNewline
+var trimNewline = (str) => {
+  return str.replace(/^[\n\r]+|[\n\r]+$/g, '');
+}
+```
+```js context=test fn=trimNewline
+trimNewline('\nhello\nworld\n')
+```
+
+### triml
+```clj context=spec fn=triml
+```
+```txt context=desc fn=triml
+```
+```js context=core fn=triml
+var triml =(str) => {
+  return str.replace(/^\s+/, '');
+}
+```
+```js context=test fn=triml
+triml('\nfoo'); // 'foo'
+```
+
+### trimr
+```clj context=spec fn=trimr
+```
+```txt context=desc fn=trimr
+```
+```js context=core fn=trimr
+var trimr(str) {
+  return str.replace(/\s+$/, '');
+}
+```
+```js context=test fn=trimr
+trimr('foo\n');
+```
+
+### char
+```clj context=spec fn=char
+```
+```txt context=desc fn=char
+```
+```js context=core fn=char
+var char = (n) => {
+  return String.fromCharCode(n);
+}
+```
+```js context=test fn=char
+char(56); // '8'
+```
 
 ### keys
 ```clj context=spec fn=keys
@@ -1838,10 +2229,23 @@ var splitAt = (...[n, coll])=>{
 ```js context=test fn=splitAt
 splitAt(2, [1,2,3,4,5,6]) //[ [ 1, 2 ], [ 3, 4, 5, 6 ] ]
 ```
-
-
 ### splitWith
+
 ### splitLines
+```clj context=spec fn=splitLines
+(split-lines s)
+```
+```txt context=desc fn=splitLines
+Splits s on \n or \r\n. Trailing empty lines are not returned.
+```
+```js context=core fn=splitLines
+var splitLines =(str) => {
+  return str.split("\n");
+}
+```
+```js context=test fn=splitLines
+splitLines('hai\nllow');
+```
 
 ### shuffle
 ```clj context=spec fn=shuffle
