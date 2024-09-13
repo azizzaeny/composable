@@ -906,6 +906,7 @@ checkNumber(0);  // zero
 
 ```
 
+
 ### condp
 ```clj context=spec fn=condp
 (condp pred expr & clauses)
@@ -942,25 +943,25 @@ condp(
 ); // three
 
 ```
-### condThreadf
-```clj context=spec fn=condThreadf
+### condtf
+```clj context=spec fn=condtf
 (cond-> expr & clauses)
 ```
-```txt context=desc fn=condThreadf
+```txt context=desc fn=condtf
 Takes an expression and a set of test/form pairs. Threads expr (via ->)
 through each form for which the corresponding test
 expression is true. Note that, unlike cond branching, cond-> threading does
 not short circuit after the first true test expression.
 ```
-```js context=core fn=condThreadf
-var condThreadf = (expr, ...clauses) => {
+```js context=core fn=condtf
+var condtf = (expr, ...clauses) => {
   return clauses.reduce((acc, [condition, fn]) => {
     return condition ? fn(acc) : acc;
   }, expr);
 }
 ```
-```js context=test fn=condThreadf
-condThreadf(
+```js context=test fn=condtf
+condtf(
   1,                       // Start with 1
   [true, (x) => x + 1],     // Since true, inc(1) => 2
   [false, (x) => x * 42],   // Condition is false, skip this step
@@ -968,7 +969,7 @@ condThreadf(
 ); // 6
 ```
 
-### condThreadl
+### condtl
 
 ### when
 ```clj context=spec fn=when
@@ -3070,6 +3071,252 @@ var intersection = (...args) =>{
 ```
 ```js context=test fn=intersection
 intersection([1,2], [2,3]); // [2]
+```
+
+### atom 
+```clj context=spec fn=atom
+atom
+```
+```txt context=desc fn=atom
+```
+```js context=core fn=atom
+var atom = (value) => {
+  let state = value;
+  let watchers = {};
+  let validator = null;
+
+  var deref = () =>  state;
+  
+  var reset = (newValue) => {
+    let oldState = state;
+    let validatedValue = validate(newValue);
+    (state = validatedValue);
+    (notifyWatchers(oldState, state));
+    return (state === validatedValue); // Return true if the value passed validation
+  }
+
+  var swap = (updateFn) => {
+    let oldValue = state;
+    let newValue = updateFn(state);
+    let validatedValue = validate(newValue);
+    (state = validatedValue);
+    (notifyWatchers(oldValue, state));
+    return (state === validatedValue); // Return true if the value passed validation
+  }
+
+  var addWatch = (name, watcherFn) =>{
+    (watchers[name] = watcherFn);
+    return true;
+  }
+
+  var removeWatch = (name) => {
+    delete watchers[name];
+  }
+  
+  var notifyWatchers = (oldState, newState) => {
+    for (const watcherName in watchers) {
+      if (watchers.hasOwnProperty(watcherName)) {
+        watchers[watcherName](oldState, newState);
+      }
+    }
+  }
+  
+  var compareAndSet = (expectedValue, newValue) => {
+    if (state === expectedValue) {
+      let validatedValue = validate(newValue);
+      (state = validatedValue);
+      (notifyWatchers(expectedValue, state));
+      return state === validatedValue; 
+    }
+    return false;
+  }
+
+  var setValidator = (validatorFn) => {
+    (validator = validatorFn);
+  }
+
+
+  var removeValidator = () => {
+    (validator = null);
+  }
+  
+
+  var validate = (newValue) => {
+    let defaultValidation = validator ? validator(newValue) : true;
+    return defaultValidation ? newValue : state; // Return current state if validation fails
+  }
+
+  // # todo: getValidator
+  return {
+    deref,
+    reset,
+    swap,
+    addWatch,
+    removeWatch,
+    compareAndSet,
+    setValidator,
+    removeValidator
+  };
+}
+```
+```js context=test fn=atom
+var state = atom(0);
+state.swap((n) => n - 10);
+state.deref(); // -10;
+state.compareAndSet(-10, 200);;
+state.deref(); // 200;
+state.addWatch('foo', (n, o)=> console.log('foo changed', n, 0))
+state.reset(300); // printed
+state.deref(); // 300;
+state.removeWatch("foo"); // will not printed anymore
+state.setValidator((n)=> n > 0)
+state.reset(-100);; // not cahnged because validator
+state.deref(); // 300
+state.removeValidator(); // removed 
+state.reset(-100); //
+state.deref(); // cahnged into -100
+```
+
+### deref
+```clj context=spec fn=deref
+```
+```txt context=desc fn=deref
+```
+```js context=core fn=deref
+var deref =(atom) => {
+  if(!atom.deref) return null;
+  return atom.deref();
+}
+```
+```js context=test fn=deref
+deref(atom(0)); // 0
+```
+
+### reset
+```clj context=spec fn=reset
+(reset! atom newval)
+```
+```txt context=desc fn=reset
+Sets the value of atom to newval without regard for the
+current value. Returns newval.
+```
+```js context=core fn=reset
+var reset = (...args) => {
+  let [atom, value] = args
+  if(args.length === 1) return (value) => atom.reset(value);
+  return (atom.reset(value), atom.deref());
+}
+```
+```js context=test fn=reset
+reset(atom(0), 100); // 100;
+```
+
+### swap
+```clj context=spec fn=swap
+(swap! atom f)(swap! atom f x)(swap! atom f x y)(swap! atom f x y & args)
+```
+```txt context=desc fn=swap
+Atomically swaps the value of atom to be:
+(apply f current-value-of-atom args). Note that f may be called
+multiple times, and thus should be free of side effects.  Returns
+the value that was swapped in.
+```
+```js context=core fn=swap
+var swap = (...args) => {
+  let [atom, fn, ...rest] = args;
+  if(args.length === 1) return (fn, ...rest) => atom.swap(fn, ...rest);
+  return (atom.swap(fn, ...args), atom.deref());
+}
+```
+```js context=test fn=swap
+swap(atom(0), (n)=> n + 100); // 100
+```
+
+### compareAndSet
+```clj context=spec fn=compareAndSet
+(compare-and-set! atom oldval newval)
+```
+```txt context=desc fn=compareAndSet
+Atomically sets the value of atom to newval if and only if the
+current value of the atom is identical to oldval. Returns true if
+set happened, else false
+```
+```js context=core fn=compareAndSet
+var compareAndSet = (...args) => {
+  let [atom, expected, newVal] = args;
+  if(args.length === 1) return (expected, newVal) => atom.compareAndSet(expected, newVal);  
+  return  atom.compareAndSet(expected, newVal);
+}
+```
+```js context=test fn=compareAndSet
+compareAndSet(atom(9), 9, 100); //true
+compareAndSet(atom(9), -9, 100); //false
+```
+
+### addWatch
+```clj context=spec fn=addWatch
+(add-watch reference key fn)
+```
+```txt context=desc fn=addWatch
+Adds a watch function to an agent/atom/var/ref reference. The watch
+fn must be a fn of 4 args: a key, the reference, its old-state, its new-state
+```
+```js context=core fn=addWatch
+var addWatch = (...args)=> {
+  let [atom, name, watcherFn] = args;
+  if(args.length === 1) return (name, watcherFn) => atom.addWatch(name, watcherFn);
+  return (atom.addWatch(name, watcherFn));
+}
+```
+```js context=test fn=addWatch
+var state = atom(0);
+addWatch(state, 'watcher', (n) => console.log('changed'));
+reset(state, 100); // printed
+```
+
+### removeWatch
+```clj context=spec fn=removeWatch
+```
+```txt context=desc fn=removeWatch
+```
+```js context=core fn=removeWatch
+var removeWatch = (...args) => {
+  let [atom, watcherFn] = args;
+  if(args.length === 1) return (watcherFn) => atom.removeWatch(watcherFn);
+  return atom.removeWatch(watcherFn);
+}
+```
+```js context=test fn=removeWatch
+var state = atom(0);
+addWatch(state, 'watcher', (n) => console.log('changed'));
+reset(state, 100); // printed
+removeWatch(state, 'watcher');
+reset(state, 100); // not printed removed
+```
+
+### setValidator
+```clj context=spec fn=setValidator
+(set-validator! iref validator-fn)
+```
+```txt context=desc fn=setValidator
+Sets the validator-fn for a var/ref/agent/atom. validator-fn must be nil or a
+side-effect-free fn of one argument, which will be passed the intended
+new state on any state change. If the new state is unacceptable, the
+validator-fn should return false or throw an exception. If the current state (root
+value if var) is not acceptable to the new validator, an exception
+will be thrown and the validator will not be changed.
+```
+```js context=core fn=setValidator
+var setValidator = (...args) => {
+  let [atom, validatorFn] = args;
+  if(args.length === 1) return (validatorFn) => atom.setValidator(validatorFn);
+  return atom.setValidator(validatorFn);
+}
+```
+```js context=test fn=setValidator
+var state = atom(9);
+setValidator(state, (n) => n < 0);
+reset(state, 100); // it keep 9 because validated
 ```
 
 ### export module 
