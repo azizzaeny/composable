@@ -276,6 +276,74 @@ or(false, null, 0, '', 'hello'); // 'hello'
 or(false, 0, undefined, 42); // 42
 ```
 
+### and 
+```clj context=spec fn=and
+```
+```txt context=desc fn=and
+```
+```js context=core fn=and
+var and = (...tests) => {
+  return tests.every(Boolean);
+};
+```
+```js context=test fn=and
+and(true, 1, 'non-empty', {}); // true
+```
+
+### complement
+```clj context=spec fn=complement
+```
+```txt context=desc fn=complement
+```
+```js context=core fn=complement
+var complement = (f) => {
+  return (...args) => !f(...args);
+};
+```
+```js context=test fn=complement
+var isPositive = (n) => n > 0;
+var isNotPositive = complement(isPositive);
+isNotPositive(-5); // true
+isNotPositive(5); // false
+```
+
+### doseq
+```clj context=spec fn=doseq
+```
+```txt context=desc fn=doseq
+```
+```js context=core fn=doseq
+var doseq = (seq, bodyFn) => {
+  seq.forEach(item => bodyFn(item) );
+};
+```
+```js context=test fn=doseq
+doseq([1, 2, 3], (x) => console.log(`Item: ${x}`));
+```
+
+### do$
+```clj context=spec fn=do$
+```
+```txt context=desc fn=do$
+```
+```js context=core fn=do$
+var do$ = (...exprs) => {
+  let result;
+  exprs.forEach(fn => {
+    result = fn();
+  });
+  return result;
+};
+```
+```js context=test fn=do$
+do$(
+  () => console.log("First expression"),
+  () => console.log("Second expression"),
+  () => "Last expression result"
+); // last expression results
+```
+
+
 ### isGt
 ```clj context=spec fn=isGt
 (> x)(> x y)(> x y & more)
@@ -839,10 +907,161 @@ checkNumber(0);  // zero
 ```
 
 ### condp
-### condThreadl
-### condThreadf
+```clj context=spec fn=condp
+(condp pred expr & clauses)
+```
+```txt context=desc fn=condp
+Takes a binary predicate, an expression, and a set of clauses.
+Each clause can take the form of either:
+ test-expr result-expr
+ test-expr :>> result-fn
+ Note :>> is an ordinary keyword.
+ For each clause, (pred test-expr expr) is evaluated. If it returns...
+```
+```js context=core fn=condp
+var condp = (pred, expr, ...clauses) => {
+  for (let i = 0; i < clauses.length - 1; i += 2) {
+    let value = clauses[i];
+    let result = clauses[i + 1];
+    if (pred(expr, value)) { return result; }
+  }
+  let fallback = clauses[clauses.length - 1];
+  return typeof fallback === 'function' ? fallback(expr) : fallback;
+};
+```
+```js context=test fn=condp
+// condp, f, testvalue, ...clauses
+var value = 3;
+condp(
+  (a, b) => a === b,  // predicate (like `=`)
+  value,              // expression to test
+  1, "one",           // condition-result pairs
+  2, "two",
+  3, "three",
+  (v) => `unexpected value, "${v}"` // fallback function
+); // three
 
-### doseq
+```
+### condThreadf
+```clj context=spec fn=condThreadf
+(cond-> expr & clauses)
+```
+```txt context=desc fn=condThreadf
+Takes an expression and a set of test/form pairs. Threads expr (via ->)
+through each form for which the corresponding test
+expression is true. Note that, unlike cond branching, cond-> threading does
+not short circuit after the first true test expression.
+```
+```js context=core fn=condThreadf
+var condThreadf = (expr, ...clauses) => {
+  return clauses.reduce((acc, [condition, fn]) => {
+    return condition ? fn(acc) : acc;
+  }, expr);
+}
+```
+```js context=test fn=condThreadf
+condThreadf(
+  1,                       // Start with 1
+  [true, (x) => x + 1],     // Since true, inc(1) => 2
+  [false, (x) => x * 42],   // Condition is false, skip this step
+  [(2 === 2), (x) => x * 3] // Condition is true, so (* 2 3) => 6
+); // 6
+```
+
+### condThreadl
+
+### when
+```clj context=spec fn=when
+(when test & body)
+```
+```txt context=desc fn=when
+```
+```js context=core fn=when
+var when = (test, ...body) => {
+  if (test) body.forEach(fn => fn());
+};
+```
+```js context=test fn=when
+when(true, 
+  () => console.log("Condition is true!"),
+  () => console.log("Another true case!")); // Both messages will print
+when(false, () => console.log("Will not print")); // No output
+```
+
+### whenNot 
+```clj context=spec fn=whenNot 
+```
+```txt context=desc fn=whenNot 
+```
+```js context=core fn=whenNot 
+var whenNot = (test, ...body) => {
+  if (!test) { body.forEach(fn => fn()); }
+};
+```
+```js context=test fn=whenNot 
+whenNot(false, 
+  () => console.log("Condition is false!")); // Output: "Condition is false!"
+```
+
+### iff
+```clj context=spec fn=if$
+```
+```txt context=desc fn=if$
+```
+```js context=core fn=if$
+var if$ = (test, thenFn, elseFn = () => {}) => {
+  return test ? thenFn() : elseFn();
+};
+```
+```js context=test fn=if$
+if$(true, 
+  () => console.log("True branch"),
+  () => console.log("False branch")); // "True branch"
+```
+
+### ifNot
+```clj context=spec fn=ifNot
+```
+```txt context=desc fn=ifNot
+```
+```js context=core fn=ifNot
+var ifNot = (test, thenFn, elseFn = () => {}) => {
+  if (!test) {
+    return thenFn();
+  } else {
+    return elseFn();
+  }
+};
+```
+```js context=test fn=ifNot
+ifNot(false, 
+  () => "Condition is false!", 
+  () => "Condition is true!"); // "Condition is false!"
+```
+
+### casef
+```clj context=spec fn=casef
+```
+```txt context=desc fn=casef
+```
+```js context=core fn=casef
+var casef = (e, ...clauses) => {
+  for (let i = 0; i < clauses.length - 1; i += 2) {
+    if (clauses[i] === e) {
+      return clauses[i + 1];
+    }
+  }
+  return clauses[clauses.length - 1]; // Default case
+};
+```
+```js context=test fn=casef
+var value = 3
+casef(value,
+  1, "one",
+  2, "two",
+  3, "three",
+      "default"); // 3
+```
 
 ### rand 
 ```clj context=spec fn=rand 
