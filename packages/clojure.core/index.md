@@ -832,6 +832,44 @@ threadl(range(10), [map, (x) => x * 2], [filter, isEven], [take, 5]); //[ 0, 2, 
 ### condtfirst
 ### doseq
 
+### rand 
+```clj context=spec fn=rand 
+(rand)(rand n)
+```
+```txt context=desc fn=rand 
+Returns a random floating point number between 0 (inclusive) and n (default 1) (exclusive).
+```
+```js context=core fn=rand 
+var rand = () => Math.random();
+```
+```js context=test fn=rand 
+rand(); // 0.912919809
+```
+
+
+### randInt 
+```clj context=spec fn=randInt
+(rand-int n)
+```
+```txt context=desc fn=randInt
+Returns a random integer between 0 (inclusive) and n (exclusive).
+```
+```js context=core fn=randInt
+var randInt = (max=100) => {
+  return Math.floor(Math.random() * max);
+}
+```
+```js context=test fn=randInt
+randInt(); //25
+```
+
+### add 
+### subtract
+### multiply
+### divide
+### quot
+### mod
+
 ### keys
 ```clj context=spec fn=keys
 (keys map)
