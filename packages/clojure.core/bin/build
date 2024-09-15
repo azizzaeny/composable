@@ -1,37 +1,3 @@
 #!/bin/sh
 
-node -e "
-
-var captureCodeBlocks = (markdown) =>  Array.from(markdown.matchAll(/\`\`\`(\w+)((?:\s+\w+=[\w./-]+)*)\s*([\s\S]*?)\`\`\`/g), match => {
-  return Object.assign({ lang: match[1], content: match[3].trim()}, match[2].trim().split(/\s+/).reduce((acc, attr)=>{
-    let [key, value] = attr.split('=');
-    return (key && value) ? (acc[key] = value, acc) : acc;
-  }, {}));
-});
-var readDir = (dirPath) => require('fs').readdirSync(dirPath);
-var readFile = (file) => require('fs').existsSync(file) ? require('fs').readFileSync(file, 'utf8') : null;
-var onlyMarkdown = (path) => path.endsWith('.md');
-var captureCode = path => captureCodeBlocks(readFile('./'+path));
-
-var groupByFn = (acc, value) => {
-  if(!value.fn) return acc;
-  return (!acc[value.fn])
-    ? Object.assign(acc, { [value.fn]: [value] })
-    : (acc[value.fn] = acc[value.fn].concat(value) ,acc);
-  return acc;
-};
-
-var build = (path='./') =>{ 
-  let refcard = readDir(path).filter(onlyMarkdown).map(captureCode).flat().reduce(groupByFn, {});
-  let core = Object.entries(refcard).slice(0,10).reduce((acc, [kfn, vfn])=>{
-    let content = vfn.reduce((acc, value) => (value.context === 'core') ? acc.concat(`\n${value.content}`) : acc, '');
-    return acc.concat(content);
-  }, '');
-  let aliasFn = ['isArray', 'isObject'];
-  let allFn = Object.keys(refcard)
-  var cjsExport = allFn.reduce((acc, v) => acc.concat(`${v}, `),`module.exports = {`).slice(0, -2).concat(` };`);
-  var mjsExport = allFn.reduce((acc, v) => acc.concat(`${v}, `), 'export { ').slice(0, -2).concat(` };`);
-  return mjsExport;
-}
-build();
-+
+node ./build.js
