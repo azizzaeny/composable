@@ -325,17 +325,17 @@ var doseq = (seq, bodyFn) => {
 doseq([1, 2, 3], (x) => console.log(`Item: ${x}`));
 ```
 
-### do$
-```clj context=spec fn=do$
+### dof
+```clj context=spec fn=dof
 (do &expr)
 ```
-```txt context=desc fn=do$
+```txt context=desc fn=dof
 Evaluates the expressions in order and returns the value of the last. If no
 expressions are supplied, returns nil. See http://clojure.org/special_forms
 for more information.
 ```
-```js context=core fn=do$
-var do$ = (...exprs) => {
+```js context=core fn=dof
+var dof = (...exprs) => {
   let result;
   exprs.forEach(fn => {
     result = fn();
@@ -343,8 +343,8 @@ var do$ = (...exprs) => {
   return result;
 };
 ```
-```js context=test fn=do$
-do$(
+```js context=test fn=dof
+dof(
   () => console.log("First expression"),
   () => console.log("Second expression"),
   () => "Last expression result"
@@ -1057,20 +1057,20 @@ whenNot(false,
   () => console.log("Condition is false!")); // Output: "Condition is false!"
 ```
 
-### if$
-```clj context=spec fn=if$
+### iff
+```clj context=spec fn=iff
 (if & body)
 ```
-```txt context=desc fn=if$
+```txt context=desc fn=iff
 evalautes test
 ```
-```js context=core fn=if$
-var if$ = (test, thenFn, elseFn = () => {}) => {
+```js context=core fn=iff
+var iff = (test, thenFn, elseFn = () => {}) => {
   return test ? thenFn() : elseFn();
 };
 ```
-```js context=test fn=if$
-if$(true, 
+```js context=test fn=iff
+iff(true, 
   () => console.log("True branch"),
   () => console.log("False branch")); // "True branch"
 ```
@@ -1097,11 +1097,11 @@ ifNot(false,
   () => "Condition is true!"); // "Condition is false!"
 ```
 
-### case$
-```clj context=spec fn=case$
+### casef
+```clj context=spec fn=casef
 (case e & clauses)
 ```
-```txt context=desc fn=case$
+```txt context=desc fn=casef
 Takes an expression, and a set of clauses.
  Each clause can take the form of either:
  test-constant result-expr
@@ -1113,8 +1113,8 @@ default expression can follow the clauses, and its value will be
 returned if no clause matches. If no default expression is provided
 and no clause matches, an IllegalArgumentException is thrown.
 ```
-```js context=core fn=case$
-var case$ = (e, ...clauses) => {
+```js context=core fn=casef
+var casef = (e, ...clauses) => {
   for (let i = 0; i < clauses.length - 1; i += 2) {
     if (clauses[i] === e) {
       return clauses[i + 1];
@@ -1125,7 +1125,7 @@ var case$ = (e, ...clauses) => {
 ```
 ```js context=test fn=casef
 var value = 3
-case$(value,
+casef(value,
   1, "one",
   2, "two",
   3, "three",
@@ -1606,7 +1606,7 @@ triml('\nfoo'); // 'foo'
 Removes whitespace from the right side of string.
 ```
 ```js context=core fn=trimr
-var trimr(str) {
+var trimr = (str) {
   return str.replace(/\s+$/, '');
 }
 ```
