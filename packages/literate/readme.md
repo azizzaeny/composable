@@ -49,4 +49,4 @@ tangle(testMdFile, (file) => (file.path && file.lang === "js"));
 
 ### Changes
 - [1.0.2] `tangle` and `eval` now return object of inputed
-- [1.0.5] refactor, move repository to composable
+- [1.0.5] refactor `groupBlockByPath`, rename `eval` to `evalaute`, move repository to composable
