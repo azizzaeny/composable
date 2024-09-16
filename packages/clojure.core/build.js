@@ -28,9 +28,9 @@ var build = (path='./') =>{
     let foundDeps = vfn.find(value => value.deps);
     if(foundDeps){
       let deps = foundDeps.deps;
-      contentExport = `import ${deps} from "./${deps}.js";\n${content}\n\n${exportDefault(kfn)}`;
+      contentExport = `import ${deps} from "./${deps}.mjs";\n${content}\n\n${exportDefault(kfn)}`;
     }
-    writeSync(`./src/${kfn}.js`, contentExport.replace(/^\s+/, ''));
+    writeSync(`./src/${kfn}.mjs`, contentExport.replace(/^\s+/, ''));
     return acc.concat(content);
   }, '').replace(/^\s+/, '');
   let aliasFn = ['isArray', 'isObject'];
@@ -40,8 +40,8 @@ var build = (path='./') =>{
   let mjsExport = allFn.reduce((acc, v) => acc.concat(`${v}, `), 'export { ').slice(0, -2).concat(` };`);
   let assignAlias = `var isArray = isVector;\nvar isObject = isMap;`;
   writeSync('./dist/core.js', `${core}`);
-  writeSync('./dist/core.cjs.js', `${core} \n\n${cjsExport}`);  
-  writeSync('./index.js', `${mjsImport} \n${assignAlias} \n\n${mjsExport}`);
+  writeSync('./dist/core.cjs', `${core} \n\n${cjsExport}`);  
+  writeSync('./index.mjs', `${mjsImport} \n${assignAlias} \n\n${mjsExport}`);
   // execSync('cp package.json dist/.');
   // execSync('cp readme.md dist/.');  
   return allFn;

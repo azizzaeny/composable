@@ -1,4 +1,4 @@
-import partial from "./partial.js";
+import partial from "./partial.mjs";
 
 
 var threadf = (val, ...forms)=>{

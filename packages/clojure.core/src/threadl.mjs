@@ -1,4 +1,4 @@
-import partialRight from "./partialRight.js";
+import partialRight from "./partialRight.mjs";
 
 
 var threadl = (val, ...forms) => {

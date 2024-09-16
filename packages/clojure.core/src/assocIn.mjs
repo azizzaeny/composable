@@ -1,4 +1,4 @@
-import assoc from "./assoc.js";
+import assoc from "./assoc.mjs";
 
 
 var assocIn =(...[m, ks, v]) => {

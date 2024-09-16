@@ -1,6 +1,6 @@
 {
   "name": "@zaeny/clojure.core",
-  "version": "2.0.4",
+  "version": "2.0.5",
   "description": "Clojure core functions in javascript land, provides a collection of functions inspired by the clojure.core library, reimagined to work with JavaScript arrays and objects. It aims to bring simple, functional programming concepts from Clojure into the JavaScript ecosystem ",
   "keywords": [
     "functional",
@@ -31,14 +31,14 @@
   "sideEffects": false,
   "type": "commonjs",
   "module": "./index.js",
-  "commonJs": "./dist/core.cjs.js",
+  "commonJs": "./dist/core.cjs",
   "global": "./dist/core.js",
   "minify": "./dist/core.min.js",
-  "main": "./dist/core.cjs.js",
+  "main": "./dist/core.cjs",
   "exports": {
     ".": {
-      "require": "./dist/core.cjs.js",
-      "import": "./index.js"
+      "require": "./dist/core.cjs",
+      "import": "./index.mjs"
     }
   },
   "scripts": {

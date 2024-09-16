@@ -1,4 +1,4 @@
-import update from "./update.js";
+import update from "./update.mjs";
 
 
 var updateIn = (...[m, ks, fn]) =>{
