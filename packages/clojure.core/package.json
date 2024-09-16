@@ -21,15 +21,19 @@
 		"access": "public"
 	},
   "files": [
-		"./*.js"
+    "dist",
+		"dist/src/*.js",
+    "dist/src/*/*.js",
+    "readme.md",
+    "package.json"
 	],
   "sideEffects": false,
   "type": "module",
-  "module": "./index.js",
-  "commonJs": "./core.cjs.js",
-  "global": "./core.js",
-  "minify":  "./core.min.js",
-  "main": "./index.js",
+  "module": "./dist/index.js",
+  "commonJs": "./dist/core.cjs.js",
+  "global": "./dist/core.js",
+  "minify":  "./dist/core.min.js",
+  "main": "./dist/index.js",
   "scripts": {
     "build": "node build",
     "test": "echo \"Error: no test specified\" && exit 1"
