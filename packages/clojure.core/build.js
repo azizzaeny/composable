@@ -39,6 +39,7 @@ var build = (path='./') =>{
   writeSync('./dist/index.js', `${mjsImport} \n${assignAlias} \n\n${mjsExport}`);
   writeSync('./dist/core.min.js', minify(core));
   execSync('cp package.json dist/.');
+  execSync('cp readme.md dist/.');  
   return allFn;
 }
 
