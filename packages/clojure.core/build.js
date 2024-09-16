@@ -28,7 +28,8 @@ var build = (path='./') =>{
     let foundDeps = vfn.find(value => value.deps);
     if(foundDeps){
       let deps = foundDeps.deps;
-      contentExport = `import ${deps} from "./${deps}.js";\n\n${content}  \n\n${exportDefault(kfn)}`;
+      console.log(deps);
+      contentExport = `import ${deps} from "./${deps}.js";\n${content}\n\n${exportDefault(kfn)}`;
     }
     writeSync(`./src/${kfn}.js`, contentExport.replace(/^\s+/, ''));
     return acc.concat(content);

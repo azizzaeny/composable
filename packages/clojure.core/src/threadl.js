@@ -1,7 +1,6 @@
 import partialRight from "./partialRight.js";
 
 
-
 var threadl = (val, ...forms) => {
   return forms.reduce((acc, form) => {
     let [fn, ...rest] = form;
@@ -12,6 +11,6 @@ var threadl = (val, ...forms) => {
       return fn(acc);      
     }
   }, val);
-}  
+}
 
 export default threadl;

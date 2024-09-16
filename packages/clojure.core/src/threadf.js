@@ -1,7 +1,6 @@
 import partial from "./partial.js";
 
 
-
 var threadf = (val, ...forms)=>{
   return forms.reduce((acc, form) => {
     let [fn, ...rest] = form;
@@ -12,6 +11,6 @@ var threadf = (val, ...forms)=>{
       return fn(acc);
     }
   }, val);
-}  
+}
 
 export default threadf;

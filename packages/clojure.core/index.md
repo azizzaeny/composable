@@ -2271,7 +2271,7 @@ and any supplied args and return the new value, and returns a new
 nested structure.  If any levels do not exist, hash-maps will be
 created.
 ```
-```js context=core fn=updateIn
+```js context=core fn=updateIn deps=update
 var updateIn = (...[m, ks, fn]) =>{
   if(!ks || !fn) return (ks, fn) => updateIn(m, ks, fn);
   if(!fn) return (fn) => updateIn(m, ks, fn);
