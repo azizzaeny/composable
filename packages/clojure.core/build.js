@@ -1,15 +1,16 @@
-
+var {minify} = await import('@putout/minify');
+var fs = await import('node:fs');
 var captureCodeBlocks = (markdown) =>  Array.from(markdown.matchAll(/\`\`\`(\w+)((?:\s+\w+=[\w./-]+)*)\s*([\s\S]*?)\`\`\`/g), match => {
   return Object.assign({ lang: match[1], content: match[3].trim()}, match[2].trim().split(/\s+/).reduce((acc, attr)=>{
     let [key, value] = attr.split('=');
     return (key && value) ? (acc[key] = value, acc) : acc;
   }, {}));
 });
-var readDir = (dirPath) => require('fs').readdirSync(dirPath);
-var readFile = (file) => require('fs').existsSync(file) ? require('fs').readFileSync(file, 'utf8') : null;
+var readDir = (dirPath) => fs.readdirSync(dirPath);
+var readFile = (file) => fs.existsSync(file) ? fs.readFileSync(file, 'utf8') : null;
 var onlyMarkdown = (path) => path.endsWith('.md');
 var captureCode = path => captureCodeBlocks(readFile('./'+path));
-var writeSync = (file, content, utf8 = 'utf8') => require('fs').writeFileSync(file, content, utf8);
+var writeSync = (file, content, utf8 = 'utf8') => fs.writeFileSync(file, content, utf8);
 var groupByFn = (acc, value) => {
   if(!value.fn) return acc;
   return (!acc[value.fn])
@@ -35,7 +36,8 @@ var build = (path='./') =>{
   writeSync('./dist/core.js', `${core}`);
   writeSync('./dist/core.cjs.js', `${core} \n\n${cjsExport}`);  
   writeSync('./dist/index.js', `${mjsImport} \n${assignAlias} \n\n${mjsExport}`);
-  return true
+  writeSync('./dist/core.min.js', minify(core));
+  return allFn;
 }
 
 console.log(build());

@@ -24,9 +24,12 @@
 		"./*.js"
 	],
   "sideEffects": false,
-  "module": "./core.esm.js",
+  "type": "module",
+  "module": "./index.js",
   "commonJs": "./core.cjs.js",
-  "main": "./core.js",
+  "global": "./core.js",
+  "minify":  "./core.min.js",
+  "main": "./index.js",
   "scripts": {
     "build": "./bin/build",
     "test": "echo \"Error: no test specified\" && exit 1"
