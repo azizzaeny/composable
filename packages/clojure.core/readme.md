@@ -12,7 +12,7 @@ This library provides a collection of functions inspired by the clojure.core lib
 - [Purpose](#Purpose)
 - [Reasoning](#Reasoning)
 - [Motivation](#Motivation)
-- [Documentation and supported functions](#Documentation and supported functions)
+- [Documentation](#Documentation and supported functions)
 - [Changes](#Changes)
 
 ### Usage
