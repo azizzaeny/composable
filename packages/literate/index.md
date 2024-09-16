@@ -54,6 +54,12 @@ var tangleDir;
 var evaluateBlockAtDir;
 ```
 
-```js context=export
-{ extractCode, groupBlockBy, onlyMarkdown, evaluate, evaluateBlock, tangle }
+```js context=export type=core
+{ extractCode, groupBlockBy }
+```
+```js context=export type=node
+{ evaluate, evaluateBlock, tangle }
+```
+```js context=export type=index
+{ extractCode, groupBlockBy, evaluate, evaluateBlock, tangle }
 ```
