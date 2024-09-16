@@ -86,3 +86,4 @@ Alternatively, you can use it directly in your HTML:
  - [1.2.1] add `isBoolean` functions
  - [1.2.2] fix `concat` not accepting more arguements
  - [2.0.0] major breaking changes, moved to new repository composable, refactored arguments some functions see details [index.md](./index.md).
+ - [2.0.1] fix readme add more documentation, add missing readme.md from published, add source file src/ into published
