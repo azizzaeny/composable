@@ -7,7 +7,38 @@
 
 This library provides a collection of functions inspired by the clojure.core library, reimagined to work with JavaScript arrays and objects. It aims to bring simple, functional programming concepts from Clojure into the JavaScript ecosystem.
 
+### Usage
 
+**Importing from a CDN**
+```js
+import {getIn, assoc, updateIn} from 'https://cdn.jsdelivr.net/npm/@zaeny/clojure.core/+esm';
+```
+Alternatively, you can use it directly in your HTML:
+```html
+<script src="https://cdn.jsdelivr.net/npm/@zaeny/clojure.core/dist/core.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@zaeny/clojure.core/dist/core.min.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/@zaeny/clojure.core/+esm"></script>  
+```   
+**Node.js commonjs and module** 
+```js
+var {getIn} = require('@zaeny/clojure.core');
+```
+or 
+```js
+var {getIn} = await import('@zaeny/clojure.core');
+import {getIn} from '@zaney/clojure.core/src/getIn.js'; // individually
+```
+**CDN**
+You can include the library in your project via CDN:
+```sh 
+https://cdn.jsdelivr.net/npm/@zaeny/clojure.core/dist/core.js # single code base var
+https://cdn.jsdelivr.net/npm/@zaeny/clojure.core/dist/core.min.js # minified version
+https://cdn.jsdelivr.net/npm/@zaeny/clojure.core/dist/core.cjs.js # module.exports node.js
+https://cdn.jsdelivr.net/npm/@zaeny/clojure.core/index.js # sepearated module
+
+# unpkg -`https://www.unpkg.com/@zaeny/clojure.core@2.0.0/core.js`
+# jsdelivr - `https://cdn.jsdelivr.net/npm/@zaeny/clojure.core`
+```
 ### Documentation and supported functions
 You can view the current list of supported functions in the library by checking the [index.md](./index.md).
 
@@ -29,37 +60,6 @@ map(identity, [1,2,3,4,5,6]) //[1,2,3,4,5,6]
 apply(get, [ {a: 1}, "a" ]) // 1
 ```
 
-### Usage
-**CDN**
-You can include the library in your project via CDN:
-```sh 
-https://cdn.jsdelivr.net/npm/@zaeny/clojure.core/dist/core.js # single code base var
-https://cdn.jsdelivr.net/npm/@zaeny/clojure.core/dist/core.min.js # minified version
-https://cdn.jsdelivr.net/npm/@zaeny/clojure.core/dist/core.cjs.js # module.exports node.js
-https://cdn.jsdelivr.net/npm/@zaeny/clojure.core/index.js # sepearated module
-
-# unpkg -`https://www.unpkg.com/@zaeny/clojure.core@2.0.0/core.js`
-# jsdelivr - `https://cdn.jsdelivr.net/npm/@zaeny/clojure.core`
-```
-**Importing from a CDN**
-```js
-import {getIn, assoc, updateIn} from 'https://cdn.jsdelivr.net/npm/@zaeny/clojure.core/+esm';
-```
-Alternatively, you can use it directly in your HTML:
-```html
-<script src="https://cdn.jsdelivr.net/npm/@zaeny/clojure.core/dist/core.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@zaeny/clojure.core/dist/core.min.js"></script>
-<script type="module" src="https://cdn.jsdelivr.net/npm/@zaeny/clojure.core/+esm"></script>  
-```   
-**Node.js commonjs and module** 
-```js
-var {getIn} = require('@zaeny/clojure.core');
-```
-or 
-```js
-var {getIn} = await import('@zaeny/clojure.core');
-import {getIn} from '@zaney/clojure.core/src/getIn.js'; // individually
-```
 
 ### Purpose  
 As a software engineer, I've encountered situations where introducing certain development paradigms, like functional programming, was challenging due to team preferences, existing codebases, or project constraints. This library is an attempt to bridge that gap by offering Clojure-inspired core functions that are compatible with JavaScript.
