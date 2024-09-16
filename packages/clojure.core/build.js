@@ -36,7 +36,7 @@ var build = (path='./') =>{
   let aliasFn = ['isArray', 'isObject'];
   let allFn = Object.keys(refcard).concat(aliasFn);
   let cjsExport = allFn.reduce((acc, v) => acc.concat(`${v}, `),`module.exports = {`).slice(0, -2).concat(` };`);
-  let mjsImport = Object.keys(refcard).reduce((acc, v) => acc.concat(`import ${v} from "./src/${v}.js";\n`), '');
+  let mjsImport = Object.keys(refcard).reduce((acc, v) => acc.concat(`import ${v} from "./src/${v}.mjs";\n`), '');
   let mjsExport = allFn.reduce((acc, v) => acc.concat(`${v}, `), 'export { ').slice(0, -2).concat(` };`);
   let assignAlias = `var isArray = isVector;\nvar isObject = isMap;`;
   writeSync('./dist/core.js', `${core}`);

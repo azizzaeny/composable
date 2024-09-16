@@ -54,7 +54,7 @@
   "bugs": {
     "url": "https://github.com/azizzaeny/composable/issues"
   },
-  "homepage": "https://github.com/azizzaeny/composable/packages/clojure.core",
+  "homepage": "https://github.com/azizzaeny/composable/tree/main/packages/clojure.core",
   "devDependencies": {
     "@putout/minify": "^4.5.2",
     "esm": "^3.2.25"
