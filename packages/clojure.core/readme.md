@@ -7,6 +7,14 @@
 
 This library provides a collection of functions inspired by the clojure.core library, reimagined to work with JavaScript arrays and objects. It aims to bring simple, functional programming concepts from Clojure into the JavaScript ecosystem.
 
+### Table of Contents  
+- [Usage](#Usage)
+- [Purpose](#Purpose)
+- [Reasoning](#Reasoning)
+- [Motivation](#Motivation)
+- [Documentation and supported functions](#Documentation and supported functions)
+- [Changes](#Changes)
+
 ### Usage
 
 **Importing from a CDN**
@@ -28,7 +36,7 @@ or
 var {getIn} = await import('@zaeny/clojure.core');
 import {getIn} from '@zaney/clojure.core/src/getIn.js'; // individually
 ```
-**CDN**
+**CDN**  
 You can include the library in your project via CDN:
 ```sh 
 https://cdn.jsdelivr.net/npm/@zaeny/clojure.core/dist/core.js # single code base var
@@ -39,27 +47,6 @@ https://cdn.jsdelivr.net/npm/@zaeny/clojure.core/index.js # sepearated module
 # unpkg -`https://www.unpkg.com/@zaeny/clojure.core@2.0.0/core.js`
 # jsdelivr - `https://cdn.jsdelivr.net/npm/@zaeny/clojure.core`
 ```
-### Documentation and supported functions
-You can view the current list of supported functions in the library by checking the [index.md](./index.md).
-
-Here are some example usages of the supported functions:
-```js
-getIn({a: {b: {c: 1}}}, ['a', 'b', 'c']); // 1
-assoc({a:1};, 'b', 20); //  {a:1,b:20}
-assocIn({a: 1, b:{c: 10}};, ['b', 'c'], 20)
-peek([1,2,3,4]); // 4
-rest([1,2,3]); // [2,3]
-remove(isEven, [1, 2, 3, 4, 5, 6]); //[1,3,5]
-reduce((acc,v) => acc + v, 0, [1, 23,4,5,6,77]); // 116
-mapcat(x => [x, x * 2], [1,2,3,4]); // [1,2,2,4,3,6,4,8]
-mapIndexed((n, i) => [n, i], [1,2,3,4,5]); // [ [ 1, 0 ], [ 2, 1 ], [ 3, 2 ], [ 4, 3 ], [ 5, 4]]
-interleave([1,2,3], ["a", "b","c"]) // [1, 'a', 2, 'b', 3, 'c']
-zipmap([1,2,3], ["a", "b","c"]); // { '1': 'a', '2': 'b', '3': 'c' }
-interpose(",", ["one", "two", "three"]) // [ 'one', ',', 'two', ',', 'three' ]
-map(identity, [1,2,3,4,5,6]) //[1,2,3,4,5,6]
-apply(get, [ {a: 1}, "a" ]) // 1
-```
-
 
 ### Purpose  
 As a software engineer, I've encountered situations where introducing certain development paradigms, like functional programming, was challenging due to team preferences, existing codebases, or project constraints. This library is an attempt to bridge that gap by offering Clojure-inspired core functions that are compatible with JavaScript.
@@ -83,6 +70,27 @@ Existing libraries like Ramda.js or Underscore.js offer functional utilities but
 Having faced these challenges myself, I decided to create this library to provide essential functions from the Clojure core in a form that’s easy to use within JavaScript. This way, developers can apply Clojure’s powerful functional paradigms without needing to fully switch to a new language or disrupt their team's workflow.
 
 By offering a familiar yet streamlined approach to immutable operations on arrays and objects, this library enables JavaScript developers to harness the power of functional programming without introducing complex new data structures or external dependencies.
+
+### Documentation and supported functions
+You can view the current list of supported functions in the library by checking the [index.md](./index.md).
+
+Here are some example usages of the supported functions:
+```js
+getIn({a: {b: {c: 1}}}, ['a', 'b', 'c']); // 1
+assoc({a:1};, 'b', 20); //  {a:1,b:20}
+assocIn({a: 1, b:{c: 10}};, ['b', 'c'], 20)
+peek([1,2,3,4]); // 4
+rest([1,2,3]); // [2,3]
+remove(isEven, [1, 2, 3, 4, 5, 6]); //[1,3,5]
+reduce((acc,v) => acc + v, 0, [1, 23,4,5,6,77]); // 116
+mapcat(x => [x, x * 2], [1,2,3,4]); // [1,2,2,4,3,6,4,8]
+mapIndexed((n, i) => [n, i], [1,2,3,4,5]); // [ [ 1, 0 ], [ 2, 1 ], [ 3, 2 ], [ 4, 3 ], [ 5, 4]]
+interleave([1,2,3], ["a", "b","c"]) // [1, 'a', 2, 'b', 3, 'c']
+zipmap([1,2,3], ["a", "b","c"]); // { '1': 'a', '2': 'b', '3': 'c' }
+interpose(",", ["one", "two", "three"]) // [ 'one', ',', 'two', ',', 'three' ]
+map(identity, [1,2,3,4,5,6]) //[1,2,3,4,5,6]
+apply(get, [ {a: 1}, "a" ]) // 1
+```
 
 ### Changes
  - [1.0.1] add atom functions `reset, swap, compareAndSet, addWatch, removeWatch, setValidator`
