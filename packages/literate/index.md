@@ -25,9 +25,6 @@ var groupBlockBy = (blocks, key='path') => blocks.reduce((acc, value) =>{
 ```
 
 ```js context=node
-var readDir = (dirPath) => fs.readdirSync(dirPath);
-var readFile = (file) => fs.existsSync(file) ? fs.readFileSync(file, 'utf8') : null;
-var onlyMarkdown = (path) => path.endsWith('.md');
 var evaluate = (code, defaultContext=global, requiredCtx={ require, module, console, setTimeout, setInterval }) => {
   let ctx =  vm.createContext(defaultContext);
   return (
@@ -44,6 +41,7 @@ var evaluateBlock = (markdown, validation, defaultCtx, requiredCtx) => {
   let bundleCodes = validBlocks.reduce((res, val) => res.concat(`${val.content}\n`), '');
   return evaluate(bundleCodes, defaultCtx, requiredCtx);
 };
+
 var tangle = (markdown, validation, key='path') => {
   if(!validation) (validation = (b) => b.path);
   let blocks = extractCode(markdown);
@@ -51,6 +49,9 @@ var tangle = (markdown, validation, key='path') => {
   let groupFile = groupBlockBy(validBlocks, key);
   return Object.entries(groupFile).map(([file, contents]) => ((file) ? fs.writeFileSync(file, contents, { flag: 'w+'}) : file, file));
 }
+
+var tangleDir;
+var evaluateBlockAtDir;
 ```
 
 ```js context=export
