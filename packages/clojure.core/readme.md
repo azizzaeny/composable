@@ -8,12 +8,12 @@
 This library provides a collection of functions inspired by the clojure.core library, reimagined to work with JavaScript arrays and objects. It aims to bring simple, functional programming concepts from Clojure into the JavaScript ecosystem.
 
 ### Table of Contents  
-- [Usage](#Usage)
-- [Purpose](#Purpose)
-- [Reasoning](#Reasoning)
-- [Motivation](#Motivation)
-- [Documentation](#Documentation and supported functions)
-- [Changes](#Changes)
+- [Usage](#Usage)  
+- [Purpose](#Purpose)  
+- [Reasoning](#Reasoning)  
+- [Motivation](#Motivation)  
+- [Documentation](#Documentation)  
+- [Changes](#Changes)  
 
 ### Usage
 
