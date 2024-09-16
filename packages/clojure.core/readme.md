@@ -12,29 +12,13 @@ Provide Collection of functions from clojure.core library, an attempt to look at
 As a Software Engineer, there are several scenarios where we cannot be selective about certain development methods, ideas, and programming paradigms that we typically utilize in our daily work. For instance:  
 
 - You have recently joined an established team of developers who predominantly employ object-oriented programming, making it challenging to immediately introduce and integrate functional programming techniques.  
-- You are a third-party developer tasked with resolving issues in the production code of an existing development team, but you are unable to transition the entire codebase to Clojure.  
-- Despite your personal experience and preference for Clojure development, your team primarily works with JavaScript, and you encounter resistance when advocating for a transition to Clojure.  
+- You are a third-party developer tasked with resolving issues in the production code of an existing development team, but you are unable to transition the entire codebase to Clojure.
+- Despite your personal experience and preference for Clojure development, your team primarily works with JavaScript, and you encounter resistance when advocating for a transition to Clojurescript.  
+- you already has mindset thinking in clojure and wanted to solve your own problem with clojure core functions, but there are a lot of naming convetions of functions out there, ramdajs has it own, underscore has different, 
+- you just need simple library that solve immutable array and object problem no need special hashMap, sortedSet, and its own persistent data structure. 
 
 Having encountered these challenges myself, I believe that providing access to the Clojure.core library or translating its functionalities to JavaScript can be beneficial for individuals facing similar dilemmas.   
 This approach enables the utilization of functional programming paradigms inherent in Clojure within the JavaScript ecosystem, thereby addressing the needs of those who wish to leverage Clojure's functional programming capabilities while adhering to JavaScript syntax conventions.
-
-{TODO}
-**Why Clojure**
-rich library functions, common naming conventions of functions, instead of Ramdajs, underscore an else an attempt to as close as possible 
-Thinking in clojure and functional programming
-
-many talks has inspired why this is opinionted
-**why not mori and clojurescript**
-Mori. A library for using ClojureScript's persistent data structures, mori has its own persisten data structure hasMap, sortedSet, 
-where my need is just conviniently using simple object ans array but keep it using immutable 
-clojurescript or cljs has it own compile langauge where we want to avoid compiling and building
-we want plainly 
-
-- [Getting Startd](#getting-started)  
-- [Documentation](#documentation)
-- [Usage](#usage)
-- [Reason](#Rational)
-- [Changes](#development)
 
 ### Documentation and supported functions
 Current status all supported functions see [index.md](./index.md). 
