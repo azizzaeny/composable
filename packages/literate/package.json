@@ -1,0 +1,41 @@
+{
+  "name": "@zaeny/literate",
+  "version": "1.0.4",
+  "description": "Literate programming, extract code from markdown",
+  "main": "index.js",
+  "scripts": {
+    "build": "node build",    
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/azizzaeny/literate.git"
+  },
+  "keywords": [
+    "literate",
+    "programming",
+    "extract",
+    "code",
+    "from",
+    "markdown"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "author": "Aziz Zaeny (https://azizzaeny.com)",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/azizzaeny/literate/issues"
+  },
+  "homepage": "https://github.com/azizzaeny/composable/tree/main/packages/literate",  
+  "files":[],
+  "type": "commonjs",
+  "module": "./index.mjs",
+  "main": "./dist/core.cjs",  
+  "exports": {
+    ".": {
+      "require": "./dist/core.cjs",
+      "import": "./index.mjs"
+    }
+  }
+}
