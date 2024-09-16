@@ -1,5 +1,7 @@
-var fs = require('node:fs');
-var {execSync} = require('node:child_process');
+// switch to type module
+var {minify} = await import('@putout/minify');
+var fs = await import('node:fs');
+var {execSync} = await import('node:child_process');
 
 var captureCodeBlocks = (markdown) =>  Array.from(markdown.matchAll(/\`\`\`(\w+)((?:\s+\w+=[\w./-]+)*)\s*([\s\S]*?)\`\`\`/g), match => {
   return Object.assign({ lang: match[1], content: match[3].trim()}, match[2].trim().split(/\s+/).reduce((acc, attr)=>{
@@ -30,21 +32,10 @@ var build = (path='./') =>{
       let deps = foundDeps.deps;
       contentExport = `import ${deps} from "./${deps}.js";\n${content}\n\n${exportDefault(kfn)}`;
     }
-    writeSync(`./src/${kfn}.js`, contentExport.replace(/^\s+/, ''));
     return acc.concat(content);
-  }, '').replace(/^\s+/, '');
-  let aliasFn = ['isArray', 'isObject'];
-  let allFn = Object.keys(refcard).concat(aliasFn);
-  let cjsExport = allFn.reduce((acc, v) => acc.concat(`${v}, `),`module.exports = {`).slice(0, -2).concat(` };`);
-  let mjsImport = Object.keys(refcard).reduce((acc, v) => acc.concat(`import ${v} from "./src/${v}.js";\n`), '');
-  let mjsExport = allFn.reduce((acc, v) => acc.concat(`${v}, `), 'export { ').slice(0, -2).concat(` };`);
-  let assignAlias = `var isArray = isVector;\nvar isObject = isMap;`;
-  writeSync('./dist/core.js', `${core}`);
-  writeSync('./dist/core.cjs.js', `${core} \n\n${cjsExport}`);  
-  writeSync('./index.js', `${mjsImport} \n${assignAlias} \n\n${mjsExport}`);
-  // execSync('cp package.json dist/.');
-  // execSync('cp readme.md dist/.');  
-  return allFn;
+  }, '').replace(/^\s+/, '');  
+  writeSync('./dist/core.min.js', minify(`${core}`,{removeUnusedVariables: false, mangle:false}));
+  return true;
 }
 
 console.log(build());

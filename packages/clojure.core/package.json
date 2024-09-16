@@ -18,23 +18,29 @@
     "functional programming"
   ],
   "publishConfig": {
-		"access": "public"
-	},
+    "access": "public"
+  },
   "files": [
     "dist",
-		"src/*.js",
+    "src/*.js",
     "src/*/*.js",
     "readme.md",
     "index.js",
     "package.json"
-	],
+  ],
   "sideEffects": false,
-  "type": "module",
+  "type": "commonjs",
   "module": "./index.js",
   "commonJs": "./dist/core.cjs.js",
   "global": "./dist/core.js",
-  "minify":  "./dist/core.min.js",
-  "main": "./index.js",
+  "minify": "./dist/core.min.js",
+  "main": "./dist/core.cjs.js",
+  "exports": {
+    ".": {
+      "require": "./dist/core.cjs.js",
+      "import": "./index.js"
+    }
+  },
   "scripts": {
     "build": "node build",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -48,5 +54,9 @@
   "bugs": {
     "url": "https://github.com/azizzaeny/composable/issues"
   },
-  "homepage": "https://github.com/azizzaeny/composable/packages/clojure.core"
+  "homepage": "https://github.com/azizzaeny/composable/packages/clojure.core",
+  "devDependencies": {
+    "@putout/minify": "^4.5.2",
+    "esm": "^3.2.25"
+  }
 }

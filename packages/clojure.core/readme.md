@@ -69,7 +69,9 @@ import {updateIn} from 'https://cdn.jsdelivr.net/npm/@zaeny/clojure.core/+esm';
 ```
 Alternatively, you can use it directly in your HTML:
 ```js
+<script src="https://cdn.jsdelivr.net/npm/@zaeny/clojure.core/dist/core.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@zaeny/clojure.core/dist/core.min.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/@zaeny/clojure.core/+esm"></script>  
 ```   
 
 ### Changes
