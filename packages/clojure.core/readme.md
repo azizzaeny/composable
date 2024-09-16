@@ -55,9 +55,9 @@ apply(get, [ {a: 1}, "a" ]) // 1
 **CDN**
 You can include the library in your project via CDN:
 ```sh 
-https://cdn.jsdelivr.net/npm/@zaeny/clojure.core/core.js # single code base var
-https://cdn.jsdelivr.net/npm/@zaeny/clojure.core/core.min.js # minified version
-https://cdn.jsdelivr.net/npm/@zaeny/clojure.core/core.cjs.js # module.exports node.js
+https://cdn.jsdelivr.net/npm/@zaeny/clojure.core/dist/core.js # single code base var
+https://cdn.jsdelivr.net/npm/@zaeny/clojure.core/dist/core.min.js # minified version
+https://cdn.jsdelivr.net/npm/@zaeny/clojure.core/dist/core.cjs.js # module.exports node.js
 https://cdn.jsdelivr.net/npm/@zaeny/clojure.core/index.js # sepearated module
 
 # unpkg -`https://www.unpkg.com/@zaeny/clojure.core@2.0.0/core.js`
@@ -69,7 +69,7 @@ import {updateIn} from 'https://cdn.jsdelivr.net/npm/@zaeny/clojure.core/+esm';
 ```
 Alternatively, you can use it directly in your HTML:
 ```js
-<script src="https://cdn.jsdelivr.net/npm/@zaeny/clojure.core/core.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@zaeny/clojure.core/dist/core.min.js"></script>
 ```   
 
 ### Changes
@@ -87,3 +87,4 @@ Alternatively, you can use it directly in your HTML:
  - [1.2.2] fix `concat` not accepting more arguements
  - [2.0.0] major breaking changes, moved to new repository composable, refactored arguments some functions see details [index.md](./index.md).
  - [2.0.1] fix readme add more documentation, add missing readme.md from published, add source file src/ into published
+ - [2.0.2] fix wrong cdn import from dist directory
