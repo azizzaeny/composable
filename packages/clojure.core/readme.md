@@ -91,3 +91,4 @@ Alternatively, you can use it directly in your HTML:
  - [2.0.1] fix readme add more documentation, add missing readme.md from published, add source file src/ into published
  - [2.0.2] fix wrong cdn import from dist directory
  - [2.0.3] fix dependencies `update`, `partial`, `threadf`
+ - [2.0.4] add support for both commonjs and type module
