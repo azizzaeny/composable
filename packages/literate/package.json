@@ -28,14 +28,18 @@
     "url": "https://github.com/azizzaeny/literate/issues"
   },
   "homepage": "https://github.com/azizzaeny/composable/tree/main/packages/literate",  
-  "files":[],
+  "files":[
+    "src",
+    "readme.md",
+    "package.json"
+  ],
   "type": "commonjs",
-  "module": "./index.mjs",
-  "main": "./dist/core.cjs",  
+  "module": "./src/mjs/index.mjs",
+  "main": "./src/cjs/index.js",  
   "exports": {
     ".": {
-      "require": "./dist/core.cjs",
-      "import": "./index.mjs"
+      "require": "./src/cjs/index.js",
+      "import": "./src/mjs/index.mjs"
     }
   }
 }
