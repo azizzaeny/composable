@@ -1,14 +1,5 @@
-
-```js context=deps type=module
-var fs = await import('node:fs');
-var vm = await import('node:vm');
-```
-
-```js context=deps type=commonjs
-var fs = require('node:fs');
-var vm = require('node:vm');
-```
-
+### core 
+extracting code
 ```js context=core
 var extractCode = (markdown) =>  Array.from(markdown.matchAll(/\`\`\`(\w+)((?:\s+\w+=[\w./-]+)*)\s*([\s\S]*?)\`\`\`/g), match => {
   return Object.assign({ lang: match[1], content: match[3].trim()}, match[2].trim().split(/\s+/).reduce((acc, attr)=>{
@@ -23,7 +14,8 @@ var groupBlockBy = (blocks, key='path') => blocks.reduce((acc, value) =>{
     : (acc[value[key]] = acc[value[key]].concat('\n', value.content), acc);  
 }, {});
 ```
-
+### node 
+evaluate and tangle
 ```js context=node
 var evaluate = (code, defaultContext=global, requiredCtx={ require, module, console, setTimeout, setInterval }) => {
   let ctx =  vm.createContext(defaultContext);
@@ -54,12 +46,26 @@ var tangleDir;
 var evaluateBlockAtDir;
 ```
 
+## importing & exporting   
+importing module   
+```js context=deps type=module
+var fs = await import('node:fs');
+var vm = await import('node:vm');
+```
+require commonjs   
+```js context=deps type=commonjs
+var fs = require('node:fs');
+var vm = require('node:vm');
+```
+export core   
 ```js context=export type=core
 { extractCode, groupBlockBy }
 ```
+export node  
 ```js context=export type=node
 { evaluate, evaluateBlock, tangle }
 ```
+export index
 ```js context=export type=index
 { extractCode, groupBlockBy, evaluate, evaluateBlock, tangle }
 ```
