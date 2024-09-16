@@ -73,7 +73,7 @@ Alternatively, you can use it directly in your HTML:
 <script src="https://cdn.jsdelivr.net/npm/@zaeny/clojure.core/dist/core.min.js"></script>
 <script type="module" src="https://cdn.jsdelivr.net/npm/@zaeny/clojure.core/+esm"></script>  
 ```   
-**node.js commonjs and module** 
+**Node.js commonjs and module** 
 ```js
 var {getIn} = require('@zaeny/clojure.core');
 ```
