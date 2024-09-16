@@ -25,7 +25,7 @@ var build = (path='./') =>{
   let core = Object.entries(refcard).reduce((acc, [kfn, vfn])=>{
     let content = vfn.reduce((acc, value) => (value.context === 'core') ? acc.concat(`\n\n${value.content}`) : acc, '');
     let contentExport =`${content} \n\n${exportDefault(kfn)}`;
-    writeSync(`./dist/src/${kfn}.js`, contentExport.replace(/^\s+/, ''));
+    writeSync(`./src/${kfn}.js`, contentExport.replace(/^\s+/, ''));
     return acc.concat(content);
   }, '').replace(/^\s+/, '');
   let aliasFn = ['isArray', 'isObject'];
@@ -36,7 +36,7 @@ var build = (path='./') =>{
   let assignAlias = `var isArray = isVector;\nvar isObject = isMap;`;
   writeSync('./dist/core.js', `${core}`);
   writeSync('./dist/core.cjs.js', `${core} \n\n${cjsExport}`);  
-  writeSync('./dist/index.js', `${mjsImport} \n${assignAlias} \n\n${mjsExport}`);
+  writeSync('./index.js', `${mjsImport} \n${assignAlias} \n\n${mjsExport}`);
   writeSync('./dist/core.min.js', minify(core));
   //execSync('cp package.json dist/.');
   //execSync('cp readme.md dist/.');  
