@@ -1,91 +1,38 @@
 ## Composable  
 
-Collection of functions that can be composed to solve programming problem.  
-Provide reusable toolkit, General purpose library Functional Programming, Pattern & side-effects modules, Data structure algorithm
+Composable is a collection of reusable functions to solve programming problems through composition. It provides a toolkit for general-purpose functional programming, covering patterns, side-effect handling, and data structure algorithms.
 
-    Composable is to make or form by combining things.   
-
+> Composable aims to help you to "compose" or build solutions by combining smaller, modular parts.
 
 
-### Packages
+### Core Packages
 
 | Status      | Packages                    | Descriptions                                                                     |
 |-------------|-----------------------------|--------------------------------------------------------------------------------- |
-| development | [@zaeny/clojure.core](https://github.com/azizzaeny/clojure.core)  | Translating the clojure core functions into javascript functions |
-| development | [@zaeny/literate](https://github.com/azizzaeny/literate)  | Literate programming, extracting code markdown |
-| development | [@zaeny/env]()  | Read .env files |
-| developemnt | [@zeny/hiccup](https://github.com/azizzaeny/hiccup) | UI building with hiccup |
-| development | [@zaeny/http](https://github.com/azizzaeny/http) | Basic utility setup nodejs http server |
-| development | [@zaeny/redis](https://github.com/azizzaeny/redis) | Functional programming utility dealing with redis |
-| development | [@zaeny/mongodb](https://github.com/azizzaeny/mongodb) | Mongodb wrapper expose two main function `query` and `transact` |
-| development | [@zaeny/expose](https://github.com/azizzaeny/expose) | Utility Functions working with repl node.js |
+| development | [@zaeny/clojure.core](https://github.com/azizzaeny/composable/tree/main/packages/clojure.core)  | JavaScript implementation of Clojure core functions. |
+| development | [@zaeny/literate](https://github.com/azizzaeny/composable/tree/main/packages/literate)  | Literate programming, extracting code from markdown  code blocks. |
+| development | [@zaeny/env](https://github.com/azizzaeny/composable/tree/main/packages/env)  | Utility for reading .env files. |
+| developemnt | [@zeny/hiccup](https://github.com/azizzaeny/composable/tree/main/hiccup) | UI building utility functions inspired by Hiccup. |
+| development | [@zaeny/http](https://github.com/azizzaeny/composable/tree/main/http) | Node.js utility functions for setting up HTTP servers. |
+| development | [@zaeny/redis](https://github.com/azizzaeny/composable/tree/main/redis) | Functional utilities for interacting with Redis. |
+| development | [@zaeny/mongodb](https://github.com/azizzaeny/composable/tree/main/mongodb) | Mongodb wrapper expose function `query` and `transact`. |
+| development | [@zaeny/expose](https://github.com/azizzaeny/composable/tree/main/expose) | Utility Functions working with repl node.js |
+| development | @zaeny/aof | Simple Efficient appendonly log json |
+| development | @zaeny/mql | Mongodb Query Langauge in memory  |
 
-### Snippets
-
-| Status      | Snippets                    | Descriptions                                                                     |
-|-------------|-----------------------------|--------------------------------------------------------------------------------- |
-| development | (wip) [aof](./snippets/aof/readme.md) | Efficient appendonly log json |
-| development | (wip) [mql](./snippets/mql/readme.md) | Mongodb Query Langauge in memory |
 
 ### Getting Started 
-
-Usage in node.js npm install
+#### Instalation
+To install and use a package in Node.js, run the following command:
 
 ```
 npm i @zaeny/{package}
 ```
 
-usage in repl without downloading sepecific the package
-
-```js
-
-var evaluate= (opt) => {
-  if(!opt){opt = { ctx: global, addCtx: {console, require, module}}; }    
-  return (res) => {
-    let vm = require('vm');
-    let context = vm.createContext(opt.ctx);
-    return vm.runInContext(res, Object.assign(context, opt.addCtx));
-  }
-}
-
-var addDeps = (url) => fetch(url).then(res => res.text()).then(evaluate(null));
-
-//  note: use your favorite cdn js
-var packages = {
-  'clojure.core' : 'https://fastly.jsdelivr.net/npm/@zaeny/clojure.core',
-  'http': 'https://fastly.jsdelivr.net/npm/@zaeny/http'
-}
-
-addDeps(packages['clojure.core']) // avaialabe map, filter, assoc, getIn, etc...
-addDeps(packages['http'])  // createServer, startServer
-
+#### Usage in REPL (without installation)
+You can also use the packages directly in a Node.js REPL without downloading specific packages.
+```sh
 ```
 
-usage in browser import
-
-```js
-
-var deps = {
-  hiccup : "https://fastly.jsdelivr.net/gh/azizzaeny/composable@main/snippets/hiccup/index.js",
-}
-
-var assignVar = (global, name) => res => Object.assign(global, { [name]: (res.default) });
-
-
-// importing via import api
-import(deps.hiccup).then(assignVar(window, "hiccup"));
-
-```
-
-usage with fetch api
-todo:
-
-usage by creating script directly 
-todo:
-
-### Workflow
-
-first we create snippets, if it good enough, and not have bugs or issue,  we level it up into a package
-
-### Contribute
-TODO: {WIP}
+### Contribution
+{todo} development
