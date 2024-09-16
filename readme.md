@@ -20,6 +20,31 @@ Composable is a collection of reusable functions to solve programming problems t
 | development | @zaeny/aof | Simple Efficient appendonly log json |
 | development | @zaeny/mql | Mongodb Query Langauge in memory  |
 
+### Development Status
+
+1. Planning:   
+The package is in the idea or design phase.  
+No code has been written yet, and the features are being outlined.  
+2. WIP (Work in Progress):  
+The package is actively being developed.  
+Code exists, but it's not yet stable or fully functional.  
+Breaking changes or incomplete features may still be present.  
+3. Alpha:  
+The package is in early development.  
+Most core features are implemented, but testing is limited.  
+Bugs and stability issues are likely, and APIs may change.  
+3. Beta:  
+The package is feature-complete.  
+It is being tested, and there may be some minor bugs, but it is mostly stable.  
+Ready for broader testing and feedback, but not recommended for production use.  
+3. Stable:  
+The package is fully developed and tested.  
+It is considered reliable for production use.  
+Only minor updates, bug fixes, and backward-compatible changes are expected.  
+4. Deprecated:  
+The package is no longer being actively maintained.  
+It may still be functional but is not recommended for new projects.  
+Security or functionality issues may not be addressed.  
 
 ### Getting Started 
 #### Instalation
