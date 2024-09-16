@@ -64,7 +64,7 @@ You are brought in as a third-party developer to solve issues in a codebase main
 Despite your experience and preference for Clojure, you’re working in a JavaScript environment where convincing the team to adopt ClojureScript is not feasible.
 
 - Naming Conventions & Complexity:  
-Existing libraries like Ramda.js or Underscore.js offer functional utilities but follow their own naming conventions and sometimes introduce unnecessary complexity (e.g., special hashMaps, persistent data structures). If you’re looking for a simpler solution to handle immutable operations on arrays and objects without these additional abstractions, this library can help.
+Existing libraries like Ramda.js or Underscore.js offer functional utilities but follow their own naming conventions or introduce unnecessary complexity (e.g. in mori.js, special hashMaps, persistent data structures). If you’re looking for a simpler solution to handle immutable operations on arrays and objects without these additional abstractions, this library can help.
 
 ### Motivation  
 Having faced these challenges myself, I decided to create this library to provide essential functions from the Clojure core in a form that’s easy to use within JavaScript. This way, developers can apply Clojure’s powerful functional paradigms without needing to fully switch to a new language or disrupt their team's workflow.
