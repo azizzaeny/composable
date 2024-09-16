@@ -44,8 +44,15 @@ var evaluateBlock = (markdown, validation, defaultCtx, requiredCtx) => {
   let bundleCodes = validBlocks.reduce((res, val) => res.concat(`${val.content}\n`), '');
   return evaluate(bundleCodes, defaultCtx, requiredCtx);
 };
+var tangle = (markdown, validation, key='path') => {
+  if(!validation) (validation = (b) => b.path);
+  let blocks = extractCode(markdown);
+  let validBlocks = blocks.filter(validation);
+  let groupFile = groupBlockBy(validBlocks, key);
+  return Object.entries(groupFile).map(([file, contents]) => ((file) ? fs.writeFileSync(file, contents, { flag: 'w+'}) : file, file));
+}
 ```
 
 ```js context=export
-{ extractCode, groupBlockBy, onlyMarkdown, evaluate, evaluateBlock }
+{ extractCode, groupBlockBy, onlyMarkdown, evaluate, evaluateBlock, tangle }
 ```
