@@ -124,7 +124,7 @@ var isEqual = (...args) =>{
   if (Array.isArray(a) && Array.isArray(b)) {
     if (a.length !== b.length) return false;
     for (let i = 0; i < a.length; i++) {
-      if (!isDeepEqual(a[i], b[i])) return false;
+      if (!isEqual(a[i], b[i])) return false;
     }
     return true;
   } else if (typeof a === 'object' && typeof b === 'object') {
@@ -132,7 +132,7 @@ var isEqual = (...args) =>{
     let bKeys = Object.keys(b);
     if (aKeys.length !== bKeys.length) return false;
     for (const key of aKeys) {
-      if (!isDeepEqual(a[key], b[key])) return false;
+      if (!isEqual(a[key], b[key])) return false;
     }
     return true;
   } else {
@@ -426,7 +426,7 @@ var triml =(str) => {
   return str.replace(/^\s+/, '');
 }
 
-var trimr = (str) {
+var trimr = (str) => {
   return str.replace(/\s+$/, '');
 }
 
@@ -1030,4 +1030,4 @@ var setValidator = (...args) => {
   return atom.setValidator(validatorFn);
 } 
 
- module.exports = {partial, apply, comp, constantly, identity, fnil, memoize, complement, juxt, sameFn, partialRight, threadLast, or, and, doseq, dof, isGt, isGte, isLt, isLte, isEqual, isZero, isPos, isNeg, isInt, isBoolean, isTrue, isFalse, isInstance, isNil, isSome, isFn, isBlank, isNumber, isEven, isOdd, isColl, isVector, isMap, isEmpty, not, isContains, isIncludes, threadf, threadl, cond, condp, condtf, condtl, when, whenNot, iff, ifNot, casef, add, subtract, multiply, divide, quot, mod, rem, inc, dec, decr, max, min, toInt, subs, replace, replaceFirst, join, escape, rePattern, reMatches, capitalize, lowerCase, upperCase, trim, trimNewline, triml, trimr, char, keys, vals, count, conj, cons, disj, concat, first, ffirst, second, last, next, nfirst, nnext, fnext, take, takeNth, takeLast, takeWhile, rest, nthrest, drop, dropLast, dropLasy, dropWhile, peek, pop, get, getIn, assoc, assocIn, dissoc, update, updateIn, merge, mergeWith, selectKeys, renameKeys, zipmap, into, seq, vec, subvec, repeat, repeatedly, range, keep, keepIndexed, split, splitAt, splitWith, splitLines, shuffle, shufle, randNth, rand, randInt, find, map, mapcat, mapIndexed, filter, remove, isEvery, everyPred, flatten, reduce, sort, sortBy, compare, reverse, interleave, interpose, distinct, groupBy, frequencies, partition, partitionBy, partitionAll, union, difference, intersection, atom, deref, reset, swap, compareAndSet, addWatch, removeWatch, setValidator, isArray, isObject };
+module.exports = {partial, apply, comp, constantly, identity, fnil, memoize, complement, juxt, someFn, partialRight, or, and, doseq, dof, isGt, isGte, isLt, isLte, isEqual, isZero, isPos, isNeg, isInt, isBoolean, isTrue, isFalse, isInstance, isNil, isSome, isFn, isBlank, isNumber, isEven, isOdd, isColl, isVector, isMap, isEmpty, not, isContains, isIncludes, threadf, threadl, cond, condp, condtf, condtl, when, whenNot, iff, ifNot, casef, add, subtract, multiply, divide, quot, mod, rem, inc, dec, max, min, toInt, subs, replace, replaceFirst, join, escape, rePattern, reMatches, capitalize, lowerCase, upperCase, trim, trimNewline, triml, trimr, char, keys, vals, count, conj, cons, disj, concat, first, ffirst, second, last, next, nfirst, nnext, fnext, take, takeNth, takeLast, takeWhile, rest, nthrest, drop, dropLast, dropWhile, peek, pop, get, getIn, assoc, assocIn, dissoc, update, updateIn, merge, mergeWith, selectKeys, renameKeys, zipmap, into, seq, vec, subvec, repeat, repeatedly, range, keep, keepIndexed, split, splitAt, splitWith, splitLines, shuffle, randNth, rand, randInt, find, map, mapcat, mapIndexed, filter, remove, isEvery, everyPred, flatten, reduce, sort, sortBy, compare, reverse, interleave, interpose, distinct, groupBy, frequencies, partition, partitionBy, partitionAll, union, difference, intersection, atom, deref, reset, swap, compareAndSet, addWatch, removeWatch, setValidator, isArray, isObject };

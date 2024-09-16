@@ -22,19 +22,20 @@ var build = (path='./') =>{
   let refcard = readDir(path).filter(onlyMarkdown).map(captureCode).flat().reduce(groupByFn, {});
   let core = Object.entries(refcard).reduce((acc, [kfn, vfn])=>{
     let content = vfn.reduce((acc, value) => (value.context === 'core') ? acc.concat(`\n\n${value.content}`) : acc, '');
-    writeSync(`./dist/src/${kfn}.js`, `${content} \n\n${exportDefault(kfn)}`.replace(/^\s+/, ''));
-    // todo: handle logic alias
+    let contentExport =`${content} \n\n${exportDefault(kfn)}`;
+    writeSync(`./dist/src/${kfn}.js`, contentExport.replace(/^\s+/, ''));
     return acc.concat(content);
   }, '').replace(/^\s+/, '');
   let aliasFn = ['isArray', 'isObject'];
   let allFn = Object.keys(refcard).concat(aliasFn);
   let cjsExport = allFn.reduce((acc, v) => acc.concat(`${v}, `),`module.exports = {`).slice(0, -2).concat(` };`);
-  let mjsImport = allFn.reduce((acc, v) => acc.concat(`import ${v} from "./src/${v}.js";\n`), '');
-  let mjsExport = allFn.reduce((acc, v) => acc.concat(`${v}, `), 'export { ').slice(0, -2).concat(` };`);  
+  let mjsImport = Object.keys(refcard).reduce((acc, v) => acc.concat(`import ${v} from "./src/${v}.js";\n`), '');
+  let mjsExport = allFn.reduce((acc, v) => acc.concat(`${v}, `), 'export { ').slice(0, -2).concat(` };`);
+  let assignAlias = `var isArray = isVector;\nvar isObject = isMap;`;
   writeSync('./dist/core.js', `${core}`);
-  writeSync('./dist/core.cjs.js', `${core} \n\n ${cjsExport}`);  
-  writeSync('./dist/index.js', `${mjsImport} \n\n ${mjsExport}`);
-  return allFn;
+  writeSync('./dist/core.cjs.js', `${core} \n\n${cjsExport}`);  
+  writeSync('./dist/index.js', `${mjsImport} \n${assignAlias} \n\n${mjsExport}`);
+  return true
 }
 
 console.log(build());

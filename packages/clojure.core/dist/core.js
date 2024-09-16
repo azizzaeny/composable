@@ -124,7 +124,7 @@ var isEqual = (...args) =>{
   if (Array.isArray(a) && Array.isArray(b)) {
     if (a.length !== b.length) return false;
     for (let i = 0; i < a.length; i++) {
-      if (!isDeepEqual(a[i], b[i])) return false;
+      if (!isEqual(a[i], b[i])) return false;
     }
     return true;
   } else if (typeof a === 'object' && typeof b === 'object') {
@@ -132,7 +132,7 @@ var isEqual = (...args) =>{
     let bKeys = Object.keys(b);
     if (aKeys.length !== bKeys.length) return false;
     for (const key of aKeys) {
-      if (!isDeepEqual(a[key], b[key])) return false;
+      if (!isEqual(a[key], b[key])) return false;
     }
     return true;
   } else {
@@ -426,7 +426,7 @@ var triml =(str) => {
   return str.replace(/^\s+/, '');
 }
 
-var trimr = (str) {
+var trimr = (str) => {
   return str.replace(/\s+$/, '');
 }
 

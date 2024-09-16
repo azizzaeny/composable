@@ -1,4 +1,4 @@
-var trimr = (str) {
+var trimr = (str) => {
   return str.replace(/\s+$/, '');
 } 
 
