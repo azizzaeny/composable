@@ -102,4 +102,4 @@ import {getIn} from '@zaney/clojure.core/src/getIn.js'; // individually
  - [2.0.3] fix dependencies `update`, `partial`, `threadf`
  - [2.0.4] add support for both commonjs and type module
  - [2.0.5] rename file into proper mjs and cjs 
- - [2.0.6] fix index.mjs wrong import .js
+ - [2.0.7] fix index.mjs wrong import .js
