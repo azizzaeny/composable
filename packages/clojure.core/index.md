@@ -207,16 +207,16 @@ juxt((n)=> n*2, (n)=> n + 10, (n)=> n*100)(10) //  [20, 20, 1000]
 
 
 ### someFn
-```clj context=spec fn=sameFn
+```clj context=spec fn=someFn
 (some-fn p)(some-fn p1 p2)(some-fn p1 p2 p3)(some-fn p1 p2 p3 & ps)
 ```
-```txt context=desc fn=sameFn
+```txt context=desc fn=someFn
 Takes a set of predicates and returns a function f that returns the first logical true value
 returned by one of its composing predicates against any of its arguments, else it returns
 logical false. Note that f is short-circuiting in that it will stop execution on the first
 argument that triggers a logical true result against the original predicates.
 ```
-```js context=core fn=sameFn
+```js context=core fn=someFn
 var someFn = (...fns) =>{
   return function(x) {
     for (let i = 0; i < fns.length; i++) {
@@ -228,7 +228,7 @@ var someFn = (...fns) =>{
   };
 }
 ```
-```js context=test fn=sameFn
+```js context=test fn=someFn
 someFn((n) => n % 2 === 0)(2); // true
 ```
 ### partialRight
@@ -245,7 +245,7 @@ var partialRight = (fn, ...leftArgs) => {
   };
 };
 ```
-```js context=test fn=threadLast
+```js context=test fn=partialRight
 var myfn1 = (a, b, c, d) => a + b + c + d;
 var newFn = partialRight(myfn1, 'a', 'z', 'i');
 newFn('z'); // 'aziz'
@@ -434,7 +434,7 @@ var isEqual = (...args) =>{
   if (Array.isArray(a) && Array.isArray(b)) {
     if (a.length !== b.length) return false;
     for (let i = 0; i < a.length; i++) {
-      if (!isDeepEqual(a[i], b[i])) return false;
+      if (!isEqual(a[i], b[i])) return false;
     }
     return true;
   } else if (typeof a === 'object' && typeof b === 'object') {
@@ -442,7 +442,7 @@ var isEqual = (...args) =>{
     let bKeys = Object.keys(b);
     if (aKeys.length !== bKeys.length) return false;
     for (const key of aKeys) {
-      if (!isDeepEqual(a[key], b[key])) return false;
+      if (!isEqual(a[key], b[key])) return false;
     }
     return true;
   } else {
@@ -835,7 +835,7 @@ second item in the first form, making a list of it if it is not a
 list already. If there are more forms, inserts the first form as the
 second item in second form, etc.
 ```
-```js context=core fn=threadf
+```js context=core fn=threadf deps=partial
 var threadf = (val, ...forms)=>{
   return forms.reduce((acc, form) => {
     let [fn, ...rest] = form;
@@ -865,7 +865,7 @@ last item in the first form, making a list of it if it is not a
 list already. If there are more forms, inserts the first form as the
 last item in second form, etc.
 ```
-```js context=core fn=threadl
+```js context=core fn=threadl deps=partialRight
 var threadl = (val, ...forms) => {
   return forms.reduce((acc, form) => {
     let [fn, ...rest] = form;
@@ -989,7 +989,7 @@ through each form for which the corresponding test
 expression is true. Note that, unlike cond branching, cond-> threading does
 not short circuit after the first true test expression.
 ```
-```js context=core fn=condtl
+```js context=core fn=condtl deps=partialRight
 var condtl = (val, ...clauses) => {
   return clauses.reduce((acc, [condition, fn, ...args]) => {
     if (condition) {
@@ -1295,10 +1295,10 @@ inc(1);
 Returns a number one less than num. Does not auto-promote
 longs, will throw on overflow. See also: dec'
 ```
-```js context=core fn=decr
+```js context=core fn=dec
 var dec = num => num - 1;
 ```
-```js context=test fn=decr
+```js context=test fn=dec
 dec(10); //9
 ```
 
@@ -1606,7 +1606,7 @@ triml('\nfoo'); // 'foo'
 Removes whitespace from the right side of string.
 ```
 ```js context=core fn=trimr
-var trimr = (str) {
+var trimr = (str) => {
   return str.replace(/\s+$/, '');
 }
 ```
@@ -2042,7 +2042,7 @@ Return a lazy sequence of all but the last n (default 1) items in coll
 ```js context=core fn=dropLast
 var dropLast = (coll) => { return coll.slice(0, -1); }
 ```
-```js context=test fn=dropLasy
+```js context=test fn=dropLast
 dropLast([1,2,3,4]); // => [1,2,3]
 ```
 
@@ -2195,7 +2195,7 @@ assoc([], 1, 1); // => [null, 1];
 ```txt context=desc fn=assocIn
 Associates a value in a nested associative structure, where ks is a sequence of keys and v is the new value and returns a new nested structure. If any levels do not exist, hash-maps will be created.
 ```
-```js context=core fn=assocIn
+```js context=core fn=assocIn deps=assoc
 var assocIn =(...[m, ks, v]) => {
   if(!ks || !v) return (ks, v) => assocIn(m, ks, v);
   if(!v) return (v) => assocIn(m, ks, v);
@@ -2688,7 +2688,7 @@ var shuffle = (coll) => {
   return result;
 };
 ```
-```js context=test fn=shufle
+```js context=test fn=shuffle
 shuffle([1,2,3,4,5,6,7,7,8]);
 ```
 
