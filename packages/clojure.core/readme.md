@@ -13,16 +13,16 @@ As a software engineer, I've encountered situations where introducing certain de
 ### Reasoning  
 There are several reasons why a developer might want Clojure-like utilities in JavaScript, including:
 
-- Team Constraints:
+- Team Constraints:  
 You’ve joined an established team that primarily uses object-oriented programming (OOP), making it difficult to introduce and integrate functional programming techniques like those in Clojure.
 
-- Third-Party Developer Role:
+- Third-Party Developer Role:  
 You are brought in as a third-party developer to solve issues in a codebase maintained by a team that’s unfamiliar with Clojure or functional programming. You cannot transition the entire project to Clojure but still want to apply functional principles where possible.
 
-- Clojure Experience vs. JavaScript Reality:
+- Clojure Experience vs. JavaScript Reality:  
 Despite your experience and preference for Clojure, you’re working in a JavaScript environment where convincing the team to adopt ClojureScript is not feasible.
 
-- Naming Conventions & Complexity:
+- Naming Conventions & Complexity:  
 Existing libraries like Ramda.js or Underscore.js offer functional utilities but follow their own naming conventions and sometimes introduce unnecessary complexity (e.g., special hashMaps, persistent data structures). If you’re looking for a simpler solution to handle immutable operations on arrays and objects without these additional abstractions, this library can help.
 
 ### Motivation  
