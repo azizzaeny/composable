@@ -65,14 +65,23 @@ https://cdn.jsdelivr.net/npm/@zaeny/clojure.core/index.js # sepearated module
 ```
 **Importing from a CDN**
 ```js
-import {updateIn} from 'https://cdn.jsdelivr.net/npm/@zaeny/clojure.core/+esm';
+import {getIn, assoc, updateIn} from 'https://cdn.jsdelivr.net/npm/@zaeny/clojure.core/+esm';
 ```
 Alternatively, you can use it directly in your HTML:
-```js
+```html
 <script src="https://cdn.jsdelivr.net/npm/@zaeny/clojure.core/dist/core.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@zaeny/clojure.core/dist/core.min.js"></script>
 <script type="module" src="https://cdn.jsdelivr.net/npm/@zaeny/clojure.core/+esm"></script>  
 ```   
+**node.js commonjs and module** 
+```js
+var {getIn} = require('@zaeny/clojure.core');
+```
+or 
+```js
+var {getIn} = await import('@zaeny/clojure.core');
+import {getIn} from '@zaney/clojure.core/src/getIn.js'; // individually
+```
 
 ### Changes
  - [1.0.1] add atom functions `reset, swap, compareAndSet, addWatch, removeWatch, setValidator`
