@@ -30,7 +30,7 @@
   ],
   "sideEffects": false,
   "type": "commonjs",
-  "module": "./index.js",
+  "module": "./index.mjs",
   "commonJs": "./dist/core.cjs",
   "global": "./dist/core.js",
   "minify": "./dist/core.min.js",
