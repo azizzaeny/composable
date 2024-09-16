@@ -5,24 +5,35 @@
 
 > Clojure core utility functions in javascript land    
 
-Provide Collection of functions from clojure.core library, an attempt to look at the spec and try to implement it as simple as possible into object or array so it available in javascript ecosystem to use.
+This library provides a collection of functions inspired by the clojure.core library, reimagined to work with JavaScript arrays and objects. It aims to bring simple, functional programming concepts from Clojure into the JavaScript ecosystem.
 
-### Reason
-**Solving my own problem**
-As a Software Engineer, there are several scenarios where we cannot be selective about certain development methods, ideas, and programming paradigms that we typically utilize in our daily work. For instance:  
+### Purpose  
+As a software engineer, I've encountered situations where introducing certain development paradigms, like functional programming, was challenging due to team preferences, existing codebases, or project constraints. This library is an attempt to bridge that gap by offering Clojure-inspired core functions that are compatible with JavaScript.
 
-- You have recently joined an established team of developers who predominantly employ object-oriented programming, making it challenging to immediately introduce and integrate functional programming techniques.  
-- You are a third-party developer tasked with resolving issues in the production code of an existing development team, but you are unable to transition the entire codebase to Clojure.
-- Despite your personal experience and preference for Clojure development, your team primarily works with JavaScript, and you encounter resistance when advocating for a transition to Clojurescript.  
-- you already has mindset thinking in clojure and wanted to solve your own problem with clojure core functions, but there are a lot of naming convetions of functions out there, ramdajs has it own, underscore has different, 
-- you just need simple library that solve immutable array and object problem no need special hashMap, sortedSet, and its own persistent data structure. 
+### Reasoning  
+There are several reasons why a developer might want Clojure-like utilities in JavaScript, including:
 
-Having encountered these challenges myself, I believe that providing access to the Clojure.core library or translating its functionalities to JavaScript can be beneficial for individuals facing similar dilemmas.   
-This approach enables the utilization of functional programming paradigms inherent in Clojure within the JavaScript ecosystem, thereby addressing the needs of those who wish to leverage Clojure's functional programming capabilities while adhering to JavaScript syntax conventions.
+- Team Constraints:
+You’ve joined an established team that primarily uses object-oriented programming (OOP), making it difficult to introduce and integrate functional programming techniques like those in Clojure.
+
+- Third-Party Developer Role:
+You are brought in as a third-party developer to solve issues in a codebase maintained by a team that’s unfamiliar with Clojure or functional programming. You cannot transition the entire project to Clojure but still want to apply functional principles where possible.
+
+- Clojure Experience vs. JavaScript Reality:
+Despite your experience and preference for Clojure, you’re working in a JavaScript environment where convincing the team to adopt ClojureScript is not feasible.
+
+- Naming Conventions & Complexity:
+Existing libraries like Ramda.js or Underscore.js offer functional utilities but follow their own naming conventions and sometimes introduce unnecessary complexity (e.g., special hashMaps, persistent data structures). If you’re looking for a simpler solution to handle immutable operations on arrays and objects without these additional abstractions, this library can help.
+
+### Motivation  
+Having faced these challenges myself, I decided to create this library to provide essential functions from the Clojure core in a form that’s easy to use within JavaScript. This way, developers can apply Clojure’s powerful functional paradigms without needing to fully switch to a new language or disrupt their team's workflow.
+
+By offering a familiar yet streamlined approach to immutable operations on arrays and objects, this library enables JavaScript developers to harness the power of functional programming without introducing complex new data structures or external dependencies.
 
 ### Documentation and supported functions
-Current status all supported functions see [index.md](./index.md). 
+You can view the current list of supported functions in the library by checking the [index.md](./index.md).
 
+Here are some example usages of the supported functions:
 ```js
 getIn({a: {b: {c: 1}}}, ['a', 'b', 'c']); // 1
 assoc({a:1};, 'b', 20); //  {a:1,b:20}
@@ -42,23 +53,24 @@ apply(get, [ {a: 1}, "a" ]) // 1
 
 ### Usage
 **CDN**
+You can include the library in your project via CDN:
 ```sh 
-https://cdn.jsdelivr.net/npm/@zaeny/clojure.core/core.js
-https://cdn.jsdelivr.net/npm/@zaeny/clojure.core/core.min.js
-https://cdn.jsdelivr.net/npm/@zaeny/clojure.core/core.cjs.js
-https://cdn.jsdelivr.net/npm/@zaeny/clojure.core/index.js
-#unpkg -`https://www.unpkg.com/@zaeny/clojure.core@2.0.0/core.js`
-#jsdelivr - `https://cdn.jsdelivr.net/npm/@zaeny/clojure.core`
+https://cdn.jsdelivr.net/npm/@zaeny/clojure.core/core.js # single code base var
+https://cdn.jsdelivr.net/npm/@zaeny/clojure.core/core.min.js # minified version
+https://cdn.jsdelivr.net/npm/@zaeny/clojure.core/core.cjs.js # module.exports node.js
+https://cdn.jsdelivr.net/npm/@zaeny/clojure.core/index.js # sepearated module
+
+# unpkg -`https://www.unpkg.com/@zaeny/clojure.core@2.0.0/core.js`
+# jsdelivr - `https://cdn.jsdelivr.net/npm/@zaeny/clojure.core`
 ```
-**import from**
+**Importing from a CDN**
 ```js
 import {updateIn} from 'https://cdn.jsdelivr.net/npm/@zaeny/clojure.core/+esm';
 ```
+Alternatively, you can use it directly in your HTML:
 ```js
 <script src="https://cdn.jsdelivr.net/npm/@zaeny/clojure.core/core.min.js"></script>
 ```   
-
-//todo: fix dependencies
 
 ### Changes
  - [1.0.1] add atom functions `reset, swap, compareAndSet, addWatch, removeWatch, setValidator`
@@ -73,4 +85,4 @@ import {updateIn} from 'https://cdn.jsdelivr.net/npm/@zaeny/clojure.core/+esm';
  - [1.2.0] add `split` functions
  - [1.2.1] add `isBoolean` functions
  - [1.2.2] fix `concat` not accepting more arguements
- - [2.0.0] major changes, move to repository composable
+ - [2.0.0] major breaking changes, moved to new repository composable, refactored arguments some functions see details [index.md](./index.md).
