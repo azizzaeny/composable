@@ -1,5 +1,6 @@
 var {minify} = await import('@putout/minify');
 var fs = await import('node:fs');
+var {execSync} = await import('node:child_process');
 var captureCodeBlocks = (markdown) =>  Array.from(markdown.matchAll(/\`\`\`(\w+)((?:\s+\w+=[\w./-]+)*)\s*([\s\S]*?)\`\`\`/g), match => {
   return Object.assign({ lang: match[1], content: match[3].trim()}, match[2].trim().split(/\s+/).reduce((acc, attr)=>{
     let [key, value] = attr.split('=');
@@ -37,6 +38,7 @@ var build = (path='./') =>{
   writeSync('./dist/core.cjs.js', `${core} \n\n${cjsExport}`);  
   writeSync('./dist/index.js', `${mjsImport} \n${assignAlias} \n\n${mjsExport}`);
   writeSync('./dist/core.min.js', minify(core));
+  execSync('cp package.json dist/.');
   return allFn;
 }
 

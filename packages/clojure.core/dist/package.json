@@ -31,7 +31,7 @@
   "minify":  "./core.min.js",
   "main": "./index.js",
   "scripts": {
-    "build": "node build",
+    "build": "./bin/build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
