@@ -1,3 +1,7 @@
+import partialRight from "./partialRight.js";
+
+
+
 var condtl = (val, ...clauses) => {
   return clauses.reduce((acc, [condition, fn, ...args]) => {
     if (condition) {
@@ -6,6 +10,6 @@ var condtl = (val, ...clauses) => {
     }
     return acc;  // Skip if condition is false
   }, val);
-}; 
+};  
 
 export default condtl;

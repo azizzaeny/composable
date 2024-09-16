@@ -25,6 +25,11 @@ var build = (path='./') =>{
   let core = Object.entries(refcard).reduce((acc, [kfn, vfn])=>{
     let content = vfn.reduce((acc, value) => (value.context === 'core') ? acc.concat(`\n\n${value.content}`) : acc, '');
     let contentExport =`${content} \n\n${exportDefault(kfn)}`;
+    let foundDeps = vfn.find(value => value.deps);
+    if(foundDeps){
+      let deps = foundDeps.deps;
+      contentExport = `import ${deps} from "./${deps}.js";\n\n${content}  \n\n${exportDefault(kfn)}`;
+    }
     writeSync(`./src/${kfn}.js`, contentExport.replace(/^\s+/, ''));
     return acc.concat(content);
   }, '').replace(/^\s+/, '');
