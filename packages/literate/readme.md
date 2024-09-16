@@ -1,5 +1,6 @@
 ## @zaeny/literate
 {todo: check the readme, add better usage with import module, in browser}
+{todo: check the eval functions, test all}
 [![npm version](https://img.shields.io/npm/v/@zaeny/literate.svg)](https://www.npmjs.com/package/@zaeny/literate)
 ![npm downloads](https://img.shields.io/npm/dm/@zaeny/literate.svg)  
 
@@ -39,7 +40,7 @@ tangle(testMdFile);
 
 **More example**
 ```js
-eval(testMdFile, (file) => (file.code && file.lang === "js" && file.eval===1), global, {require, console, module });
+evalulate(testMdFile, (file) => (file.code && file.lang === "js" && file.eval===1), global, {require, console, module });
 // welcome
 // hai
 
