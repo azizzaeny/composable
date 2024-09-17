@@ -5,7 +5,9 @@
 
 > Clojure core utility functions in javascript land    
 
-This library provides a collection of functions inspired by the clojure.core library, reimagined to work with JavaScript arrays and objects. It aims to bring simple, functional programming concepts from Clojure into the JavaScript ecosystem.
+This utility provides a collection of functions inspired by the clojure.core library, reimagined to work with JavaScript arrays and objects. It aims to bring simple, functional programming concepts from Clojure into the JavaScript ecosystem.  
+
+See related packages : [@composable](https://github.com/azizzaeny/composable)  
 
 ### Table of Contents  
 - [Usage](#Usage)  
