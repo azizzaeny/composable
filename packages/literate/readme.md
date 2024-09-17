@@ -18,7 +18,7 @@ See related packages : [@composable](https://github.com/azizzaeny/composable)
  npm install @zaeny/literate
  
  ``` 
- **Browser Import**
+ **Import**
  ```js
  import {extractCode} from 'https://cdn.jsdelivr.net/npm/@zaeny/literate';
  // import core code individually without side effects
