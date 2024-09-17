@@ -1,5 +1,4 @@
-
-var fs = require('fs');
+var fs = await import('node:fs');
 
 var map = (...args) =>{
   let [fn, arr] = args;
