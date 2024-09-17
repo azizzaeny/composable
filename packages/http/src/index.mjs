@@ -1,4 +1,8 @@
 var fs = await import('node:fs');
+var queryString = await import('node:querystring');
+var http = await import('node:http');
+var url = await import('node:url');
+var path = await import('node:path');
 
 var reduce = (...args) => {
   let [reducer, initialValue, arr] = args;
@@ -130,7 +134,7 @@ var parseJSON = (request, response) => {
 
 var parseUrlencoded = (request, response) => {
   if(!isRequestBody(request)) return;    
-  return (request.body = merge({}, require('querystring').parse(request.body)));
+  return (request.body = merge({}, queryString.parse(request.body)));
   
 }
 
@@ -156,7 +160,7 @@ var parseFormData = (request, response) => {
 }
 
 var parseRequest = (request, buffer) => {
-  (request.$parsed = require('url').parse(request.url, true));
+  (request.$parsed = url.parse(request.url, true));
   (request.query = request.$parsed.query);
   (request.params = merge({}, request.query));
   (request.pathname = request.$parsed.pathname);
@@ -185,7 +189,7 @@ var processRequest = (ctx) => (request, response) => {
 
 var createServer = (ctx, name="server") => merge(
   ctx,
-  { [name] : require('http').createServer(processRequest(ctx)) }
+  { [name] : http.createServer(processRequest(ctx)) }
 );
 
 var startServer = (ctx, name="server") => (
@@ -333,14 +337,14 @@ var contentType = (type) => ({'Content-Type': mimeType(type) });
 var headersJson = { headers: contentType('json')};
 var headersHtml = { headers: contentType('html')};
 
-var ext = (file) => require('path').extname(file).slice(1);
+var ext = (file) => path.extname(file).slice(1);
 
 var isDirectory = (filePath) => fs.statSync(filePath).isDirectory();
 var readFile = (file) => fs.readFileSync(file, 'utf8');
 
 var findFile = (file, resp={status: 200, headers: {'Content-Type': mimeType(ext(file))} }) => {
   if(!isDirectory(file)) return merge(resp, {body: readFile(file) });
-  let indexPath = require('path').join(filePath, 'index.html');
+  let indexPath = path.join(filePath, 'index.html');
   return merge(resp, { body: readFile(indexPath) });
 }
 
