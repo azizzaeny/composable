@@ -1,0 +1,40 @@
+{
+  "name": "@zaeny/expose",
+  "version": "1.0.2",
+  "description": "Utility Functions working with repl node.js, exposing function into global variable repl",
+  "scripts": {
+    "build": "node build",    
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/azizzaeny/expose.git"
+  },
+  "keywords": [
+    "utility",
+    "repl",
+    "expose",
+    "global",
+    "variable"
+  ],
+  "author": "Aziz Zaeny (https://azizzaeny.com)",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/azizzaeny/expose/issues"
+  },
+  "homepage": "https://github.com/azizzaeny/expose#readme",
+  "module": "./src/index.mjs",
+  "main": "./src/index.js",
+   "type": "commonjs",
+  "exports": {
+    ".": {
+      "require": "./src/index.js",
+      "import": "./src/index.mjs"
+    }
+  },
+  "files": [
+    "src",
+    "readme.md",
+    "package.json"
+  ] 
+}
