@@ -14,6 +14,7 @@ var groupBlockBy = (blocks, key='path') => blocks.reduce((acc, value) =>{
     : (acc[value[key]] = acc[value[key]].concat('\n', value.content), acc);  
 }, {});
 ```
+
 ### node 
 evaluate and tangle
 ```js context=node
@@ -38,8 +39,8 @@ var tangle = (markdown, validation, key='path') => {
   if(!validation) (validation = (b) => b.path);
   let blocks = extractCode(markdown);
   let validBlocks = blocks.filter(validation);
-  let groupFile = groupBlockBy(validBlocks, key);
-  return Object.entries(groupFile).map(([file, contents]) => ((file) ? fs.writeFileSync(file, contents, { flag: 'w+'}) : file, file));
+  let groupPath = groupBlockBy(validBlocks, key);
+  return Object.entries(groupPath).map(([file, contents]) => ((file) ? fs.writeFileSync(file, contents, { flag: 'w+'}) : file, file));
 }
 
 var tangleDir;
