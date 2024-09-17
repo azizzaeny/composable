@@ -1,5 +1,6 @@
 var fs = await import('node:fs');
 var vm = await import('node:vm');
+import { extractCode, groupBlockBy } from "./core.mjs";
 var evaluate = (code, defaultContext=global, requiredCtx={ require, module, console, setTimeout, setInterval }) => {
   let ctx =  vm.createContext(defaultContext);
   return (

@@ -1,5 +1,6 @@
 var fs = require('node:fs');
 var vm = require('node:vm');
+var { extractCode, groupBlockBy } = require("./core");
 var evaluate = (code, defaultContext=global, requiredCtx={ require, module, console, setTimeout, setInterval }) => {
   let ctx =  vm.createContext(defaultContext);
   return (
