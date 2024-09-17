@@ -1,6 +1,4 @@
 ## @zaeny/literate
-{todo: check the readme, add better usage with import module, in browser}  
-{todo: check the eval functions, test all}  
 
 [![npm version](https://img.shields.io/npm/v/@zaeny/literate.svg)](https://www.npmjs.com/package/@zaeny/literate)
 ![npm downloads](https://img.shields.io/npm/dm/@zaeny/literate.svg)  
