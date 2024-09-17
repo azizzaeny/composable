@@ -25,6 +25,8 @@ EOL
 usage:
 ```js
 var {env} = require('@zaeny/env');
+// or
+var {env} = await import('@zaeny/env');
 env()
 
 /*
