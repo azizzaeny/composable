@@ -20,6 +20,8 @@ See related packages : [@composable](https://github.com/azizzaeny/composable)
  ``` 
  **Browser Import**
  ```js
+ import {extractCode} from 'https://cdn.jsdelivr.net/npm/@zaeny/literate';
+ // import core code individually without side effects
  import {extractCode} from 'https://cdn.jsdelivr.net/npm/@zaeny/literate/src/core.js';
  ```
  
