@@ -1,0 +1,45 @@
+{
+  "name": "@zaeny/env",
+  "version": "1.0.3",
+  "description": "read .env files",
+  "module": "./src/index.mjs",
+  "main": "./src/index.js",
+  "scripts": {
+    "build": "node build",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    ".env",
+    "env",
+    "environment",
+    "env variable"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "author": "Aziz Zaeny (https://azizzaeny.com)",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/azizzaeny/env.git"
+  },
+  "bugs": {
+    "url": "https://github.com/azizzaeny/env/issues"
+  },
+  "homepage": "https://github.com/azizzaeny/composable/tree/main/packages/env",
+  "license": "GPL-3.0",
+  "devDependencies": {
+    "@zaeny/literate": "^1.0.7"
+  },
+  "type": "commonjs",
+  "exports": {
+    ".": {
+      "require": "./src/index.js",
+      "import": "./src/index.mjs"
+    }
+  },
+  "files": [
+    "src",
+    "readme.md",
+    "package.json"
+  ]
+}
