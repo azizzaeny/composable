@@ -8,7 +8,9 @@
 > literate programming, extract code blocks from markdown file   
 
 ### Table of Contents 
-- []()
+- [Usage](#Usage)
+- [Documentation](#Documentation)
+- [Changes](#Changes)
 
 ### Usage 
 **Node.js Installing**
@@ -66,6 +68,8 @@ tangle(testMdFile);
 tangle(testMdFile, (file) => (file.path && file.lang === "js"));
 //  'tangle files: #1 index.js'
 ```
+### Documentation
+check the [index.md](./index.md);  
 
 ### Changes
 - [1.0.2] `tangle` and `eval` now return object of inputed
