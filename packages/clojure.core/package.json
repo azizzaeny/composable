@@ -56,7 +56,6 @@
   },
   "homepage": "https://github.com/azizzaeny/composable/tree/main/packages/clojure.core",
   "devDependencies": {
-    "@putout/minify": "^4.5.2",
-    "esm": "^3.2.25"
+    "@putout/minify": "^4.5.2"
   }
 }
