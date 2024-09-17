@@ -5,10 +5,18 @@ var extractCode = (markdown) =>  Array.from(markdown.matchAll(/\`\`\`(\w+)((?:\s
   }, {}));
 });
 
-var groupBlockBy = (blocks, key='path') => blocks.reduce((acc, value) =>{
+var groupBlockBy = (key='path') => (blocks) => blocks.reduce((acc, value) =>{
+  if(!value[key]) return acc;
   return (!acc[value[key]])
     ?  (acc[value[key]] = value.content, acc)
     : (acc[value[key]] = acc[value[key]].concat('\n', value.content), acc);  
 }, {});
 
-export { extractCode, groupBlockBy }
+var concatBlockBy = (key) => blocks => blocks.reduce((acc, value) =>{
+  if(!value[key]) return acc;
+  return (!acc[value[key]])
+    ? Object.assign(acc, {[value[key]]: [value]})
+    : (acc[value[key]] = acc[value[key]].concat(value), acc)  
+}, {});
+
+export { extractCode, groupBlockBy, concatBlockBy }

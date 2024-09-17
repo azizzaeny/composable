@@ -1,6 +1,6 @@
 var fs = require('node:fs');
 var vm = require('node:vm');
-var { extractCode, groupBlockBy } = require("./core");
+var { extractCode, groupBlockBy, concatBlockBy } = require("./core");
 var evaluate = (code, defaultContext=global, requiredCtx={ require, module, console, setTimeout, setInterval }) => {
   let ctx =  vm.createContext(defaultContext);
   return (
@@ -22,8 +22,8 @@ var tangle = (markdown, validation, key='path') => {
   if(!validation) (validation = (b) => b.path);
   let blocks = extractCode(markdown);
   let validBlocks = blocks.filter(validation);
-  let groupFile = groupBlockBy(validBlocks, key);
-  return Object.entries(groupFile).map(([file, contents]) => ((file) ? fs.writeFileSync(file, contents, { flag: 'w+'}) : file, file));
+  let groupPath = groupBlockBy(key)(validBlocks);
+  return Object.entries(groupPath).map(([file, contents]) => ((file) ? fs.writeFileSync(file, contents, { flag: 'w+'}) : file, file));
 }
 
 var tangleDir;
