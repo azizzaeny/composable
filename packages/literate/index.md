@@ -27,6 +27,7 @@ var concatBlockBy = (key) => blocks => blocks.reduce((acc, value) =>{
 ### node 
 evaluate and tangle
 ```js context=node
+
 var evaluate = (code, defaultContext=global, requiredCtx={ require, module, console, setTimeout, setInterval }) => {
   let ctx =  vm.createContext(defaultContext);
   return (
@@ -36,6 +37,7 @@ var evaluate = (code, defaultContext=global, requiredCtx={ require, module, cons
     )
   );
 }
+
 var evaluateBlock = (markdown, validation, defaultCtx, requiredCtx) => {
   if(!validation) (validation = (b) => b.eval);
   let blocks = extractCode(markdown);
@@ -52,8 +54,13 @@ var tangle = (markdown, validation, key='path') => {
   return Object.entries(groupPath).map(([file, contents]) => ((file) ? fs.writeFileSync(file, contents, { flag: 'w+'}) : file, file));
 }
 
-var tangleDir;
-var evaluateBlockAtDir;
+var readDir = (dirPath) => fs.readdirSync(dirPath);
+var readFile = (file) => fs.existsSync(file) ? fs.readFileSync(file, 'utf8') : null;
+var isMarkdown = (file) => file.endsWith('.md');
+var captureCode = (path) => extractCode(readFile(path));
+var captureCodeAt = (path) => readDir(path).filter(isMarkdown).map(captureCode).flat();
+var tangleAt;
+var evaluateBlockAt;
 ```
 
 ## importing & exporting   
