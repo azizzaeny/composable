@@ -35,4 +35,4 @@ var captureCodeAt = (path) => readDir(path).filter(isMarkdown).map(captureCode).
 var tangleAt;
 var evaluateBlockAt;
 
-export { evaluate, evaluateBlock, tangle }
+export { evaluate, evaluateBlock, tangle, captureCode, captureCodeAt  }

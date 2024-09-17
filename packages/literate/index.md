@@ -80,9 +80,9 @@ export core
 ```
 export node  
 ```js context=export type=node
-{ evaluate, evaluateBlock, tangle }
+{ evaluate, evaluateBlock, tangle, captureCode, captureCodeAt  }
 ```
 export index
 ```js context=export type=index
-{ extractCode, groupBlockBy, evaluate, evaluateBlock, tangle }
+{ extractCode, groupBlockBy, evaluate, evaluateBlock, tangle, captureCode, captureCodeAt }
 ```
