@@ -1,5 +1,6 @@
 ### core 
 extracting code
+
 ```js context=core
 var extractCode = (markdown) =>  Array.from(markdown.matchAll(/\`\`\`(\w+)((?:\s+\w+=[\w./-]+)*)\s*([\s\S]*?)\`\`\`/g), match => {
   return Object.assign({ lang: match[1], content: match[3].trim()}, match[2].trim().split(/\s+/).reduce((acc, attr)=>{
@@ -8,10 +9,18 @@ var extractCode = (markdown) =>  Array.from(markdown.matchAll(/\`\`\`(\w+)((?:\s
   }, {}));
 });
 
-var groupBlockBy = (blocks, key='path') => blocks.reduce((acc, value) =>{
+var groupBlockBy = (key='path') => (blocks) => blocks.reduce((acc, value) =>{
+  if(!value[key]) return acc;
   return (!acc[value[key]])
     ?  (acc[value[key]] = value.content, acc)
     : (acc[value[key]] = acc[value[key]].concat('\n', value.content), acc);  
+}, {});
+
+var concatBlockBy = (key) => blocks => blocks.reduce((acc, value) =>{
+  if(!value[key]) return acc;
+  return (!acc[value[key]])
+    ? Object.assign(acc, {[value[key]]: [value]})
+    : (acc[value[key]] = acc[value[key]].concat(value), acc)  
 }, {});
 ```
 
@@ -39,7 +48,7 @@ var tangle = (markdown, validation, key='path') => {
   if(!validation) (validation = (b) => b.path);
   let blocks = extractCode(markdown);
   let validBlocks = blocks.filter(validation);
-  let groupPath = groupBlockBy(validBlocks, key);
+  let groupPath = groupBlockBy(key)(validBlocks);
   return Object.entries(groupPath).map(([file, contents]) => ((file) ? fs.writeFileSync(file, contents, { flag: 'w+'}) : file, file));
 }
 
