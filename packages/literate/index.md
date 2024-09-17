@@ -69,7 +69,7 @@ var vm = require('node:vm');
 ```
 export core   
 ```js context=export type=core
-{ extractCode, groupBlockBy }
+{ extractCode, groupBlockBy, concatBlockBy }
 ```
 export node  
 ```js context=export type=node
