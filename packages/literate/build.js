@@ -24,8 +24,8 @@ var build = (path='./') =>{
   let files = {
     './src/cjs/core.js': `${core}\n\nmodule.exports=${coreExport}`,
     './src/mjs/core.mjs': `${core}\n\nexport ${coreExport}`,
-    './src/cjs/node.js': `${commonJsImport}\n${node}\n\nmodule.exports=${nodeExport}`,
-    './src/mjs/node.mjs': `${moduleImport}\n${node}\n\nexport ${nodeExport}`,
+    './src/cjs/node.js': `${commonJsImport}\nvar ${coreExport} = require("./core");\n${node}\n\nmodule.exports=${nodeExport}`,
+    './src/mjs/node.mjs': `${moduleImport}\nimport ${coreExport} from "./core.mjs";\n${node}\n\nexport ${nodeExport}`,
     './src/cjs/index.js': `var ${coreExport} = require('./core');\nvar ${nodeExport} = require('./node');\n\nmodule.exports = ${indexExport}`,
     './src/mjs/index.mjs': `import ${coreExport} from "./core.mjs";\nimport ${nodeExport} from "./node.mjs";\n\nexport ${indexExport}`,
   }; 
