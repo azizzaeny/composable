@@ -21,7 +21,7 @@ See related packages : [@composable](https://github.com/azizzaeny/composable)
  **Import**
  ```js
  import {extractCode} from 'https://cdn.jsdelivr.net/npm/@zaeny/literate';
- // import core code individually without side effects
+ // import core code individually without side effects, and use in browser
  import {extractCode} from 'https://cdn.jsdelivr.net/npm/@zaeny/literate/src/core.js';
  ```
  
