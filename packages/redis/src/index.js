@@ -200,6 +200,8 @@ var connectRedis = (client, onError, onReconnect) => {
 
 var disconnectRedis = (client) => client.disconnect();
 
+var ack = (key, group, client) => (ids) => command(['XACK', key, group].concat(ids), client).catch((err) => console.log(err));
+
 var reader = (...args) => {
   let [cmd, callback, currentClient] = args;
   let closed = false; // shared state  
@@ -209,7 +211,9 @@ var reader = (...args) => {
       if(!stream) return block();
       let [[_, data]] = stream;
       if(!data || data.length === 0) return block();
-      cb(data); // process, todo, ack
+      let skey = cmd[1];
+      let sgroup = cmd[2];
+      cb(data, ack(skey, sgroup, client)); // acking
       return block();
     }).catch((err) => (console.log(err),  block()));
   };
