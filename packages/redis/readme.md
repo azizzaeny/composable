@@ -52,6 +52,17 @@ var mystream = reader(['xread', 'mystream', '100', '0', '0'], (data)=> console.l
 mystream.close();
 ```
 
+add acknowledge
+```js
+// ack([streamId]);
+var processStream = ((data, ack) =>{
+  ack(map(first, data));
+  console.log(data);
+}                     
+reader(['xreadgroup', 'mystream', 'group1', 'consumer1', '100', '0', '0'], processStream, rs);
+```
+
+var mystream = reader(['xread', 'mystream', '100', '0', '0'], (data)=> console.log(data), rs);
 ### API
 
 ```js
@@ -74,3 +85,4 @@ parsePair,
  - [1.0.5] fix json.get return array 
  - [1.0.6] fix  multiple path `$.[]` at json.get
  - [1.0.7] move to new repositoy, add `xack`
+ - [1.1.2] add new stream acknowledge 
