@@ -1,6 +1,6 @@
 {
   "name": "@zaeny/env",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "read .env files",
   "module": "./src/index.mjs",
   "main": "./src/index.js",
@@ -20,7 +20,7 @@
   "author": "Aziz Zaeny (https://azizzaeny.com)",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/azizzaeny/env.git"
+    "url": "git+https://github.com/azizzaeny/composable/tree/main/packages/env"
   },
   "bugs": {
     "url": "https://github.com/azizzaeny/env/issues"
