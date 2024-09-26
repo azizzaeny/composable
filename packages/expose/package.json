@@ -6,10 +6,6 @@
     "build": "node build",    
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+ssh://git@github.com/azizzaeny/expose.git"
-  },
   "keywords": [
     "utility",
     "repl",
@@ -19,13 +15,17 @@
   ],
   "author": "Aziz Zaeny (https://azizzaeny.com)",
   "license": "GPL-3.0",
-  "bugs": {
-    "url": "https://github.com/azizzaeny/expose/issues"
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/azizzaeny/composable.git"
   },
-  "homepage": "https://github.com/azizzaeny/expose#readme",
+  "bugs": {
+    "url": "https://github.com/azizzaeny/composable/issues"
+  },
+  "homepage": "https://github.com/azizzaeny/composable/tree/main/packages/expose",
   "module": "./src/index.mjs",
   "main": "./src/index.js",
-   "type": "commonjs",
+  "type": "commonjs",
   "exports": {
     ".": {
       "require": "./src/index.js",
