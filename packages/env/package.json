@@ -23,7 +23,7 @@
     "url": "git+https://github.com/azizzaeny/composable/tree/main/packages/env"
   },
   "bugs": {
-    "url": "https://github.com/azizzaeny/env/issues"
+    "url": "https://github.com/azizzaeny/composable/issues"
   },
   "homepage": "https://github.com/azizzaeny/composable/tree/main/packages/env",
   "license": "GPL-3.0",
