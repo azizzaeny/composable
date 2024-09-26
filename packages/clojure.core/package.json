@@ -1,6 +1,6 @@
 {
   "name": "@zaeny/clojure.core",
-  "version": "2.0.7",
+  "version": "2.0.8",
   "description": "Clojure core functions in javascript land, provides a collection of functions inspired by the clojure.core library, reimagined to work with JavaScript arrays and objects. It aims to bring simple, functional programming concepts from Clojure into the JavaScript ecosystem ",
   "keywords": [
     "functional",
@@ -47,7 +47,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/azizzaeny/composable.git"
+    "url": "git+https://github.com/azizzaeny/composable/tree/main/packages/clojure.core"
   },
   "author": "Aziz Zaeny (https://azizzaeny.com)",
   "license": "GPL-3.0",
