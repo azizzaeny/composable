@@ -20,7 +20,7 @@
   "author": "Aziz Zaeny (https://azizzaeny.com)",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/azizzaeny/composable/tree/main/packages/env"
+    "url": "git+https://github.com/azizzaeny/composable.git"
   },
   "bugs": {
     "url": "https://github.com/azizzaeny/composable/issues"
