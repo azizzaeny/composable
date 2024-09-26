@@ -1,6 +1,6 @@
 {
   "name": "@zaeny/expose",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Utility Functions working with repl node.js, exposing function into global variable repl",
   "scripts": {
     "build": "node build",    

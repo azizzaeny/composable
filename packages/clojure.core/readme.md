@@ -114,4 +114,4 @@ apply(get, [ {a: 1}, "a" ]) // 1
  - [2.0.4] add support for both commonjs and type module
  - [2.0.5] rename file into proper mjs and cjs 
  - [2.0.7] fix index.mjs wrong import .js
- - [2.0.8] fix readme home repository
+ - [2.0.9] fix readme home repository
