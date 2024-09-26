@@ -1,6 +1,6 @@
 {
   "name": "@zaeny/env",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "read .env files",
   "module": "./src/index.mjs",
   "main": "./src/index.js",

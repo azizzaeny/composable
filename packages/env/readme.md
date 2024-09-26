@@ -47,4 +47,4 @@ see it here [index.md](./index.md)
  - [1.0.1] add information update repositry, issues, keywords and so on 
  - [1.0.2] fix cannot get value from env that contain = like uri `?auth=admin&foo=bar`
  - [1.0.3] refactor, move to new repository composable
- - [1.0.4] fix readme repository home 
+ - [1.0.5] fix readme repository home 
