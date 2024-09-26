@@ -1,14 +1,10 @@
 {
   "name": "@zaeny/http",
-  "version": "1.0.14",
+  "version": "1.0.15",
   "description": "Utility function creating http server, Translate incomin http request into data strcuture like ring in clojure",
   "scripts": {
     "build": "node build",    
     "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+ssh://git@github.com/azizzaeny/http.git"
   },
   "keywords": [
     "http",
@@ -23,8 +19,12 @@
   ],
   "author": "Aziz Zaeny (https://azizzaeny.com)", 
   "license": "GPL-3.0",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/azizzaeny/composable.git"
+  },
   "bugs": {
-    "url": "https://github.com/azizzaeny/http/issues"
+    "url": "https://github.com/azizzaeny/composable/issues"
   },
   "homepage": "https://github.com/azizzaeny/composable/tree/main/packages/http",
   "module": "./src/index.mjs",

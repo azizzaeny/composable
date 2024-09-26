@@ -187,4 +187,4 @@ await handler(createRequest('GET /api/search?query=Aziz'));
  - [1.0.11] add `response(body, headers, status)` basic construct instead single arguments, fix `findRoutes` bugs
  - [1.0.12] fix bugs `request.buffer` and `request.body` is empty when content-type `application/json`  
  - [1.0.13] fix bugs `replace` not found on `findRoutes` 
- - [1.0.13] fix bugs `reduce` not found on `findRoutes` 
+ - [1.0.15] fix homepage repository
