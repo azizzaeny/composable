@@ -1,14 +1,10 @@
 {
   "name": "@zaeny/mongodb",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Wrap mongodb node.js driver so it expose only two main function `query` and `transact`, so you can seperate pure function in domain business and side-effect (avoiding not dot notation call)",
   "scripts": {
     "build": "node build",    
     "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+ssh://git@github.com/azizzaeny/mongodb.git"
   },
   "keywords": [
     "mongodb",
@@ -20,6 +16,10 @@
   ],
   "author": "Aziz Zaeny (https://azizzaeny.com)", 
   "license": "GPL-3.0",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/azizzaeny/composable.git"
+  },
   "bugs": {
     "url": "https://github.com/azizzaeny/mongodb/issues"
   },

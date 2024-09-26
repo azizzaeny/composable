@@ -18,6 +18,14 @@ Wrap mongodb node.js driver so it expose only two main function `query` and `tra
 npm i @zaeny/mongodb
 ```
 
+```js
+// support module js 
+var {query, find, transact, connectDb, createDb} = await import('@zaeny/mongodb);
+import {query, find, transact, connectDb, createDb} from '@zaeny/mongodb; // individually
+// support common js 
+var {query} = require('@zaeny/mongodb');
+```
+
 ### Usage 
 
 ```js
@@ -26,9 +34,7 @@ process.env.MONGODB_URI="mongodb://mongouser:mongopass@localhost:27017/test?auth
 var {createDb, connectDb, query, transact} = require('@zaeny/mongodb');
 
 var clientDb = createDb(process.env.MONGODB_URI);
-
 connectDb(clientDb)
-  .then(()=> console.log('mongodb connected');
 
 var db => clientDb;
 
@@ -118,3 +124,4 @@ example of usage transacting
  - [1.0.0] add `query` and `transact`
  - [1.0.1] fix bugs `transact` allow operation default
  - [1.1.1] breaking changes `transact` now instead of `$set` `$set` it work on top operation
+ - [1.1.2] fix homepage repository, add support import 
