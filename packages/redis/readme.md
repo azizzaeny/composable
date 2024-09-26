@@ -25,9 +25,8 @@ parsing json data automaticly, both input json and output json
 process.env.REDIS_URL="redis://redisuser:redispass@127.0.0.1:6379"
 
 var client = createRedis(process.env.REDIS_URL);
-
 connectRedis(client)
-  .then(()=> console.log('redis connected'));
+
   
 command(['ping'], client).then(console.log)
 command(['json.get', 'foo', '$.data'], client)
@@ -86,3 +85,4 @@ parsePair,
  - [1.0.6] fix  multiple path `$.[]` at json.get
  - [1.0.7] move to new repositoy, add `xack`
  - [1.1.2] add new stream acknowledge 
+ - [1.1.3] fix repository homepage

@@ -1,6 +1,6 @@
 {
   "name": "@zaeny/redis",
-  "version": "1.1.2",
+  "version": "1.1.3",
   "description": "Utility functions wrap redis node.js driver",
   "scripts": {
     "build": "node build",    
@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/azizzaeny/redis.git"
+    "url": "git+ssh://git@github.com/azizzaeny/composable.git"
   },
   "keywords": [
     "redis",
@@ -18,7 +18,7 @@
   "author": "Aziz Zaeny (https://azizzaeny.com)", 
   "license": "GPL-3.0",
   "bugs": {
-    "url": "https://github.com/azizzaeny/redis/issues"
+    "url": "https://github.com/azizzaeny/composable/issues"
   },
   "homepage": "https://github.com/azizzaeny/composable/tree/main/packages/redis",  
   "dependencies": {
