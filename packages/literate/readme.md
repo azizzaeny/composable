@@ -77,3 +77,4 @@ check the [index.md](./index.md);
 - [1.0.2] `tangle` and `eval` now return object of inputed
 - [1.0.5] refactor `groupBlockBy`, rename `eval` to `evalaute`, move repository to composable
 - [1.0.7] add `captureCode` `captureCodeAt`
+- [1.0.8] fix homepage repository

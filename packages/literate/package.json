@@ -1,6 +1,6 @@
 {
   "name": "@zaeny/literate",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "Literate programming, extract code from markdown",
   "scripts": {
     "build": "node build",    
@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/azizzaeny/literate.git"
+    "url": "git+ssh://git@github.com/azizzaeny/composable.git"
   },
   "keywords": [
     "literate",
@@ -24,7 +24,7 @@
   "author": "Aziz Zaeny (https://azizzaeny.com)",
   "license": "GPL-3.0",
   "bugs": {
-    "url": "https://github.com/azizzaeny/literate/issues"
+    "url": "https://github.com/azizzaeny/composable/issues"
   },
   "homepage": "https://github.com/azizzaeny/composable/tree/main/packages/literate",  
   "files":[
