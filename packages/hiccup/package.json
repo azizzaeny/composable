@@ -1,6 +1,6 @@
 {
   "name": "@zaeny/hiccup",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "VDOM representation in hiccup, Simple UI building with hiccup tree",
   "keywords": [
     "functional rendering",
@@ -14,6 +14,7 @@
     "tree"
   ],
   "module": "./src/index.mjs",
+  "global": "./src/hiccup.js",  
   "main": "./src/index.js",
   "scripts": {
     "build": "node build",    
@@ -21,7 +22,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/azizzaeny/hiccup.git"
+    "url": "git+https://github.com/azizzaeny/composable.git"
   },
   "author": "Aziz Zaeny (https://azizzaeny.com)",
   "license": "GPL-3.0",

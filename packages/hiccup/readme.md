@@ -95,3 +95,4 @@ toString(hnode)
 - [1.0.1] add `svg` rendering in renderNode
 - [1.0.2] add `toString` to render html string
 - [1.0.3] seperate `toString` to its own file
+- [1.0.5] add global `hiccup` script, fix homepage repository 
