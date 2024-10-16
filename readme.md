@@ -1,8 +1,6 @@
 ## Composable  
 
-> Composable aims to help you to "compose" or build solutions by combining smaller, modular parts.
-
-Composable is a collection of reusable functions to solve programming problems through composition. It provides a toolkit for general-purpose functional programming, covering patterns, side-effect handling, and data structure algorithms.
+Composable is a collection of reusable utility functions to solve programming problems. Provides a toolkit for general-purpose functional programming, covering patterns, side-effect handling, and data structure algorithms.
 
 ### Core Packages
 
@@ -16,6 +14,7 @@ Composable is a collection of reusable functions to solve programming problems t
 | alpha       | [@zaeny/redis](https://github.com/azizzaeny/composable/tree/main/packages/redis) | Functional utilities for interacting with Redis. |
 | alpha       | [@zaeny/mongodb](https://github.com/azizzaeny/composable/tree/main/packages/mongodb) | Mongodb wrapper expose function `query` and `transact`. |
 | alpha       | [@zaeny/expose](https://github.com/azizzaeny/composable/tree/main/packages/expose) | Utility Functions working with repl node.js |
+| alpha       | [@zaeny/repl](https://github.com/azizzaeny/composable/tree/main/packages/repl) |Bringing Clojure Repl Like Experiences to the Javascript Node.js, add support evaluating in context, or in-ns |
 | wip         | [@zaeny/aof](https://github.com/azizzaeny/composable/tree/main/packages/aol) | Simple Efficient appendonly log json |
 | wip         | [@zaeny/mql](https://github.com/azizzaeny/composable/tree/main/packages/mql) | Mongodb Query Langauge in memory  |
 
@@ -30,6 +29,7 @@ npm i @zaeny/{package}
 #### Usage in REPL (without installation)
 You can also use the packages directly in a Node.js REPL without downloading specific packages.
 ```sh
+{todo}
 ```
 
 ### Development Status
@@ -62,6 +62,3 @@ The package is no longer being actively maintained.
 It may still be functional but is not recommended for new projects.  
 Security or functionality issues may not be addressed.  
 
-
-### Contribution
-{todo} development
