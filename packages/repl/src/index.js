@@ -19,6 +19,7 @@ var patchedRequire = patchedRequire || false;
 
 /* patch require*/
 var originalRequire = Module.prototype.require;
+
 Module.prototype.require = function(id){
   let moduleId = getModule(id);
   if(moduleId) return moduleId.exports;  
@@ -77,13 +78,13 @@ var defaultAfterEvalHook = (value, module) =>{
 
 var evaluateGlobal = (code) => {
   let context = vm.createContext(Object.assign(global, defaultExpose));
-  let value =  vm.runInContext(code, Object.assign(context, defaultExpose, { require, module, process }));
+  let value =  vm.runInContext(code, Object.assign(context, defaultExpose, { module, process, __dirname: process.cwd() }));
   return value;  
 }
 
 var evaluateIn = (code, id) => {
   let module = (createModule(id), getModule(id));
-  if(!module.context) (module.context = vm.createContext(Object.assign({}, defaultContext, {require, module, process}, defaultExpose)));
+  if(!module.context) (module.context = vm.createContext(Object.assign({}, defaultContext, {module, process, __dirname: process.cwd() }, defaultExpose)));
   let script = new vm.Script(code);
   let value = script.runInContext(module.context);
   return {value, module};
