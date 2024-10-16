@@ -81,13 +81,13 @@ var parseData = (data) => {
   if (isObject(data)) return map(toString, flatten(seq(data)))
   return data;
 }
-
 var toString = (k) => k.toString();
+
 var stringify = (data) => {
   return isObject(data) ? JSON.stringify(data) : (!isString(data) ? data.toString() : data);
 }
 
-var parseResult = (type) => (result) => {
+var parseResult = (type, command) => (result) => {
   if(!result) return result;
   if(type === 'json.get'){
     try{
@@ -99,7 +99,13 @@ var parseResult = (type) => (result) => {
     }    
   }
   if(type === 'json.mget'){
-    return map((r) => (r ? first(JSON.parse(r)) : r), result);
+    return map((r) => {
+      if(r){
+        if(last(command) === '$') return first(JSON.parse(r));
+        return JSON.parse(r);
+      }
+      return r;
+    }, result);
   }
   return result;
 };
@@ -152,7 +158,7 @@ var command = (...args) =>{
   let type = lowerCase(first(commands));  
   let adaptCommand = transformCommand(commands);  
   if(isFn(client)) (client = client());
-  return client.sendCommand(adaptCommand).then(parseResult(type));
+  return client.sendCommand(adaptCommand).then(parseResult(type, adaptCommand));
 }
 
 var tfload = (pathFile, client) => command(['TFUNCTION', 'LOAD', 'REPLACE', require('fs').readFileSync(`${pathFile}`,'utf8')], client);
