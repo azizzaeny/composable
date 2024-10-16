@@ -1,0 +1,43 @@
+{
+  "name": "@zaeny/repl",
+  "version": "1.0.0",
+  "description": "Bringing Clojure Repl Like Experiences to the Javascript Node.js, add support evaluating in context, or in-ns",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "repl",
+    "clojure-repl",
+    "browser-repl",
+    "evaluate",
+    "eval",
+    "evalaute in repl",
+    "browser repl eval",
+    "develop from repl",
+    "incremental development"
+  ],
+  "author": "Aziz Zaeny (https://azizzaeny.com)", 
+  "license": "GPL-3.0",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/azizzaeny/composable.git"
+  },
+  "bugs": {
+    "url": "https://github.com/azizzaeny/composable/issues"
+  },
+  "homepage": "https://github.com/azizzaeny/composable/tree/main/packages/repl",
+  "module": "./src/index.mjs",
+  "main": "./src/index.js",
+  "type": "commonjs",
+  "exports": {
+    ".": {
+      "require": "./src/index.js",
+      "import": "./src/index.mjs"
+    }
+  },
+  "files": [
+    "src",
+    "readme.md",
+    "package.json"
+  ]  
+}
