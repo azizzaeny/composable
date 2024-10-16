@@ -1,7 +1,7 @@
 
 /* default top level context */
 var defaultContext = defaultContext || Object.assign({}, global);
-var defaultKeys    = defaultKeys || Object.keys(defaultContext).concat(['_', '_error', 'require', 'module', 'process'])
+var defaultKeys    = defaultKeys || Object.keys(defaultContext).concat(['_', '__error', '__value', 'require', 'module', 'process']);
 var defaultExpose  = defaultExpose || {};
 
 /* deps*/
@@ -78,19 +78,20 @@ var defaultAfterEvalHook = (value, module) =>{
 
 var evaluateGlobal = (code) => {
   let context = vm.createContext(Object.assign(global, defaultExpose));
-  let value =  vm.runInContext(code, Object.assign(context, defaultExpose, { module, process, __dirname: process.cwd() }));
+  let value =  vm.runInContext(code, Object.assign(context, defaultExpose, { module, process, __value, __error, __dirname: process.cwd() }));
   return value;  
 }
 
 var evaluateIn = (code, id) => {
   let module = (createModule(id), getModule(id));
-  if(!module.context) (module.context = vm.createContext(Object.assign({}, defaultContext, {module, process, __dirname: process.cwd() }, defaultExpose)));
+  if(!module.context) (module.context = vm.createContext(Object.assign({}, defaultContext, {module, process, __value, __error, __dirname: process.cwd() }, defaultExpose)));
   let script = new vm.Script(code);
   let value = script.runInContext(module.context);
   return {value, module};
 }
 
 var isDefaultContext = (id) => (id === 'main' || id === 'global' || id === null);
+
 // todo: make evaluate to be customize
 var createEvaluate = (afterEvalHook=defaultAfterEvalHook) => (code, id='main') => {
   try{
@@ -101,6 +102,7 @@ var createEvaluate = (afterEvalHook=defaultAfterEvalHook) => (code, id='main') =
     let { value, module } =  evaluateIn(code, id);
     return afterEvalHook(value, module);
   }catch(err){
+    __error = err;
     console.log('error: '+err);
   }
 }
@@ -130,8 +132,10 @@ var evaluateReplExpression = async (sourceCode, context, filename, callback) => 
     let script = new vm.Script(code, {filename});
     let result = await evaluate(code, currentContext);
     if (result instanceof Promise) (result = await result);
+    __value = result;
     callback(null, result);    
   }catch(error){
+    __error = error;
     if(isRecoverable(error)) return callback(new repl.Recoverable(error));
     callback(error);
   }
@@ -292,5 +296,6 @@ module.exports = {
   loadSource, loadFile, loadDir,
   listExports, exportAt, expose, 
   listContext, lastContext, inContext,
+  __value, __error
 };
 
