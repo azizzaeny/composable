@@ -8,4 +8,6 @@ Bringing Clojure Repl Like Experiences to the Javascript Node.js, add support ev
 
 {todo: usage}
 
+### Changes
+- 1.0.1 fix `require` context, and add `__dirname` into global and module context evaluation
 
