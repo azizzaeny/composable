@@ -40,5 +40,8 @@
     "src",
     "readme.md",
     "package.json"
-  ]  
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
 }
