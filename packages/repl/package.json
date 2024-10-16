@@ -14,7 +14,8 @@
     "evalaute in repl",
     "browser repl eval",
     "develop from repl",
-    "incremental development"
+    "send to repl",    
+    "incremental interactive development"
   ],
   "author": "Aziz Zaeny (https://azizzaeny.com)", 
   "license": "GPL-3.0",
