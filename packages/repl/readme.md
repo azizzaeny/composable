@@ -10,5 +10,5 @@ Bringing Clojure Repl Like Experiences to the Javascript Node.js, add support ev
 
 ### Changes
 - 1.0.1 fix `require` context, and add `__dirname` into global and module context evaluation
-- 1.0.2 add last value saved at `__value` and `__error`
+- 1.0.2 add last value saved at `__value` and `__error`, add support for markdown extension `.md`
 
