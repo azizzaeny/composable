@@ -135,7 +135,6 @@ var evaluateReplExpression = async (sourceCode, context, filename, callback) => 
     __value = result;
     callback(null, result);    
   }catch(error){
-    __error = error;
     if(isRecoverable(error)) return callback(new repl.Recoverable(error));
     callback(error);
   }
