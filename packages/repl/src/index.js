@@ -42,7 +42,7 @@ var isString = (val) => (typeof val === 'string' || val instanceof String);
 /* fs utility  */
 var readFile = file => fs.readFileSync(file, 'utf8') || '';
 var isNotDir = (file) => !fs.statSync(file).isDirectory();
-var isFileWithExt = (file) => path.extname(file) === '.js' || path.extname(file) === '.mjs';
+var isFileWithExt = (file) => path.extname(file) === '.js' || path.extname(file) === '.mjs' || path.extname(file) === '.md';
 
 /* implementation  module */
 var resolvePathWithExt = (id, ext) =>  path.resolve(process.cwd(), id+ext);
@@ -155,10 +155,9 @@ var getFileWithExtension = (file) =>{
   if(fs.existsSync(file)) return file;
   if(fs.existsSync(file+'.js')) return file+'.js';
   if(fs.existsSync(file+'.mjs')) return file+'.mjs';
+  if(fs.existsSync(file+'.md')) return file+'.md';
   return false;
 }
-
-var isValidLoadFile = (file) => isNotDir(file) && isFileWithExt(file);
 
 var defaultTransformer= (code) => code;
 
@@ -170,6 +169,8 @@ var loadSource = (file, contextId, transformer=defaultTransformer) => {
 }
 
 var loadFile = (file, contextId) => loadSource(file, contextId, defaultTransformer);
+
+var isValidLoadFile = (file) => isNotDir(file) && isFileWithExt(file);
 
 var loadDir = (dir, contextId, transformer=defaultTransformer) => {
   let pathDir = (fs.existsSync(dir) ? fs.readdirSync(dir) : [])
