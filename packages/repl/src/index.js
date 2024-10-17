@@ -76,6 +76,8 @@ var defaultAfterEvalHook = (value, module) =>{
   return value;
 };
 
+var defaultBeforeEvalHook = (code) => code;
+
 var evaluateGlobal = (code) => {
   let context = vm.createContext(Object.assign(global, defaultExpose));
   let value =  vm.runInContext(code, Object.assign(context, defaultExpose, { module, process, __value, __error, __dirname: process.cwd() }));
@@ -92,14 +94,15 @@ var evaluateIn = (code, id) => {
 
 var isDefaultContext = (id) => (id === 'main' || id === 'global' || id === null);
 
-// todo: make evaluate to be customize
-var createEvaluate = (afterEvalHook=defaultAfterEvalHook) => (code, id='main') => {
+var createEvaluate = (
+  beforEvalHook=defaultBeforeEvalHook,
+  afterEvalHook=defaultAfterEvalHook ) => (code, id='main') => {
   try{
     if(isDefaultContext(id)){
-      let value =  evaluateGlobal(code);
+      let value =  evaluateGlobal(beforEvalHook(code));
       return afterEvalHook(value, null)
     }
-    let { value, module } =  evaluateIn(code, id);
+    let { value, module } =  evaluateIn(beforEvalHook(code), id);
     return afterEvalHook(value, module);
   }catch(err){
     __error = err;
@@ -107,7 +110,7 @@ var createEvaluate = (afterEvalHook=defaultAfterEvalHook) => (code, id='main') =
   }
 }
 
-var evaluate = createEvaluate(defaultAfterEvalHook);
+var evaluate = createEvaluate(defaultBeforeEvalHook, defaultAfterEvalHook);
 
 /* Repl evaluation implementation */
 var currentContext = 'main';
@@ -164,8 +167,7 @@ var defaultTransformer= (code) => code;
 var loadSource = (file, contextId, transformer=defaultTransformer) => {
   let fileExt = getFileWithExtension(file);
   let code = (fileExt && fs.readFileSync(fileExt, 'utf8')) || "";
-  let transformedCode = transformer(code);
-  return evaluate(code, contextId);
+  return evaluate(transformer(code), contextId);
 }
 
 var loadFile = (file, contextId) => loadSource(file, contextId, defaultTransformer);
