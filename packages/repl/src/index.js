@@ -81,24 +81,26 @@ var defaultBeforeEvalHook = (code) => code;
 var evaluateGlobal = (code) => {
   try{
     let context = vm.createContext(Object.assign(global, defaultExpose));
-    let value =  vm.runInContext(code, Object.assign(context, defaultExpose, { module, process, __value, __error, __dirname: process.cwd() }));
+    let value =  vm.runInContext(code, Object.assign(context, defaultExpose, { console, module, process, __value, __error, __dirname: process.cwd() }));
     return value;    
   }catch(err){
     __error = err;
-    console.log('error: '+err);    
+    console.log('error: '+err);
+    return {value: null, module: null}    
   }
 }
 
 var evaluateIn = (code, id) => {
   try{   
     let module = (createModule(id), getModule(id));
-    if(!module.context) (module.context = vm.createContext(Object.assign({}, defaultContext, {module, process, __value, __error, __dirname: process.cwd() }, defaultExpose)));
+    if(!module.context) (module.context = vm.createContext(Object.assign({}, defaultContext, {console, module, process, __value, __error, __dirname: process.cwd() }, defaultExpose)));
     let script = new vm.Script(code);
     let value = script.runInContext(module.context);
     return {value, module}; 
   }catch(err){
     __error = err;
-    console.log('error: '+err);    
+    console.log('error: '+err);
+    return {value: null, module: null}
   }
 }
 
