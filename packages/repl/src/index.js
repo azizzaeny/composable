@@ -79,17 +79,27 @@ var defaultAfterEvalHook = (value, module) =>{
 var defaultBeforeEvalHook = (code) => code;
 
 var evaluateGlobal = (code) => {
-  let context = vm.createContext(Object.assign(global, defaultExpose));
-  let value =  vm.runInContext(code, Object.assign(context, defaultExpose, { module, process, __value, __error, __dirname: process.cwd() }));
-  return value;  
+  try{
+    let context = vm.createContext(Object.assign(global, defaultExpose));
+    let value =  vm.runInContext(code, Object.assign(context, defaultExpose, { module, process, __value, __error, __dirname: process.cwd() }));
+    return value;    
+  }catch(err){
+    __error = err;
+    console.log('error: '+err);    
+  }
 }
 
 var evaluateIn = (code, id) => {
-  let module = (createModule(id), getModule(id));
-  if(!module.context) (module.context = vm.createContext(Object.assign({}, defaultContext, {module, process, __value, __error, __dirname: process.cwd() }, defaultExpose)));
-  let script = new vm.Script(code);
-  let value = script.runInContext(module.context);
-  return {value, module};
+  try{   
+    let module = (createModule(id), getModule(id));
+    if(!module.context) (module.context = vm.createContext(Object.assign({}, defaultContext, {module, process, __value, __error, __dirname: process.cwd() }, defaultExpose)));
+    let script = new vm.Script(code);
+    let value = script.runInContext(module.context);
+    return {value, module}; 
+  }catch(err){
+    __error = err;
+    console.log('error: '+err);    
+  }
 }
 
 var isDefaultContext = (id) => (id === 'main' || id === 'global' || id === null);
@@ -111,6 +121,42 @@ var createEvaluate = (
 }
 
 var evaluate = createEvaluate(defaultBeforeEvalHook, defaultAfterEvalHook);
+
+var getCodeBlocks = (markdown) =>  Array.from(markdown.matchAll(/\`\`\`(\w+)((?:\s+\w+=[\w./-]+)*)\s*([\s\S]*?)\`\`\`/g), match => {
+  return Object.assign({ lang: match[1], content: match[3].trim()}, match[2].trim().split(/\s+/).reduce((acc, attr)=>{
+    let [key, value] = attr.split('=');
+    return (key && value) ? (acc[key] = value, acc) : acc;
+  }, {}));
+});
+
+var exposeContext = (source) => {
+  let context = source.reduce((a, v) => Object.assign(a, v), {});
+  return (expose(context), true);
+};
+
+var isValidSource = (block) => {
+  return ( block.lang === 'js' &&
+           block.eval === '1' &&           
+           block.content &&
+           block.context);
+}
+
+var loadCodeAt = (file, afterEvalHook=defaultAfterEvalHook) => {
+  let fileSource = fs.existsSync(file) && fs.readFileSync(file, 'utf8');
+  if (!fileSource) return (console.log(file, 'not available'), false);
+  let codeBlocks = getCodeBlocks(fileSource).filter(isValidSource);
+  let compiled = codeBlocks.reduce((acc, {context, content})=>{
+    if(!acc[context]) return (acc[context] = content, acc);
+    return (acc[context] = acc[context].concat(content), acc);
+  }, {});  
+  return Object.entries(compiled).map(([key, code], index)=>{
+    let {value, module}= evaluateIn(code, key);
+    afterEvalHook(value, module);
+    return key;
+  });
+};
+
+var provide = (source) => source.map(loadCodeAt);
 
 /* Repl evaluation implementation */
 var currentContext = 'main';
@@ -238,6 +284,7 @@ var inContextRepl = (_repl) => ({
     help: 'change current context evaluateion',
     action: (params) => {
       let id = params.split(' ')[0];
+      if(!id || id ==="") return;
       inContext(id);
       _repl.setPrompt(getPrompt());
       _repl.displayPrompt();
@@ -295,8 +342,9 @@ module.exports = {
   createRepl, extendRepl, startRepl, 
   evaluate, evaluateGlobal, evaluateIn, createEvaluate,
   createModule, getModule,
-  loadSource, loadFile, loadDir,
-  listExports, exportAt, expose, 
+  getCodeBlocks,
+  loadSource, loadFile, loadDir, loadCodeAt,
+  listExports, exportAt, expose, provide,
   listContext, lastContext, inContext,
   __value, __error
 };
