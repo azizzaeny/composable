@@ -156,7 +156,8 @@ var loadCodeAt = (file, afterEvalHook=defaultAfterEvalHook) => {
   });
 };
 
-var provide = (source) => source.map(loadCodeAt);
+var provide = source => source.map(file => loadCodeAt(file));
+
 
 /* Repl evaluation implementation */
 var currentContext = 'main';
