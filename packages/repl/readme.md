@@ -14,3 +14,4 @@ Bringing Clojure Repl Like Experiences to the Javascript Node.js, add support ev
 - 1.0.3 add `defaultBeforEvalHook` in  `evaluate` function,  fix `defaultTransformer` code
 - 1.0.4 add `provide`, `loadCodeAt`, `exposeContext`, add try catch `evaluate`
 - 1.0.5 fix `provide` not able to loadCodeAt
+- 1.0.6 fix `console` not show up, and fix return value of `evaluate`
