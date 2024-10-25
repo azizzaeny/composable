@@ -1,7 +1,7 @@
 
 /* default top level context */
 var defaultContext = defaultContext || Object.assign({}, global);
-var defaultKeys    = defaultKeys || Object.keys(defaultContext).concat(['_', '__error', '__value', 'require', 'module', 'process']);
+var defaultKeys    = defaultKeys || Object.keys(defaultContext).concat(['_', '__error', '__value', 'require', 'module', 'process', 'console']);
 var defaultExpose  = defaultExpose || {};
 
 /* deps*/
@@ -139,19 +139,21 @@ var exposeContext = (source) => {
 var isValidSource = (block) => {
   return ( block.lang === 'js' &&
            block.eval === '1' &&           
-           block.content &&
-           block.context);
+           block.content);
 }
 
 var loadCodeAt = (file, afterEvalHook=defaultAfterEvalHook) => {
   let fileSource = fs.existsSync(file) && fs.readFileSync(file, 'utf8');
   if (!fileSource) return (console.log(file, 'not available'), false);
   let codeBlocks = getCodeBlocks(fileSource).filter(isValidSource);
-  let compiled = codeBlocks.reduce((acc, {context, content})=>{
+  let compiled = codeBlocks.reduce((acc, value)=>{
+    let {context, content} = value;
+    if(!context) context = 'main';
     if(!acc[context]) return (acc[context] = content, acc);
     return (acc[context] = acc[context].concat(content), acc);
-  }, {});  
+  }, {});
   return Object.entries(compiled).map(([key, code], index)=>{
+    if(key === 'main') return (evaluateGlobal(code), key);
     let {value, module}= evaluateIn(code, key);
     afterEvalHook(value, module);
     return key;
@@ -326,6 +328,7 @@ var getDefaultCommands = (_repl) => Object.assign(
   listContextRepl(_repl),
   listExportsRepl(_repl)
 );
+
 var extendRepl = (_repl, commands={}) => {
   let defaultCommands = getDefaultCommands(_repl);
   if(!_repl) return;
