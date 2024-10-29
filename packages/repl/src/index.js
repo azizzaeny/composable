@@ -142,7 +142,7 @@ var isValidSource = (block) => {
            block.content);
 }
 
-var loadCodeAt = (file, afterEvalHook=defaultAfterEvalHook) => {
+var loadCodeAt = (file, overrideContext, afterEvalHook=defaultAfterEvalHook) => {
   let fileSource = fs.existsSync(file) && fs.readFileSync(file, 'utf8');
   if (!fileSource) return (console.log(file, 'not available'), false);
   let codeBlocks = getCodeBlocks(fileSource).filter(isValidSource);
@@ -150,10 +150,11 @@ var loadCodeAt = (file, afterEvalHook=defaultAfterEvalHook) => {
     let {context, content} = value;
     if(!context) context = 'main';
     if(!acc[context]) return (acc[context] = content, acc);
-    return (acc[context] = acc[context].concat(content), acc);
+    return (acc[context] = acc[context].concat(`${content}\n`), acc);
   }, {});
   return Object.entries(compiled).map(([key, code], index)=>{
-    if(key === 'main') return (evaluateGlobal(code), key);
+    if(!overrideContext && key === 'main') return (evaluateGlobal(code), key);
+    if(overrideContext) key = overrideContext;
     let {value, module}= evaluateIn(code, key);
     afterEvalHook(value, module);
     return key;

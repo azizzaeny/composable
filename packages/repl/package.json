@@ -1,6 +1,6 @@
 {
   "name": "@zaeny/repl",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "Bringing Clojure Repl Like Experiences to the Javascript Node.js, add support evaluating in context, or in-ns",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
