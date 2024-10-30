@@ -17,3 +17,4 @@ Bringing Clojure Repl Like Experiences to the Javascript Node.js, add support ev
 - 1.0.6 fix `console` not show up, and fix return value of `evaluate`
 - 1.0.7 add choose evaluate if context not available `evaluateIn` and `evaluateGlobal` at `provide` source
 - 1.0.8 fix concat code content at `loadCodeAt` 
+- 1.0.9 fix return verbose `__error` null remove the error

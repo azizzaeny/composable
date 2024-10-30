@@ -86,7 +86,7 @@ var evaluateGlobal = (code) => {
   }catch(err){
     __error = err;
     console.log('error: '+err);
-    return {value: null, module: null}    
+    //return {value: null, module: null}    
   }
 }
 
@@ -100,7 +100,7 @@ var evaluateIn = (code, id) => {
   }catch(err){
     __error = err;
     console.log('error: '+err);
-    return {value: null, module: null}
+    //return {value: null, module: null}
   }
 }
 
