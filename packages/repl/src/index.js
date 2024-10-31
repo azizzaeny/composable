@@ -86,7 +86,7 @@ var evaluateGlobal = (code) => {
   }catch(err){
     __error = err;
     console.log('error: '+err);
-    //return {value: null, module: null}    
+    return null;
   }
 }
 
@@ -100,7 +100,7 @@ var evaluateIn = (code, id) => {
   }catch(err){
     __error = err;
     console.log('error: '+err);
-    //return {value: null, module: null}
+    return null;
   }
 }
 
@@ -112,10 +112,11 @@ var createEvaluate = (
   try{
     if(isDefaultContext(id)){
       let value =  evaluateGlobal(beforEvalHook(code));
-      return afterEvalHook(value, null)
+      return afterEvalHook(value, null);
     }
-    let { value, module } =  evaluateIn(beforEvalHook(code), id);
-    return afterEvalHook(value, module);
+    let result = evaluateIn(beforEvalHook(code), id);
+    if (result) return afterEvalHook(result.value, result.module);
+    return afterEvalHook(result, null);
   }catch(err){
     __error = err;
     console.log('error: '+err);
@@ -150,7 +151,7 @@ var loadCodeAt = (file, overrideContext, afterEvalHook=defaultAfterEvalHook) => 
     let {context, content} = value;
     if(!context) context = 'main';
     if(!acc[context]) return (acc[context] = content, acc);
-    return (acc[context] = acc[context].concat(`${content}\n`), acc);
+    return (acc[context] = acc[context].concat(`\n${content}\n`), acc);
   }, {});
   return Object.entries(compiled).map(([key, code], index)=>{
     if(!overrideContext && key === 'main') return (evaluateGlobal(code), key);
