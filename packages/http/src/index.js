@@ -153,14 +153,18 @@ var parseFormData = (request, response) => {
   (request.body = params);
 }
 
+var baseUrl = `http://localhost:8080`;
+
 var parseRequest = (request, buffer) => {
-  (request.$parsed = rurl.parse(request.url, true));
+  (request.$parsed = new URL(request.url, baseUrl));
   (request.query = request.$parsed.query);
   (request.params = merge({}, request.query));
   (request.pathname = request.$parsed.pathname);
   if(request.method !== 'GET'){
-    (request.buffer = buffer);    
-    (request.body = Buffer.concat(buffer).toString());
+    (request.buffer = buffer);
+    if(isRequestBuffer(request)){
+      (request.body = Buffer.concat(buffer).toString());
+    }
     if(isContentType(request, 'application/json')) parseJSON(request, response);
     if(isContentType(request, 'application/x-www-form-urlencoded')) parseUrlencoded(request, response);
     if(isContentType(request, 'multipart/form-data')) parseFormData(request, response);
@@ -170,24 +174,34 @@ var parseRequest = (request, buffer) => {
 
 var processRequest = (ctx) => (request, response) => {
   let buffer = [];
-  let totalLength = 0;
-  // totalLength += chunk.length;
+  let totalLength = 0;  // totalLength += chunk.length;
   // todo: add request limiter
-  request.on('data', chunk => (chunk && buffer.push(chunk)));
-  request.on('end', async ()  =>{
-    try{
-      let parsedRequest = parseRequest(request, buffer);
-      let ctxResponse = await ctx.handler( parsedRequest, response );
-      responseWrite(
-        ctxResponse,
-        request,
-        response
-      );
-    }catch(err){
-      let status = err.status || 500;
-      responseWrite({ status, headers:{'Content-Type': 'application/json'}, body: '{"error":true, "message": "Internal Server Error"}'}, request, response);      
-    }
-  });
+  if(request.method !== 'GET'){
+    request.on('data', chunk => (chunk && buffer.push(chunk)));
+    request.on('end', async ()  =>{
+      try{
+        let parsedRequest = parseRequest(request, buffer);
+        let ctxResponse = await ctx.handler( parsedRequest, response );
+        responseWrite(
+          ctxResponse,
+          request,
+          response
+        );
+      }catch(err){
+        let status = err.status || 500;
+        responseWrite({ status, headers:{'Content-Type': 'application/json'}, body: '{"error":true, "message": "Internal Server Error"}'}, request, response);      
+      }
+    });    
+  }else{
+    (async () => {
+      (request.$parsed = new URL(request.url, baseUrl));
+      (request.query = request.$parsed.query);
+      (request.params = merge({}, request.query));
+      (request.pathname = request.$parsed.pathname);
+      let ctxResponse = await ctx.handler(request, response);
+      handleResponse(ctxResponse, response);
+    })();
+  }
 }
 
 var createServer = (ctx, name="server") => merge(
