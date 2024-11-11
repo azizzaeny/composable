@@ -152,12 +152,51 @@ var transformCommand = (commands) => {
   return commands;
 }
 
+var getFirstKey = (cmds, type) =>{
+  let ref = {
+    'json.get': 1,
+    'json.set': 1,
+    'json.mget': 1,
+    'json.mset': 1,
+    'mset': 1,
+    'mget': 1,
+    'xread': 1,
+    'xadd': 1,
+    'xreadgroup':1,
+  };
+  return cmds[ref[type]] || cmds[1];
+};
+
+var isReadOnly = cmd =>{
+  let ref = {
+    'set': false,
+    'get': true,
+    'json.get': true,
+    'json.set': false,
+    'sadd': false,
+    'smembers': true,
+    'json.mset': false,
+    'json.mget': true,
+    'hset': false,
+    'hget': true,
+    'hmget': true,
+    'hgetall': true,
+    'xadd': false,
+    'xread': true,
+    'xreadgroup': true
+  }
+  return ref[cmd] || false;
+}
+
 var command = (...args) =>{
   let [commands, client] = args;
   if (args.length === 1) return (client) => command(commands, client);
   let type = lowerCase(first(commands));  
   let adaptCommand = transformCommand(commands);  
   if(isFn(client)) (client = client());
+  if(client.isCluster){
+    return client.sendCommand(getFirstKey(commands, type), isReadOnly(type), adaptCommand).then(parseResult(type, adaptCommand));
+  }
   return client.sendCommand(adaptCommand).then(parseResult(type, adaptCommand));
 }
 
@@ -197,8 +236,10 @@ var createRedis = (url, options={}) => {
 }
 
 var createCluster = (urls, options={}) =>{
-  let opt = merge({ rootNodes: urls }, {retry_strategy }, options);
-  return redis.createCluster(opt);
+  let opt = merge({ rootNodes: urls }, { retry_strategy }, options);
+  let client = redis.createCluster(opt);
+  client.isCluster = true;
+  return client;
 }
 
 var connectRedis = (client, onError, onReconnect) => {
