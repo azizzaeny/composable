@@ -87,3 +87,4 @@ parsePair,
  - [1.1.2] add new stream acknowledge 
  - [1.1.3] fix repository homepage
  - [1.1.4] fix the parse value for `json.mget`
+ - [1.1.5] add `createClusterRedis` 

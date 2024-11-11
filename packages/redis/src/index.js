@@ -196,6 +196,11 @@ var createRedis = (url, options={}) => {
   return redis.createClient(opt);  
 }
 
+var createCluster = (urls, options={}) =>{
+  let opt = merge({ rootNodes: urls }, {retry_strategy }, options);
+  return redis.createCluster(opt);
+}
+
 var connectRedis = (client, onError, onReconnect) => {
   if(!onError) onError = ((err) => console.log('redis error', err));
   if(!onReconnect) onReconnect = ((details) =>  console.log('Redis reconnecting ...'));  
@@ -269,4 +274,4 @@ var parsePair = (data) => reduce((acc, curr, index, arr)=>{
   return acc;
 }, {}, data);
 
-module.exports = { reader, command, createRedis, connectRedis, disconnectRedis, parsePair, tfload, tfcall };
+module.exports = { reader, command, createRedis, createCluster, connectRedis, disconnectRedis, parsePair, tfload, tfcall };
