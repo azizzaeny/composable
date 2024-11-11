@@ -155,8 +155,30 @@ var parseFormData = (request, response) => {
 
 var baseUrl = `http://localhost:8080`;
 
+class URLCache {
+  constructor(maxSize = 1000) {
+    this.cache = new Map();
+    this.maxSize = maxSize;
+  }
+  get(url) {
+    return this.cache.get(url);
+  }
+  set(url, value) {
+    if (this.cache.size >= this.maxSize) {
+      const firstKey = this.cache.keys().next().value;
+      this.cache.delete(firstKey);
+    }
+    this.cache.set(url, value);
+  }
+}
+
 var parseRequest = (request, buffer) => {
-  (request.$parsed = new URL(request.url, baseUrl));
+  let parsedURL = urlCache.get(request.url);
+  if (!parsedURL) {
+    parsedURL = parseURL(request.url, true);
+    urlCache.set(request.url, parsedURL);
+  }
+  (request.$parsed = parsedURL);
   (request.query = request.$parsed.query);
   (request.params = merge({}, request.query));
   (request.pathname = request.$parsed.pathname);
@@ -194,20 +216,34 @@ var processRequest = (ctx) => (request, response) => {
     });    
   }else{
     (async () => {
-      (request.$parsed = new URL(request.url, baseUrl));
-      (request.query = request.$parsed.query);
-      (request.params = merge({}, request.query));
-      (request.pathname = request.$parsed.pathname);
-      let ctxResponse = await ctx.handler(request, response);
-      handleResponse(ctxResponse, response);
+      try{
+        let parsedRequest = parseRequest(request, buffer);      
+        let ctxResponse = await ctx.handler(request, response);
+        handleResponse(ctxResponse, response);
+      }catch(err){
+        let status = err.status || 500;
+        responseWrite({ status, headers:{'Content-Type': 'application/json'}, body: '{"error":true, "message": "Internal Server Error"}'}, request, response);      
+      }
     })();
   }
 }
 
-var createServer = (ctx, name="server") => merge(
-  ctx,
-  { [name] : require('http').createServer(processRequest(ctx)) }
-);
+var createServer = (ctx, name="server") => {
+  let httpServer = require('http').createServer(processRequest(ctx));
+
+  httpServer.on('clientError', (err, socket) => {
+    socket.end('HTTP/1.1 400 Bad Request\r\n\r\n');
+  });
+
+  httpServer.keepAliveTimeout = ctx.keepAliveTimeout || 5000; // 5 seconds
+  httpServer.maxHeadersCount = ctx.maxHeadersCount || 100;
+  httpServer.headersTimeout = ctx.headersTimeout || 60000; // 60 seconds
+  
+  return merge(
+    ctx,
+    { [name] : httpServer }
+  );
+}
 
 var startServer = (ctx, name="server") => (
   getIn(ctx, [name, "listen"]) ? ( ctx[name].listen(ctx.port, ctx.onListen), ctx) : ctx
