@@ -172,6 +172,8 @@ class URLCache {
   }
 }
 
+var urlCache = new URLCache();
+
 var parseRequest = (request, buffer) => {
   let parsedURL = urlCache.get(request.url);
   if (!parsedURL) {
