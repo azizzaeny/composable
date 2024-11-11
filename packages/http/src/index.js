@@ -221,7 +221,11 @@ var processRequest = (ctx) => (request, response) => {
       try{
         let parsedRequest = parseRequest(request, buffer);      
         let ctxResponse = await ctx.handler(request, response);
-        handleResponse(ctxResponse, response);
+        responseWrite(
+          ctxResponse,
+          request,
+          response
+        );
       }catch(err){
         let status = err.status || 500;
         responseWrite({ status, headers:{'Content-Type': 'application/json'}, body: '{"error":true, "message": "Internal Server Error"}'}, request, response);      
