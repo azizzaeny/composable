@@ -190,3 +190,4 @@ await handler(createRequest('GET /api/search?query=Aziz'));
  - [1.0.15] fix homepage repository
  - [1.0.16] improve performace parseRequest, remove setTimeout, add chunk handling, better parseRequest
  - [1.0.17] fix buffer request, remove request method parser for non GET
+ - [1.0.18] add clientError handler, improve parsing by urlCache set and get 
