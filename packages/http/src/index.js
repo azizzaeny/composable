@@ -177,7 +177,7 @@ var urlCache = new URLCache();
 var parseRequest = (request, buffer) => {
   let parsedURL = urlCache.get(request.url);
   if (!parsedURL) {
-    parsedURL = parseURL(request.url, true);
+    parsedURL = rurl.parseURL(request.url, true);
     urlCache.set(request.url, parsedURL);
   }
   (request.$parsed = parsedURL);
