@@ -1,6 +1,6 @@
 {
   "name": "@zaeny/http",
-  "version": "1.0.22",
+  "version": "1.0.23",
   "description": "Utility function creating http server, Translate incomin http request into data strcuture like ring in clojure",
   "scripts": {
     "build": "node build",    

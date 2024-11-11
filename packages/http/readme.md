@@ -192,4 +192,4 @@ await handler(createRequest('GET /api/search?query=Aziz'));
  - [1.0.17] fix buffer request, remove request method parser for non GET
  - [1.0.18] add clientError handler, improve parsing by urlCache set and get 
  - [1.0.20] fix internal server error url cache not defined (bugs)
- - [1.0.22] update fix error bugs urlCache parse unable to parse
+ - [1.0.23] update fix error bugs urlCache parse unable to parse
