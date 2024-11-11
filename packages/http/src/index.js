@@ -1,4 +1,5 @@
 var fs = require('fs');
+var rurl = require('url');
 
 var reduce = (...args) => {
   let [reducer, initialValue, arr] = args;
@@ -86,29 +87,27 @@ var responseEnd = (ctx, body, response) => (
 );
 
 var responseWrite = (ctx, request, response) => {
-  let alreadySent = request.sent;
+  let alreadySent = request.sent;  
   let dispatch = (ctx) => {
     let body    = ctx.body || '';
     let headers = ctx.headers || {};
     let status  = ctx.status || 200;
-    if(isObject(body) || isArray(body)){
-      (body = JSON.stringify(ctx.body));
-      return responseEnd(ctx, body, response);
-    }
-    if(isNumber(body)){
-      (body = body.toString());
-      return responseEnd(ctx, body, response);
-    }
-    if(isFn(body) || isNil(body)){
-      (body = '');
-      return responseEnd(ctx, body, response);
-    }
-    if(isBoolean(body)){
-      (body = Boolean(body).toString());
-      return responseEnd(ctx, body, response);
-    } 
+    switch (typeof body) {
+    case 'object':
+      body = JSON.stringify(body);
+      break;
+    case 'number':
+      body = body.toString();
+      break;
+    case 'boolean':
+      body = body ? 'true' : 'false';
+      break;
+    case 'function':
+      body = ''; // Handle functions and undefined cases as empty
+      break;
+    };
     return responseEnd(ctx, body, response);
-  }
+  }  
   if(alreadySent) return dispatch(alreadySent);  
   return (ctx) ? dispatch(ctx) : (null);  
 }
@@ -130,8 +129,7 @@ var parseJSON = (request, response) => {
 
 var parseUrlencoded = (request, response) => {
   if(!isRequestBody(request)) return;    
-  return (request.body = merge({}, require('querystring').parse(request.body)));
-  
+  return (request.body = merge({}, require('querystring').parse(request.body)));  
 }
 
 var parseFormData = (request, response) => {
@@ -156,31 +154,40 @@ var parseFormData = (request, response) => {
 }
 
 var parseRequest = (request, buffer) => {
-  (request.$parsed = require('url').parse(request.url, true));
+  (request.$parsed = rurl.parse(request.url, true));
   (request.query = request.$parsed.query);
   (request.params = merge({}, request.query));
   (request.pathname = request.$parsed.pathname);
-  (request.buffer = buffer);
-  if(isRequestBuffer(request)){
+  if(request.method !== 'GET'){
+    (request.buffer = buffer);    
     (request.body = Buffer.concat(buffer).toString());
+    if(isContentType(request, 'application/json')) parseJSON(request, response);
+    if(isContentType(request, 'application/x-www-form-urlencoded')) parseUrlencoded(request, response);
+    if(isContentType(request, 'multipart/form-data')) parseFormData(request, response);
   }
-  if(isContentType(request, 'application/json')) parseJSON(request, response);
-  if(isContentType(request, 'application/x-www-form-urlencoded')) parseUrlencoded(request, response);
-  if(isContentType(request, 'multipart/form-data')) parseFormData(request, response);
   return request;
 };
 
 var processRequest = (ctx) => (request, response) => {
   let buffer = [];
-  request.on('data', chunk => (chunk ? buffer.push(chunk) : null));
-  request.on('end', _  =>{
-    setTimeout(async ()=>{
+  let totalLength = 0;
+  // totalLength += chunk.length;
+  // todo: add request limiter
+  request.on('data', chunk => (chunk && buffer.push(chunk)));
+  request.on('end', async ()  =>{
+    try{
+      let parsedRequest = parseRequest(request, buffer);
+      let ctxResponse = await ctx.handler( parsedRequest, response );
       responseWrite(
-        await ctx.handler( parseRequest(request, buffer), response),
+        ctxResponse,
         request,
-        response)
-    }, 0);
-  }) 
+        response
+      );
+    }catch(err){
+      let status = err.status || 500;
+      responseWrite({ status, headers:{'Content-Type': 'application/json'}, body: '{"error":true, "message": "Internal Server Error"}'}, request, response);      
+    }
+  });
 }
 
 var createServer = (ctx, name="server") => merge(
