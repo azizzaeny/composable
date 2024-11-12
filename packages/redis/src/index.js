@@ -395,6 +395,10 @@ var reader = (...args) => {
   let processor = blockType[type];
   if(!processor) return console.log('unsupported block type');  
   if(isFn(currentClient)) (currentClient = currentClient());  
+  if(Array.isArray(currentClient)){
+    let conn = getMasterOf(currentClient);
+    currentClient = conn;
+  };
   let client = currentClient.duplicate();  
   let isTypeGroup = (cmd[0] === 'xreadgroup');
   let createGroup = (c)=> (cmd[0] === 'xreadgroup' ? command(['xgroup', cmd[1], cmd[2],'$'], client).catch(identity) : c );
