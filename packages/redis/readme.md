@@ -89,3 +89,5 @@ parsePair,
  - [1.1.4] fix the parse value for `json.mget`
  - [1.1.5] add `createClusterRedis` 
  - [1.1.6] add support `command` in cluster mode, support `isReadonly` command 
+ - [1.1.7] add simple replication routing, use weight distribution 
+ 

@@ -151,7 +151,7 @@ var transformCommand = (commands) => {
   if(resolve) return resolve(commands);
   return commands;
 }
-
+// todo: stream line this 
 var getFirstKey = (cmds, type) =>{
   let ref = {
     'json.get': 1,
@@ -188,15 +188,118 @@ var isReadOnly = cmd =>{
   return ref[cmd] || false;
 }
 
+var writeCommands = {
+  string: [
+    'SET', 'SETNX', 'SETEX', 'PSETEX', 'APPEND', 'INCR', 'DECR', 'INCRBY', 'DECRBY',
+    'INCRBYFLOAT', 'MSET', 'MSETNX', 'SETBIT', 'SETRANGE'
+  ],  
+  key: [
+    'DEL', 'UNLINK', 'EXPIRE', 'EXPIREAT', 'PEXPIRE', 'PEXPIREAT', 'PERSIST',
+    'RENAME', 'RENAMENX', 'MOVE', 'COPY', 'RESTORE', 'MIGRATE'
+  ],  
+  list: [
+    'RPUSH', 'LPUSH', 'RPUSHX', 'LPUSHX', 'LINSERT', 'LSET', 'LTRIM', 'RPOP', 'LPOP',
+    'RPOPLPUSH', 'LMOVE', 'BLMOVE', 'LREM'
+  ],  
+  set: [
+    'SADD', 'SREM', 'SMOVE', 'SPOP', 'SINTERSTORE', 'SUNIONSTORE', 'SDIFFSTORE'
+  ],  
+  sortedSet: [
+    'ZADD', 'ZINCRBY', 'ZREM', 'ZREMRANGEBYRANK', 'ZREMRANGEBYSCORE', 'ZREMRANGEBYLEX',
+    'ZUNIONSTORE', 'ZINTERSTORE', 'BZPOPMIN', 'BZPOPMAX'
+  ],  
+  hash: [
+    'HSET', 'HSETNX', 'HMSET', 'HINCRBY', 'HINCRBYFLOAT', 'HDEL'
+  ],  
+  stream: [
+    'XADD', 'XDEL', 'XTRIM', 'XGROUP', 'XSETID', 'XACK', 'XAUTOCLAIM', 'XCLAIM', 
+  ],  
+  pubsub: [
+    'PUBLISH'
+  ],  
+  transaction: [
+    'MULTI', 'EXEC', 'DISCARD', 'WATCH', 'UNWATCH'
+  ],  
+  json: [
+    'JSON.SET', 'JSON.MSET', 'JSON.DEL', 'JSON.NUMINCRBY', 'JSON.NUMMULTBY',
+    'JSON.STRAPPEND', 'JSON.ARRAPPEND', 'JSON.ARRINSERT', 'JSON.ARRPOP',
+    'JSON.ARRTRIM', 'JSON.CLEAR'
+  ],  
+  search: [
+    'FT.CREATE', 'FT.ALTER', 'FT.DROPINDEX', 'FT.ALIASADD', 'FT.ALIASDEL',
+    'FT.SUGADD', 'FT.SUGDEL'
+  ],  
+  graph: [
+    'GRAPH.DELETE', 'GRAPH.EXPLAIN', 'GRAPH.PROFILE', 'GRAPH.QUERY', 'GRAPH.RO_QUERY'
+  ],  
+  timeseries: [
+    'TS.CREATE', 'TS.ALTER', 'TS.ADD', 'TS.MADD', 'TS.INCRBY', 'TS.DECRBY',
+    'TS.CREATERULE', 'TS.DELETERULE'
+  ]
+};
+
+var allWriteCommands = new Set(
+  Object.values(writeCommands).flat().map(cmd => cmd.toUpperCase())  
+);
+
+var isWriteCommand = (command) => {
+  return allWriteCommands.has(command.toUpperCase());
+};
+
+var getWeightIndex = (values, weights) =>{
+  let totalWeight = weights.reduce((acc, v) => acc + parseInt(v), 0 );  
+  let randomNum = Math.random() * totalWeight;
+  for (const [index, value] of values.entries()) {
+    if (randomNum < weights[index]) {
+      return index;
+    }
+    (randomNum -= weights[index]);
+  }
+};
+
+var createReplicaWeight = (count) => {
+  const weight = 100 / count;
+  return Array(count).fill(weight);
+};
+
+var getReplicaOf = (client) => {
+  let masterClient = client[0];
+  let weights = masterClient.replicaWeight || createReplicaWeight(client.length);
+  let index = getWeightIndex(client, weights);
+  return client[index];
+};
+
+var getMasterOf = (client) => {
+  return client[0];
+}
+
+/*
+  .in-context ./console
+  await command(['get', 'foo'], rs);
+*/
+
 var command = (...args) =>{
   let [commands, client] = args;
   if (args.length === 1) return (client) => command(commands, client);
   let type = lowerCase(first(commands));  
   let adaptCommand = transformCommand(commands);  
   if(isFn(client)) (client = client());
-  if(client.isCluster){
-    return client.sendCommand(getFirstKey(commands, type), isReadOnly(type), adaptCommand).then(parseResult(type, adaptCommand));
+  if(Array.isArray(client)){
+    let isWriteable = isWriteCommand(first(commands));
+    let conn = (isWriteable ? getMasterOf(client) : getReplicaOf(client));
+    try{
+      return conn.sendCommand(adaptCommand).then(parseResult(type, adaptCommand));
+    }catch(err){
+      if (err.message.includes('READONLY')) {
+        let conn = getMasterOf(client);
+        return conn.sendCommand(adaptCommand).then(parseResult(type, adaptCommand));        
+      }
+    }
   }
+  if(client.isCluster){
+    return client.sendCommand(getFirstKey(commands, type), isReadOnly(type), adaptCommand).then(parseResult(type, adaptCommand));   
+  }
+  
   return client.sendCommand(adaptCommand).then(parseResult(type, adaptCommand));
 }
 
@@ -232,7 +335,11 @@ var retry_strategy = (options) => {
 
 var createRedis = (url, options={}) => {
   let opt = merge({ url }, {retry_strategy }, options);
-  return redis.createClient(opt);  
+  let client =  redis.createClient(opt);
+  if(process.env.REDIS_WEIGHT){
+    client.replicaWeight = process.env.REDIS_WEIGHT.split(',').map(i=> parseInt(i)); 
+  };
+  return client;
 }
 
 var createCluster = (urls, options={}) =>{
