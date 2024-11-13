@@ -19,3 +19,4 @@ Bringing Clojure Repl Like Experiences to the Javascript Node.js, add support ev
 - 1.0.8 fix concat code content at `loadCodeAt` 
 - 1.0.9 fix return verbose `__error` null remove the error
 - 1.1.0 fix concat value of code is not properly joined string at `loadCodeAt`
+- 1.1.1 fix repl `evaluateIn` error value
