@@ -281,6 +281,7 @@ var getMasterOf = (client) => {
 var command = (...args) =>{
   let [commands, client] = args;
   if (args.length === 1) return (client) => command(commands, client);
+  if (isString(commands)) commands = commands.split(' ');
   let type = lowerCase(first(commands));  
   let adaptCommand = transformCommand(commands);  
   if(isFn(client)) (client = client());

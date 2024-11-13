@@ -91,3 +91,4 @@ parsePair,
  - [1.1.6] add support `command` in cluster mode, support `isReadonly` command 
  - [1.1.7] add simple replication routing, use weight distribution 
  - [1.1.8] add fix for duplicate client for `reader` command 
+ - [1.1.9] add support for sending string `command`
