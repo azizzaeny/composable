@@ -206,7 +206,7 @@ var writeCommands = {
   ],  
   sortedSet: [
     'ZADD', 'ZINCRBY', 'ZREM', 'ZREMRANGEBYRANK', 'ZREMRANGEBYSCORE', 'ZREMRANGEBYLEX',
-    'ZUNIONSTORE', 'ZINTERSTORE', 'BZPOPMIN', 'BZPOPMAX', 'ZPOPMIN'
+    'ZUNIONSTORE', 'ZINTERSTORE', 'BZPOPMIN', 'BZPOPMAX', 'ZPOPMIN', 'ZPOPMAX'
   ],  
   hash: [
     'HSET', 'HSETNX', 'HMSET', 'HINCRBY', 'HINCRBYFLOAT', 'HDEL'
@@ -235,6 +235,9 @@ var writeCommands = {
   timeseries: [
     'TS.CREATE', 'TS.ALTER', 'TS.ADD', 'TS.MADD', 'TS.INCRBY', 'TS.DECRBY',
     'TS.CREATERULE', 'TS.DELETERULE'
+  ],
+  evaluate: [
+    'EVAL','EVALSHA', 'FUNCTION', 'SCRIPT'
   ]
 };
 
@@ -281,6 +284,7 @@ var getMasterOf = (client) => {
 var command = (...args) =>{
   let [commands, client] = args;
   if (args.length === 1) return (client) => command(commands, client);
+  if (isString(commands)) commands = commands.split(' ');
   let type = lowerCase(first(commands));  
   let adaptCommand = transformCommand(commands);  
   if(isFn(client)) (client = client());
@@ -395,6 +399,10 @@ var reader = (...args) => {
   let processor = blockType[type];
   if(!processor) return console.log('unsupported block type');  
   if(isFn(currentClient)) (currentClient = currentClient());  
+  if(Array.isArray(currentClient)){
+    let conn = getMasterOf(currentClient);
+    currentClient = conn;
+  };
   let client = currentClient.duplicate();  
   let isTypeGroup = (cmd[0] === 'xreadgroup');
   let createGroup = (c)=> (cmd[0] === 'xreadgroup' ? command(['xgroup', cmd[1], cmd[2],'$'], client).catch(identity) : c );

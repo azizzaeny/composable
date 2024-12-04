@@ -206,7 +206,7 @@ var writeCommands = {
   ],  
   sortedSet: [
     'ZADD', 'ZINCRBY', 'ZREM', 'ZREMRANGEBYRANK', 'ZREMRANGEBYSCORE', 'ZREMRANGEBYLEX',
-    'ZUNIONSTORE', 'ZINTERSTORE', 'BZPOPMIN', 'BZPOPMAX', 'ZPOPMIN'
+    'ZUNIONSTORE', 'ZINTERSTORE', 'BZPOPMIN', 'BZPOPMAX', 'ZPOPMIN', 'ZPOPMAX'
   ],  
   hash: [
     'HSET', 'HSETNX', 'HMSET', 'HINCRBY', 'HINCRBYFLOAT', 'HDEL'
@@ -235,6 +235,9 @@ var writeCommands = {
   timeseries: [
     'TS.CREATE', 'TS.ALTER', 'TS.ADD', 'TS.MADD', 'TS.INCRBY', 'TS.DECRBY',
     'TS.CREATERULE', 'TS.DELETERULE'
+  ],
+  evaluate: [
+    'EVAL','EVALSHA', 'FUNCTION', 'SCRIPT'
   ]
 };
 
