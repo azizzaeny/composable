@@ -743,11 +743,12 @@ Please use the idiom (seq x) rather than (not (empty? x))
 ```
 ```js context=core fn=isEmpty
 var isEmpty = (coll) => {
+  if(!coll || coll === null || coll === undefined) return true
   if(typeof coll === 'object'){
     return (Object.keys(coll).length === 0);
   }
   return coll.length === 0;
-}
+};
 ```
 ```js context=test fn=isEmpty
 isEmpty([]); // true
