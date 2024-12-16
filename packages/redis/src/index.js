@@ -282,15 +282,17 @@ var getMasterOf = (client) => {
 */
 
 var command = (...args) =>{
-  let [commands, client] = args;
+  let [commands, client, forceMode] = args;
   if (args.length === 1) return (client) => command(commands, client);
   if (isString(commands)) commands = commands.split(' ');
   let type = lowerCase(first(commands));  
-  let adaptCommand = transformCommand(commands);  
+  let adaptCommand = transformCommand(commands);
+  let isForceModeRead = forceMode === 'read' ? true : false;
   if(isFn(client)) (client = client());
   if(Array.isArray(client)){
     let isWriteable = isWriteCommand(first(commands));
-    let conn = (isWriteable ? getMasterOf(client) : getReplicaOf(client));
+    let conn = (isWriteable & !isForceModeRead ? getMasterOf(client) : getReplicaOf(client));
+    if(isForceModeRead) (conn = getReplicaOf(client));
     try{
       return conn.sendCommand(adaptCommand).then(parseResult(type, adaptCommand));
     }catch(err){

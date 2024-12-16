@@ -94,3 +94,4 @@ parsePair,
  - [1.1.9] add support for sending string `command`
  - [1.1.10] add `zpopmin` as write commands 
  - [1.1.11] add `zpopmax`, `eval`, `evalsha`, `function` to write commands
+ - [1.1.12] add `forceMode` `read` or `write` in replication command
